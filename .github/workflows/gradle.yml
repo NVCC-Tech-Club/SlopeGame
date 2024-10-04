@@ -76,7 +76,7 @@ jobs:
     - name: Run with Gradle Wrapper
       run: |
         export DISPLAY=:99
-        ./gradlew run
+        ./gradlew run --workflowtest
       timeout-minutes: 1 # Ensure the task terminates when there are no errors.
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
