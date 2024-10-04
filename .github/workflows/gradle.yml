@@ -75,6 +75,7 @@ jobs:
 
     - name: Run with Gradle Wrapper
       run: |
+        export DISPLAY=:99
         ./gradlew run
       timeout-minutes: 1 # Ensure the task terminates when there are no errors.
 
