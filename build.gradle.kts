@@ -32,6 +32,17 @@ dependencies {
 
 application {
     mainClass.set("com.slope.game.Main")
+
+    // Initialize an empty list for JVM arguments
+    val jvmArgs = mutableListOf<String>()
+
+    // Conditionally add -XstartOnFirstThread if running on macOS
+    if (os.isMacOsX) {
+        jvmArgs.add("-XstartOnFirstThread")
+    }
+
+    // Set the JVM arguments
+    applicationDefaultJvmArgs = jvmArgs
 }
 
 java {
@@ -42,8 +53,4 @@ java {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-}
-
-tasks.named<JavaExec>("run") {
-    jvmArgs("-XstartOnFirstThread")
 }
