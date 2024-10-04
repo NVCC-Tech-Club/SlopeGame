@@ -19,7 +19,11 @@ class Engine {
     private GLFWErrorCallback errorCallback; // Capture any errors that may arise.
     private boolean isRunning; // Whether or not the application is still running.
 
-    private Engine() {}
+    private Engine() {
+        this.errorCallback = null;
+        this.primaryWindow = null;
+        this.isRunning = false;
+    }
 
     public static void init() {
         if(main.initialized) { // Check if it's already initialized.
@@ -31,19 +35,16 @@ class Engine {
     }
 
     public void start() {
-        if(isRunning) { // Check if it's already running.
-            throw new IllegalStateException("Engine has already been initialized!");
-        }
-
         if(!main.initialized) { // Check if it's been initialized before continuing.
             throw new IllegalStateException("Engine has not been initialized already!");
         }
 
+        if(isRunning) { // Check if it's already running.
+            throw new IllegalStateException("Engine has already been initialized!");
+        }
+
         // Print out our current LWJGL version.
         System.out.println("Current LWJGL Version: " + Version.getVersion());
-
-        // Initialize the game engine.
-        main = new Engine();
 
         // Create the "capturer"
         GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
@@ -51,16 +52,10 @@ class Engine {
         // Initialize window manager and create our window!
         WindowManager.init();
         primaryWindow = WindowManager.createMainWindow(1280, 720, "Slope Game");
-
-        try {
-            run();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     // Overall loop.
-    private void run() throws Exception {
+    public void run() throws Exception {
         isRunning = true;
         long frameCounter = 0;
         long lastTime = System.nanoTime();
@@ -98,8 +93,6 @@ class Engine {
 
             GLFW.glfwPollEvents();
         }
-
-        destroy();
     }
 
     public void stop() {
