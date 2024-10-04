@@ -11,12 +11,6 @@ class WindowManager {
 
     public static void init() {
 
-        // Set up the window
-
-
-        // Creates an error callback such that we can get more information.
-        GLFWErrorCallback.createPrint(System.err).set();
-
         // Initializes GLFW, if returned false, then something went wrong.
         if(!GLFW.glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
