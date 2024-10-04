@@ -3,6 +3,7 @@ package com.slope.game;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL21;
 
 class WindowManager {
@@ -23,6 +24,7 @@ class WindowManager {
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2); // The minor version of OpenGL.
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE); // The profile of OpenGL.
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, 1); // The forward compatibility of OpenGL.
+        GLFW.glfwWindowHint(GLFW.GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW.GLFW_FALSE);
 
         // Finished initializing
         initialized = true;
@@ -47,10 +49,10 @@ class WindowManager {
         GL.createCapabilities();
 
         // Have our window screen be black.
-        GL21.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // We need this since our sphere might just be raymarched
-        GL21.glEnable(GL21.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         return window;
     }

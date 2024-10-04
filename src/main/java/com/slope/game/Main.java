@@ -1,8 +1,11 @@
 package com.slope.game;
 
 class Main {
-    public static void main(String[] args) {
+    private static Game game;
+
+    public static void main(String[] args) throws Exception {
         boolean runApp = true;
+        game = new Game();
 
         if (args.length > 0) {
             String mode = args[0];
@@ -24,6 +27,10 @@ class Main {
             }
         }
 
-        // Engine.getMain().destroy();
+        Engine.getMain().destroy();
+    }
+
+    public static Game getGame() {
+        return game;
     }
 }

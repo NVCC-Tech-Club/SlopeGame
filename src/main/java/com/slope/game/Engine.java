@@ -2,7 +2,6 @@ package com.slope.game;
 
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.opengl.GL21;
 import org.lwjgl.glfw.GLFW;
 
 // This class is responsible for the main loop of the game, physics, rendering, etc.
@@ -16,16 +15,21 @@ class Engine {
     private static final double FRAME_AREA = 1.0 / FRAMERATE;
 
     private Window primaryWindow;
+    private IComponent game;
     private GLFWErrorCallback errorCallback; // Capture any errors that may arise.
     private boolean isRunning; // Whether or not the application is still running.
+    private long frames;
 
     private Engine() {
         this.errorCallback = null;
         this.primaryWindow = null;
         this.isRunning = false;
+        this.frames = 0;
+
+        game = Main.getGame();
     }
 
-    public static void init() {
+    public static void init() throws Exception {
         if(main.initialized) { // Check if it's already initialized.
             throw new IllegalStateException("Engine has already been initialized!");
         }
@@ -52,6 +56,7 @@ class Engine {
         // Initialize window manager and create our window!
         WindowManager.init();
         primaryWindow = WindowManager.createMainWindow(1280, 720, "Slope Game");
+        game.init();
     }
 
     // Overall loop.
@@ -62,8 +67,6 @@ class Engine {
         double accumulatedTime = 0;
 
         while(isRunning) {
-            GL21.glClear(GL21.GL_COLOR_BUFFER_BIT | GL21.GL_DEPTH_BUFFER_BIT);
-
             boolean render = false;
             long start = System.nanoTime();
             long passedTime = start - lastTime;
@@ -109,15 +112,21 @@ class Engine {
 
     // This method is going to be used for rendering stuff.
     private void render() {
-        // Code Here
+        game.render();
+        primaryWindow.update();
     }
 
     // This method is going to be used for calculating Physics.
     private void update() {
-        // Code Here
+        game.update();
+    }
+
+    public Window getPrimaryWindow() {
+        return primaryWindow;
     }
 
     public void destroy() {
+        game.destroy();
         primaryWindow.destroy();
         WindowManager.terminate();
         errorCallback.free();
