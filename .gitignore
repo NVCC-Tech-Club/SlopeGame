@@ -10,5 +10,8 @@ build
 # Ignore IDEA project files
 .idea
 
+# Ignore VSCode project files
+.vscode
+
 # Ignore DS_Store files
 .DS_Store
