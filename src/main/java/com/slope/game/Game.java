@@ -8,14 +8,15 @@ public class Game implements IComponent {
     private final ObjectLoader loader;
 
     public Game() {
-        renderer = new RenderManager();
         loader = new ObjectLoader();
+        renderer = new RenderManager();
     }
 
     @Override
     public void init() {
-        renderer.init();
         loader.loadVertexObject(Shape.RAMP);
+        renderer.init();
+        loader.unbind();
     }
 
     @Override

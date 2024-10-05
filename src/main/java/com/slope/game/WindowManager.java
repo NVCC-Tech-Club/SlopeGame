@@ -20,8 +20,8 @@ class WindowManager {
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, 0); // The window will not be visible until we set it to be.
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, 1); // The window will be resizable.
-        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3); // The major version of OpenGL.
-        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2); // The minor version of OpenGL.
+        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4); // The major version of OpenGL.
+        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 1); // The minor version of OpenGL.
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE); // The profile of OpenGL.
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, 1); // The forward compatibility of OpenGL.
         GLFW.glfwWindowHint(GLFW.GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW.GLFW_FALSE);
@@ -49,7 +49,7 @@ class WindowManager {
         GL.createCapabilities();
 
         // Have our window screen be black.
-        GL11.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // We need this since our sphere might just be raymarched
         GL11.glEnable(GL11.GL_DEPTH_TEST);

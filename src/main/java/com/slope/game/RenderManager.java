@@ -7,14 +7,26 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 public class RenderManager {
+    private ShaderManager shaderManager;
+
     public RenderManager() {}
 
     public void init() {
+        shaderManager = new ShaderManager();
 
+        try {
+            shaderManager.createVertexShader(ResourceLoader.loadShader("shaders/main-vertex.glsl"));
+            shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
+            shaderManager.link();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     public void renderInstances(ObjectLoader loader) {
         clear();
+        shaderManager.bind();
 
         for(int i=0; i<loader.getCapacity(); i++) {
 
@@ -44,6 +56,8 @@ public class RenderManager {
             // Set the divisor for instance attribute
             // GL33.glVertexAttribDivisor(1, 1);
         }
+
+        shaderManager.unbind();
     }
 
     public void clear() {
@@ -51,6 +65,6 @@ public class RenderManager {
     }
 
     public void destroy() {
-
+        shaderManager.destroy();
     }
 }

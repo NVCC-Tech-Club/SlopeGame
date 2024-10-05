@@ -19,7 +19,6 @@ public class ObjectLoader {
         long vertexAmount = (long) sp.getVertexAmount() / 3;
         int VAO = createVAO();
         int VBO = storeShapeInAttribList(sp);
-        unbind();
 
         // Store VAO and vertex count in a 64-bit long (32 bits each)
         long vaoWithCount = ((long) VAO << BIT_32_CAPACITY) | (vertexAmount & 0xFFFFFFFFL);
@@ -40,8 +39,14 @@ public class ObjectLoader {
 
     private int storeShapeInAttribList(Shape sp) {
         int VBO = GL15.glGenBuffers();
+
+        // Bind buffer object to element array (Basically indices)
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, VBO);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, sp.storeIndicesInBuffer(), GL15.GL_STATIC_DRAW);
+
+        // Bind buffer object to array
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, sp.storeDataInBuffer(), GL15.GL_STATIC_DRAW);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, sp.storeVerticesInBuffer(), GL15.GL_STATIC_DRAW);
 
         // Set vertex attribute pointer for the shape
         GL20.glVertexAttribPointer(0, sp.getVertexCount(), GL21.GL_FLOAT, false, 0, 0);
