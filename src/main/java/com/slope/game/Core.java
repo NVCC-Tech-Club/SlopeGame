@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL21;
 public class Core implements IComponentManager {
     private final RenderManager renderer;
     private final ObjectLoader loader;
-    // TODO: Add ComputeShaderManager here. (Feeshy Task Onlu)
+    // TODO: Add ComputeShaderManager here. (Feeshy Task Only)
 
     // MONDAY TASK: Add Camere Class here. (Remove the comment)
 
@@ -38,7 +38,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void update() {
-        //MONDAY TASK: Put the updater function for Camera Class here!. (Remove this comment)
+        //MONDAY TASK: Put the updater function for Camera Class here! (Remove this comment)
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Core implements IComponentManager {
     }
 
     // These are background objects that can't be interacted with the game in any way.
-    // That's why they are in the Core Class rather than in the Game Class.
+    // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
         loader.loadVertexObject(Shape.RAMP);
     }
