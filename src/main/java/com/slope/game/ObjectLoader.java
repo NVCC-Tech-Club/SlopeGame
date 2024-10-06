@@ -9,7 +9,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectLoader {
+public class ObjectLoader implements IGraphics {
     private static final int BIT_32_CAPACITY = 32;
     private static boolean RE = false;
 
@@ -78,10 +78,12 @@ public class ObjectLoader {
         return (int) (vertexData.get(index).getKey() & 0xFFFFFFFFL);
     }
 
+    @Override
     public void unbind() {
         GL30.glBindVertexArray(0);
     }
 
+    @Override
     public void destroy() {
         while(getCapacity() != 0) {
             GL30.glDeleteVertexArrays(getID(0));

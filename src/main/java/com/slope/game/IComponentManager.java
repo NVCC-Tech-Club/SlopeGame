@@ -1,15 +1,6 @@
 package com.slope.game;
 
-public interface IComponent {
-    // Initialize our component.
-    void init();
-
-    // Render our component.
-    void render();
-
-    // Update our component.
-    void update();
-
-    // Destroy our component.
-    void destroy();
+public interface IComponentManager extends IComponent {
+    // Add component to manager with graphics handler.
+    IComponent addComponent(IComponent component, Class<IGraphics> handler);
 }

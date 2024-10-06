@@ -2,7 +2,7 @@ package com.slope.game;
 
 import org.lwjgl.opengl.GL20;
 
-public class ShaderManager {
+public class ShaderManager implements IGraphics {
     private static final int BUFFER_SIZE = 1024;
 
     private final int programID;
@@ -52,20 +52,6 @@ public class ShaderManager {
         GL20.glUseProgram(programID);
     }
 
-    public void unbind() {
-        GL20.glUseProgram(0);
-    }
-
-    public void destroy() {
-        unbind();
-
-        if(programID != 0) {
-            GL20.glDeleteShader(fragmentShaderID);
-            GL20.glDeleteShader(vertexShaderID);
-            GL20.glDeleteProgram(programID);
-        }
-    }
-
     private int createShader(String shaderCode, int shaderType) throws Exception {
         int shaderID = GL20.glCreateShader(shaderType);
 
@@ -82,5 +68,21 @@ public class ShaderManager {
         }
 
         return shaderID;
+    }
+
+    @Override
+    public void unbind() {
+        GL20.glUseProgram(0);
+    }
+
+    @Override
+    public void destroy() {
+        unbind();
+
+        if(programID != 0) {
+            GL20.glDeleteShader(fragmentShaderID);
+            GL20.glDeleteShader(vertexShaderID);
+            GL20.glDeleteProgram(programID);
+        }
     }
 }

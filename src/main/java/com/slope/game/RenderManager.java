@@ -1,6 +1,5 @@
 package com.slope.game;
 
-import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL11;

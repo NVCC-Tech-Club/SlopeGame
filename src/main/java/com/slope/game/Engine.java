@@ -15,7 +15,7 @@ class Engine {
     private static final double FRAME_AREA = 1.0 / FRAMERATE;
 
     private Window primaryWindow;
-    private IComponent game;
+    private IComponentManager game;
     private GLFWErrorCallback errorCallback; // Capture any errors that may arise.
     private boolean isRunning; // Whether or not the application is still running.
     private long frames;
