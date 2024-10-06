@@ -6,6 +6,7 @@ public class Game extends Core {
     // TODO: Also add multiple Fixed Sized Queues here for platforms and red block pillars. (Feeshy Task Only)
     // NOTE: I will have to create my own Fixed Size Queue class that uses LWJGL's direct memory components to
     // allocate and deallocate my capacity and map memory to it like I was in C.
+    // This means I need an object pool to store all platform variations.
 
     // TODO: Probably have an ArrayList for the red obstacles in every platform. (Feeshy Task Only)
 
