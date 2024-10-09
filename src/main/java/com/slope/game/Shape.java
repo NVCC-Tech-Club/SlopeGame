@@ -11,6 +11,7 @@ public enum Shape {
     RAMP( 3,
 
         // Vertices
+        
         new float[] {
             -0.333f, -0.333f, 0.0f,  // V1
             0.666f, -0.333f, 0.0f,  // V2
@@ -22,6 +23,8 @@ public enum Shape {
             1, 2, 3
         }
     );
+
+
 
 
     // Don't focus on this, not important for anyone other than "Feeshy" to use.

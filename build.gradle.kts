@@ -24,10 +24,16 @@ dependencies {
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
 
+    //JOML
+    implementation("org.joml:joml:1.10.8")
+
     // LWJGL natives for the current platform
     runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
+    runtimeOnly("org.joml:joml:1.10.8")
+
+    
 }
 
 application {

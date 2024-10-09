@@ -16,12 +16,17 @@ public class ShaderManager implements IGraphics {
         }
     }
 
+
     public void createVertexShader(String shaderCode) throws Exception {
         vertexShaderID = createShader(shaderCode, GL20.GL_VERTEX_SHADER);
     }
 
     public void createFragmentShader(String shaderCode) throws Exception {
         fragmentShaderID = createShader(shaderCode, GL20.GL_FRAGMENT_SHADER);
+    }
+
+    public int getProgramID(){
+        return programID;
     }
 
     public void link() throws Exception {

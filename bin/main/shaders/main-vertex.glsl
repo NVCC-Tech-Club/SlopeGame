@@ -1,7 +1,5 @@
 #version 410 core
 
-uniform mat4 viewMatrix;
-
 in vec3 pos;
 out vec3 color;
 
