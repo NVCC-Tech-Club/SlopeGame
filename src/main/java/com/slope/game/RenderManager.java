@@ -1,11 +1,23 @@
 package com.slope.game;
 
+import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
-public class RenderManager {
+public final class RenderManager {
+    // Nice utils
+
+    public static void maxGLBindings(int target) {
+        switch(target) {
+            case GL31.GL_UNIFORM_BUFFER -> GL21.glGetInteger(GL31.GL_MAX_UNIFORM_BUFFER_BINDINGS);
+        }
+    }
+
+
+    // How the renderer works at runtime.
+
     private ShaderManager shaderManager;
 
     public RenderManager() {}
