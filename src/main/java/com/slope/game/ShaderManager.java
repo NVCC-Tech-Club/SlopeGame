@@ -1,14 +1,23 @@
 package com.slope.game;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.lwjgl.opengl.GL20;
+
+import static org.lwjgl.opengl.GL31.*;
+import static org.lwjgl.opengl.GL43.*;
 
 public class ShaderManager implements IGraphics {
     private static final int BUFFER_SIZE = 1024;
 
     private final int programID;
+    private final Object2IntMap<CharSequence> uniformBlocks;
+    private final Object2IntMap<CharSequence> storageBlocks;
     private int vertexShaderID, fragmentShaderID;
 
     public ShaderManager() {
+        this.uniformBlocks = new Object2IntArrayMap<>();
+        this.storageBlocks = new Object2IntArrayMap<>();
         this.programID = GL20.glCreateProgram();
 
         if(programID == 0) {
@@ -48,6 +57,38 @@ public class ShaderManager implements IGraphics {
         }
     }
 
+    public int getUniformBlock(CharSequence name) {
+        if(this.programID == 0) {
+            return GL_INVALID_INDEX;
+        }
+
+        return this.uniformBlocks.computeIfAbsent(name, k -> glGetUniformBlockIndex(this.programID, name));
+    }
+
+    public int getStorageBlock(CharSequence name) {
+        if(this.programID == 0) {
+            return GL_INVALID_INDEX;
+        }
+
+        return this.storageBlocks.computeIfAbsent(name, k -> glGetProgramResourceIndex(this.programID, GL_SHADER_STORAGE_BLOCK, name));
+    }
+
+    public void setUniformBlock(CharSequence name, int binding) {
+        int index = this.getUniformBlock(name);
+
+        if(index != GL_INVALID_INDEX) {
+            glUniformBlockBinding(this.programID, index, binding);
+        }
+    }
+
+    public void setStorageBlock(CharSequence name, int binding) {
+        int index = this.getStorageBlock(name);
+
+        if (index != GL_INVALID_INDEX) {
+            glShaderStorageBlockBinding(this.programID, index, binding);
+        }
+    }
+
     public void bind() {
         GL20.glUseProgram(programID);
     }
@@ -84,5 +125,8 @@ public class ShaderManager implements IGraphics {
             GL20.glDeleteShader(vertexShaderID);
             GL20.glDeleteProgram(programID);
         }
+
+        this.uniformBlocks.clear();
+        this.storageBlocks.clear();
     }
 }
