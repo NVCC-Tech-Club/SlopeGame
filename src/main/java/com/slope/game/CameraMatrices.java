@@ -20,9 +20,7 @@ public class CameraMatrices {
     private float farPlane;
 
     // Our data that stays.
-    private final Matrix3f rotationX;
-    private final Matrix3f rotationY;
-    private final float verticalAngle;
+    private float verticalAngle;
 
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
@@ -32,9 +30,7 @@ public class CameraMatrices {
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
-        this.rotationX = new Matrix3f();
-        this.rotationY = new Matrix3f();
-        verticalAngle = 0.0f;
+        this.verticalAngle = 0.0f;
     }
 
     public void write(SizedShaderBlock<CameraMatrices> block, ByteBuffer buffer) {
