@@ -1,6 +1,8 @@
 package com.slope.game;
 
 import org.joml.*;
+import org.joml.Math;
+
 import java.nio.ByteBuffer;
 
 public class CameraMatrices {
@@ -31,7 +33,6 @@ public class CameraMatrices {
         this.farPlane = 0.0f;
 
         this.verticalAngle = 0.0f;
-        this.rotationMatrix.identity();
     }
 
     public void write(SizedShaderBlock<CameraMatrices> block, ByteBuffer buffer) {
@@ -50,5 +51,20 @@ public class CameraMatrices {
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
     public void update(Matrix4fc projection, Matrix4fc modelView, Vector3fc pos, float zNear, float zFar) {
+        updateRotationMat();
+    }
+
+    public void render() {
+        
+    }
+
+    public void updateRotationMat() {
+        float cos_y = Math.acos(verticalAngle);
+        float sin_y = Math.asin(verticalAngle);
+
+        rotationMatrix.m11(cos_y);
+        rotationMatrix.m12(-sin_y);
+        rotationMatrix.m21(sin_y);
+        rotationMatrix.m22(cos_y);
     }
 }
