@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    kotlin("jvm") version "1.6.10"
 }
 
 val lwjglVersion = "3.3.0"
@@ -19,6 +20,9 @@ repositories {
 }
 
 dependencies {
+    // Add Apache Commons Lang3 library
+    implementation(kotlin("stdlib"))
+
     // LWJGL core
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
@@ -28,6 +32,7 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
+    implementation(kotlin("stdlib"))
 }
 
 application {
