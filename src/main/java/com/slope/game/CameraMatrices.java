@@ -31,6 +31,7 @@ public class CameraMatrices {
         this.farPlane = 0.0f;
 
         this.verticalAngle = 0.0f;
+        this.rotationMatrix.identity();
     }
 
     public void write(SizedShaderBlock<CameraMatrices> block, ByteBuffer buffer) {
