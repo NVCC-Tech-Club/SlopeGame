@@ -18,17 +18,17 @@ public final class RenderManager {
         };
     }
 
-    // public static
-
 
     // How the renderer works at runtime.
 
+    private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
 
     public RenderManager() {}
 
     public void init() {
         shaderManager = new ShaderManager();
+        uniformBlockState = new UniformBlockState(shaderManager);
 
         try {
             shaderManager.createVertexShader(ResourceLoader.loadShader("shaders/main-vertex.glsl"));
@@ -74,6 +74,21 @@ public final class RenderManager {
         }
 
         shaderManager.unbind();
+    }
+
+    // Assigns the specified block to the next available binding slot.
+    public void bind(SizedShaderBlock<?> block) {
+        uniformBlockState.bind(block);
+    }
+
+    // Assigns the specified block to the next available binding slot.
+    public void bind(CharSequence name, SizedShaderBlock<?> block) {
+        uniformBlockState.bind(name, block);
+    }
+
+    // Releases the specified block and frees its occupied binding slot.
+    public void unbind(SizedShaderBlock<?> block) {
+        uniformBlockState.unbind(block);
     }
 
     public void clear() {

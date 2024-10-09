@@ -26,6 +26,9 @@ dependencies {
     // Add Apache Commons Lang3 library
     implementation(kotlin("stdlib"))
 
+    // Add Java OpenGL Math
+    implementation("org.joml:joml:1.10.5")
+
     // LWJGL core
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")

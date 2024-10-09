@@ -7,7 +7,7 @@ public class Core implements IComponentManager {
     private final ObjectLoader loader;
     // TODO: Add ComputeShaderManager here. (Feeshy Task Only)
 
-    // MONDAY TASK: Add Camere Class here. (Remove the comment)
+    // TODO (One Point Gain): Add Camere Class here. (Remove the comment)
 
     public Core() {
         loader = new ObjectLoader();
@@ -38,7 +38,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void update() {
-        //MONDAY TASK: Put the updater function for Camera Class here! (Remove this comment)
+        // TODO: Put the updater function for Camera Class here! (Remove this comment)
     }
 
     @Override

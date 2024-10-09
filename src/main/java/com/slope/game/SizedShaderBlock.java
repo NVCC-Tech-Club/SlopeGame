@@ -14,14 +14,16 @@ import static org.lwjgl.opengl.GL30.glBindBufferBase;
 public class SizedShaderBlock<T> {
     private final int binding;
     private final BiConsumer<T, ByteBuffer> serializer;
+    private final RenderManager renderer;
     private int buffer;
     private int size;
     private T value;
     private boolean dirty;
 
-    public SizedShaderBlock(int binding, int size, BiConsumer<T, ByteBuffer> serializer) {
+    public SizedShaderBlock(RenderManager renderer, int binding, int size, BiConsumer<T, ByteBuffer> serializer) {
         this.binding = binding;
         this.serializer = serializer;
+        this.renderer = renderer;
         this.size = size;
         this.value = null;
     }
@@ -86,7 +88,15 @@ public class SizedShaderBlock<T> {
         glBindBufferBase(binding, index, 0);
     }
 
-    public void destroy() {
+    public int getBinding() {
+        return binding;
+    }
 
+    public void destroy() {
+        renderer.unbind(this);
+        if(buffer != 0) {
+            glDeleteBuffers(buffer);
+            this.buffer = 0;
+        }
     }
 }
