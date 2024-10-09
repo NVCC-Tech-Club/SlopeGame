@@ -20,6 +20,9 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/it.unimi.dsi/fastutil
+    implementation("it.unimi.dsi:fastutil:8.2.1")
+
     // Add Apache Commons Lang3 library
     implementation(kotlin("stdlib"))
 

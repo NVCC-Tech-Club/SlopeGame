@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL30;
 import java.util.Locale;
 
 public final class RenderManager {
-    // Nice utils
+    // Nice utils to have
 
     public static int maxGLBindings(int target) {
         return switch(target) {
@@ -17,6 +17,8 @@ public final class RenderManager {
             default -> throw new IllegalStateException("Invalid Target: 0x" + Integer.toHexString(target).toUpperCase(Locale.ROOT));
         };
     }
+
+    // public static
 
 
     // How the renderer works at runtime.
