@@ -6,7 +6,7 @@ public class Core implements IComponentManager {
     private final RenderManager renderer;
     private final ObjectLoader loader;
     private final CameraMatrices camMatrices;
-    // TODO: Add ComputeShaderManager here. (Feeshy Task Only)
+    // TODO: Add ComputeShaderManager here.
 
     public Core() {
         camMatrices = new CameraMatrices();
@@ -24,7 +24,7 @@ public class Core implements IComponentManager {
 
     @Override
     public IComponent addComponent(IComponent component, Class<IGraphics> hander) {
-        return null; // TODO: Make this work, meaning implement. (Feeshy Task Onlu)
+        return null; // TODO: Make this work, meaning implement.
     }
 
     @Override
