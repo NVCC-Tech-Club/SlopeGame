@@ -6,7 +6,7 @@ import org.joml.Math;
 import java.nio.ByteBuffer;
 
 public class CameraMatrices {
-    private static final int MATRIX_SIZE =
+    public static final int SIZE =
             Float.BYTES * 16 + // The size of our projection matrix.
             Float.BYTES * 16 + // The size of our view matrix.
             Float.BYTES * 9 + // The size of our rotation matrix.
@@ -35,7 +35,7 @@ public class CameraMatrices {
         this.verticalAngle = 0.0f;
     }
 
-    public void write(SizedShaderBlock<CameraMatrices> block, ByteBuffer buffer) {
+    public void write(ByteBuffer buffer) {
         this.projectionMatrix.get(0, buffer);
         this.viewMatrix.get(Float.BYTES * 16, buffer);
         this.rotationMatrix.get(Float.BYTES * 32, buffer);
@@ -52,10 +52,6 @@ public class CameraMatrices {
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
     public void update(Matrix4fc projection, Matrix4fc modelView, Vector3fc pos, float zNear, float zFar) {
         updateRotationMat();
-    }
-
-    public void render() {
-        
     }
 
     public void updateRotationMat() {

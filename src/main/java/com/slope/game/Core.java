@@ -5,13 +5,13 @@ import org.lwjgl.opengl.GL21;
 public class Core implements IComponentManager {
     private final RenderManager renderer;
     private final ObjectLoader loader;
+    private final CameraMatrices camMatrices;
     // TODO: Add ComputeShaderManager here. (Feeshy Task Only)
 
-    // TODO (One Point Gain): Add Camere Class here. (Remove the comment)
-
     public Core() {
+        camMatrices = new CameraMatrices();
         loader = new ObjectLoader();
-        renderer = new RenderManager();
+        renderer = new RenderManager(camMatrices);
     }
 
     @Override

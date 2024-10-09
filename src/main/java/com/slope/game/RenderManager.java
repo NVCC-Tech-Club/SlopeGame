@@ -8,12 +8,14 @@ import org.lwjgl.opengl.GL30;
 
 import java.util.Locale;
 
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+
 public final class RenderManager {
     // Nice utils to have
 
     public static int maxGLBindings(int target) {
         return switch(target) {
-            case GL31.GL_UNIFORM_BUFFER -> GL21.glGetInteger(GL31.GL_MAX_UNIFORM_BUFFER_BINDINGS);
+            case GL_UNIFORM_BUFFER -> GL21.glGetInteger(GL31.GL_MAX_UNIFORM_BUFFER_BINDINGS);
             default -> throw new IllegalStateException("Invalid Target: 0x" + Integer.toHexString(target).toUpperCase(Locale.ROOT));
         };
     }
@@ -24,7 +26,14 @@ public final class RenderManager {
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
 
-    public RenderManager() {}
+    // Camera Stuff.
+    private final SizedShaderBlock<CameraMatrices> camBlock;
+    private final CameraMatrices camMatrices;
+
+    public RenderManager(CameraMatrices camMatrices) {
+        this.camMatrices = camMatrices;
+        this.camBlock = new SizedShaderBlock<CameraMatrices>(this, GL_UNIFORM_BUFFER, CameraMatrices.SIZE, CameraMatrices::write);
+    }
 
     public void init() {
         shaderManager = new ShaderManager();
@@ -43,6 +52,7 @@ public final class RenderManager {
     public void renderInstances(ObjectLoader loader) {
         clear();
         shaderManager.bind();
+        renderCamera();
 
         for(int i=0; i<loader.getCapacity(); i++) {
 
@@ -97,5 +107,10 @@ public final class RenderManager {
 
     public void destroy() {
         shaderManager.destroy();
+    }
+
+    private void renderCamera() {
+        camBlock.set(camMatrices);
+        bind("CameraMatrices", this.camBlock);
     }
 }

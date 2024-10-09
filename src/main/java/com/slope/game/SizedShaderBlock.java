@@ -2,6 +2,7 @@ package com.slope.game;
 
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
+
 import com.slope.game.utils.Validate;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL31;
@@ -86,6 +87,11 @@ public class SizedShaderBlock<T> {
 
         // Unbind to a specific bind slot on the GPU via. (layout binding = index)
         glBindBufferBase(binding, index, 0);
+    }
+
+    public void set(@Nullable T value) {
+        this.value = value;
+        this.dirty = true;
     }
 
     public int getBinding() {
