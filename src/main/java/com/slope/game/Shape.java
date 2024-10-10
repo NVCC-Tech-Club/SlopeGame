@@ -80,4 +80,6 @@ public enum Shape {
     public int getVertexAmount() {
         return vertices.length;
     }
+
+    public int getIndexCount() { return indices.length; }
 }

@@ -37,15 +37,17 @@ public class CameraMatrices {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.rotationMatrix = new Matrix3f();
-        this.position = new Vector3f(0.0f, 0.0f, -3.0f);
+        this.position = new Vector3f(0.0f, 10.0f, -3.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
-        this.verticalAngle = 0.0f;
+        this.verticalAngle = Math.toRadians(-60.0f);
         this.lookAt = new Vector3f(0.0f, 0.0f, 1.0f);
         this.center = new Vector3f(0.0f, 0.0f, 0.0f);
         this.rotation3fX = new Matrix3f();
         this.rotation3fY = new Matrix3f();
+
+        updateRotationMat();
     }
 
     public void write(ByteBuffer buffer) {

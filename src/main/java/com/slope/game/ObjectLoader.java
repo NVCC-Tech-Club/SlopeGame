@@ -15,19 +15,22 @@ public class ObjectLoader implements IGraphics {
 
     private List<Long> vaoList = new ArrayList<Long>();
     private List<Integer> vboList = new ArrayList<Integer>();
+    private List<Long> eboList = new ArrayList<Long>();
 
     public void loadVertexObject(Shape sp) {
         long vertexAmount = (long) sp.getVertexAmount() / 3;
         int VAO = createVAO();
-        storeIndexInAttribList(sp);
+        int EBO = storeIndexInAttribList(sp);
         storeVerticesInAttribList(sp);
 
         // Store VAO and vertex count in a 64-bit long (32 bits each)
         long vaoWithCount = ((long) VAO << BIT_32_CAPACITY) | (vertexAmount & 0xFFFFFFFFL);
+        long eboWithCount = ((long) EBO << BIT_32_CAPACITY) | (sp.getIndexCount() & 0xFFFFFFFFL);
 
         // Store both VAO and vertex count in a 64-bit datatype since 32 + 32 = 64.
         // Also include the VBO.
         vaoList.add(vaoWithCount);
+        eboList.add(eboWithCount);
     }
 
     private int createVAO() {
@@ -49,13 +52,13 @@ public class ObjectLoader implements IGraphics {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    private void storeIndexInAttribList(Shape sp) {
-        int VBO = GL15.glGenBuffers();
-        vboList.add(VBO);
+    private int storeIndexInAttribList(Shape sp) {
+        int EBO = GL15.glGenBuffers();
 
         // Bind buffer object to element array (Basically indices)
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, VBO);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, sp.storeIndicesInBuffer(), GL15.GL_STATIC_DRAW);
+        return EBO;
     }
 
     public int getCapacity() {
@@ -70,6 +73,14 @@ public class ObjectLoader implements IGraphics {
     // Get the VBO by extracting the left-most 32 bits.
     public int getVBO(int index) {
         return vboList.get(index);
+    }
+
+    public int getEBO(int index) {
+        return (int) (eboList.get(index) >> BIT_32_CAPACITY);
+    }
+
+    public int getIndicesCount(int index) {
+        return (int) (eboList.get(index) & 0xFFFFFFFFL);
     }
 
     // Get the vertex count by masking the lower 32 bits.
@@ -94,5 +105,9 @@ public class ObjectLoader implements IGraphics {
             vboList.remove(0);
         }
 
+        while(eboList.size() != 0) {
+            GL30.glDeleteBuffers(getEBO(0));
+            eboList.remove(0);
+        }
     }
 }

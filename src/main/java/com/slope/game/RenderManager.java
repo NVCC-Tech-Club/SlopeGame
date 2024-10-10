@@ -1,10 +1,6 @@
 package com.slope.game;
 
-import org.lwjgl.opengl.GL31;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL21;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 
 import java.util.Locale;
 
@@ -60,16 +56,21 @@ public final class RenderManager {
             // Receive our components
             int ID = loader.getID(i);
             int vertexCount = loader.getVertexCount(i);
-            // int VBO = loader.getVBO(0);
+            int indicesCount = loader.getIndicesCount(i);
 
             // Bind VAO
             GL30.glBindVertexArray(ID);
 
+            // Bind the element buffer object (EBO) for the indices
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(i));
+
             // Enable the vertex attribute array.
             GL20.glEnableVertexAttribArray(0);
 
+            System.out.println("Indices: " + indicesCount);
+
             // Draw the vertices as triangles.
-            GL21.glDrawElements(GL11.GL_TRIANGLES, vertexCount, GL11.GL_UNSIGNED_INT, 0);
+            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
 
             // Disable the vertex attribute array after rendering.
             GL20.glDisableVertexAttribArray(0);
