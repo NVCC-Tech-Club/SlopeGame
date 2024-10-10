@@ -6,6 +6,9 @@ import org.joml.Math;
 import java.nio.ByteBuffer;
 
 public class CameraMatrices {
+    private static final float FOV = Math.toRadians(45);
+    private static final Vector3f LOOK_UP = new Vector3f(0.0f, 1.0f, 0.0f);
+
     public static final int SIZE =
             Float.BYTES * 16 + // The size of our projection matrix.
             Float.BYTES * 16 + // The size of our view matrix.
@@ -23,16 +26,18 @@ public class CameraMatrices {
 
     // Our data that stays.
     private float verticalAngle;
+    private Vector3f lookAt;
 
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.rotationMatrix = new Matrix3f();
-        this.position = new Vector3f();
+        this.position = new Vector3f(0.0f, 0.0f, 2.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
         this.verticalAngle = 0.0f;
+        this.lookAt = new Vector3f(0.0f, 0.0f, 100.0f);
     }
 
     public void write(ByteBuffer buffer) {
@@ -45,13 +50,14 @@ public class CameraMatrices {
     }
 
     // TODO (Gain one point): Have a update method here that calculates our matrix.
-    // @param projection (datatype: Matrix4fc) -> The projection of the camera.
-    // @param modelView (datatype: Matrix4fc) -> The modelview rotation of the camera.
-    // @param position (datatype: Vector3fc) -> The position of the camera.
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
-    public void update(Matrix4fc projection, Matrix4fc modelView, Vector3fc pos, float zNear, float zFar) {
+    public void update(float zNear, float zFar) {
         updateRotationMat();
+        //verticalAngle += 0.1f;
+
+        projectionMatrix.perspective(FOV, Engine.getMain().getPrimaryWindow().getAspectRatio(), zNear, zFar, false);
+        viewMatrix.lookAt(position, position.add(lookAt), LOOK_UP);
     }
 
     public void updateRotationMat() {
@@ -62,5 +68,7 @@ public class CameraMatrices {
         rotationMatrix.m12(-sin_y);
         rotationMatrix.m21(sin_y);
         rotationMatrix.m22(cos_y);
+
+        lookAt.set(0.0f, sin_y, cos_y);
     }
 }

@@ -38,7 +38,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void update() {
-        // TODO: Put the updater function for Camera Class here! (Remove this comment)
+        camMatrices.update(0.05f, 160.0f);
     }
 
     @Override
@@ -50,6 +50,6 @@ public class Core implements IComponentManager {
     // These are background objects that can't be interacted with the game in any way.
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
-        loader.loadVertexObject(Shape.RAMP);
+        loader.loadVertexObject(Shape.CUBE);
     }
 }

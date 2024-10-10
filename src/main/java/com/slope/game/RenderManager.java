@@ -52,9 +52,10 @@ public final class RenderManager {
     public void renderInstances(ObjectLoader loader) {
         clear();
         shaderManager.bind();
-        renderCamera();
+        //renderCamera();
 
         for(int i=0; i<loader.getCapacity(); i++) {
+            System.out.println("");
 
             // Receive our components
             int ID = loader.getID(i);
@@ -68,7 +69,7 @@ public final class RenderManager {
             GL20.glEnableVertexAttribArray(0);
 
             // Draw the vertices as triangles.
-            GL21.glDrawArrays(GL11.GL_TRIANGLES,0, vertexCount);
+            GL21.glDrawElements(GL11.GL_TRIANGLES, vertexCount, GL11.GL_UNSIGNED_INT, 0);
 
             // Disable the vertex attribute array after rendering.
             GL20.glDisableVertexAttribArray(0);

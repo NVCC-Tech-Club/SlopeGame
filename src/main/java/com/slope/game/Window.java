@@ -12,6 +12,7 @@ class Window {
     private int height;
     private String title;
     private boolean vsync;
+    private float aspectRatio;
 
     private long window;
 
@@ -30,6 +31,7 @@ class Window {
         if(this.width <= 0 || this.height <= 0) {
             this.width = 1280;
             this.height = 720;
+            this.aspectRatio = width / height;
         }
     }
 
@@ -41,6 +43,7 @@ class Window {
         GLFW.glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
+            this.aspectRatio = width / height;
         });
 
         // Since we aren't planning on starting the program with a fullscreened window, let's just center it.
@@ -90,4 +93,6 @@ class Window {
     public long getWindow() {
         return window;
     }
+
+    public float getAspectRatio() { return aspectRatio; }
 }

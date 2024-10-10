@@ -13,22 +13,21 @@ public class ObjectLoader implements IGraphics {
     private static final int BIT_32_CAPACITY = 32;
     private static boolean RE = false;
 
-    private List<SimpleEntry<Long, Long>> vertexData = new ArrayList<SimpleEntry<Long, Long>>();
+    private List<Long> vaoList = new ArrayList<Long>();
+    private List<Integer> vboList = new ArrayList<Integer>();
 
     public void loadVertexObject(Shape sp) {
         long vertexAmount = (long) sp.getVertexAmount() / 3;
         int VAO = createVAO();
-        int VBO = storeShapeInAttribList(sp);
+        storeIndexInAttribList(sp);
+        storeVerticesInAttribList(sp);
 
         // Store VAO and vertex count in a 64-bit long (32 bits each)
         long vaoWithCount = ((long) VAO << BIT_32_CAPACITY) | (vertexAmount & 0xFFFFFFFFL);
 
-        // Store VBO (shifted left) and a placeholder for instance VBO (-1 for now)
-        long vboWithInstance = ((long) VBO << BIT_32_CAPACITY) | (-1L & 0xFFFFFFFFL);
-
         // Store both VAO and vertex count in a 64-bit datatype since 32 + 32 = 64.
         // Also include the VBO.
-        vertexData.add(new SimpleEntry<Long, Long>(vaoWithCount, vboWithInstance));
+        vaoList.add(vaoWithCount);
     }
 
     private int createVAO() {
@@ -37,12 +36,9 @@ public class ObjectLoader implements IGraphics {
         return VAO;
     }
 
-    private int storeShapeInAttribList(Shape sp) {
+    private void storeVerticesInAttribList(Shape sp) {
         int VBO = GL15.glGenBuffers();
-
-        // Bind buffer object to element array (Basically indices)
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, VBO);
-        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, sp.storeIndicesInBuffer(), GL15.GL_STATIC_DRAW);
+        vboList.add(VBO);
 
         // Bind buffer object to array
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
@@ -51,31 +47,34 @@ public class ObjectLoader implements IGraphics {
         // Set vertex attribute pointer for the shape
         GL20.glVertexAttribPointer(0, sp.getVertexCount(), GL21.GL_FLOAT, false, 0, 0);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        return VBO;
+    }
+
+    private void storeIndexInAttribList(Shape sp) {
+        int VBO = GL15.glGenBuffers();
+        vboList.add(VBO);
+
+        // Bind buffer object to element array (Basically indices)
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, VBO);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, sp.storeIndicesInBuffer(), GL15.GL_STATIC_DRAW);
     }
 
     public int getCapacity() {
-        return vertexData.size();
+        return vaoList.size();
     }
 
     // Get the left most 32-bit chunk which is our VAO.
     public int getID(int index) {
-        return (int) (vertexData.get(index).getKey() >> BIT_32_CAPACITY);
+        return (int) (vaoList.get(index) >> BIT_32_CAPACITY);
     }
 
     // Get the VBO by extracting the left-most 32 bits.
     public int getVBO(int index) {
-        return (int) (vertexData.get(index).getValue() >> BIT_32_CAPACITY);
-    }
-
-    // Get the instance VBO by masking the lower 32 bits.
-    public int getInstanceVBO(int index) {
-        return (int) (vertexData.get(index).getValue() & 0xFFFFFFFFL);
+        return vboList.get(index);
     }
 
     // Get the vertex count by masking the lower 32 bits.
     public int getVertexCount(int index) {
-        return (int) (vertexData.get(index).getKey() & 0xFFFFFFFFL);
+        return (int) (vaoList.get(index) & 0xFFFFFFFFL);
     }
 
     @Override
@@ -87,8 +86,13 @@ public class ObjectLoader implements IGraphics {
     public void destroy() {
         while(getCapacity() != 0) {
             GL30.glDeleteVertexArrays(getID(0));
-            GL30.glDeleteBuffers(getVBO(0));
-            vertexData.remove(0);
+            vaoList.remove(0);
         }
+
+        while(vboList.size() != 0) {
+            GL30.glDeleteBuffers(getVBO(0));
+            vboList.remove(0);
+        }
+
     }
 }
