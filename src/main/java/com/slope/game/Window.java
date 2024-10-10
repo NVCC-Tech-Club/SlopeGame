@@ -37,7 +37,7 @@ class Window {
 
         if(this.width <= 0 || this.height <= 0) {
             this.width = 800;
-            this.height = 800;
+            this.height = 600;
         }
 
         this.aspectRatio = (float)width / (float)height;
