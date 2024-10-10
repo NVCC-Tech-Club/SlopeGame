@@ -4,8 +4,11 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryStack;
 
-import java.util.AbstractMap.SimpleEntry;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,8 @@ public class ObjectLoader implements IGraphics {
         long vertexAmount = (long) sp.getVertexAmount() / 3;
         int VAO = createVAO();
         int EBO = storeIndexInAttribList(sp);
-        storeVerticesInAttribList(sp);
+        storeDataInAttribList(sp.storeVerticesInBuffer(),0, 3);
+        storeDataInAttribList(sp.storeTexCoordsInBuffer(), 1, 2);
 
         // Store VAO and vertex count in a 64-bit long (32 bits each)
         long vaoWithCount = ((long) VAO << BIT_32_CAPACITY) | (vertexAmount & 0xFFFFFFFFL);
@@ -39,16 +43,29 @@ public class ObjectLoader implements IGraphics {
         return VAO;
     }
 
-    private void storeVerticesInAttribList(Shape sp) {
+    private void storeDataInAttribList(FloatBuffer buffer, int index, int size) {
         int VBO = GL15.glGenBuffers();
         vboList.add(VBO);
 
         // Bind buffer object to array
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, sp.storeVerticesInBuffer(), GL15.GL_STATIC_DRAW);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 
         // Set vertex attribute pointer for the shape
-        GL20.glVertexAttribPointer(0, sp.getVertexCount(), GL21.GL_FLOAT, false, 0, 0);
+        GL20.glVertexAttribPointer(index, size, GL21.GL_FLOAT, false, 0, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+
+    private void storeDataInAttribList(IntBuffer buffer, int index, int size) {
+        int VBO = GL15.glGenBuffers();
+        vboList.add(VBO);
+
+        // Bind buffer object to array
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+
+        // Set vertex attribute pointer for the shape
+        GL20.glVertexAttribPointer(index, size, GL21.GL_FLOAT, false, 0, 0);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
@@ -59,6 +76,21 @@ public class ObjectLoader implements IGraphics {
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, sp.storeIndicesInBuffer(), GL15.GL_STATIC_DRAW);
         return EBO;
+    }
+
+    public int loadTexture(String filename) {
+        int width, height;
+        ByteBuffer buffer;
+
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer c = stack.mallocInt(1);
+
+            // STBImage.
+        }
+
+        return 0;
     }
 
     public int getCapacity() {
