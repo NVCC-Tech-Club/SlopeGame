@@ -1,7 +1,7 @@
 plugins {
     java
-    application
     kotlin("jvm") version "1.6.10"
+    application
 }
 
 val lwjglVersion = "3.3.0"
