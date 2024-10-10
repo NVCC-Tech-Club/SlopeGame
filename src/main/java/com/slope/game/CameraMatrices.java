@@ -37,17 +37,20 @@ public class CameraMatrices {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.rotationMatrix = new Matrix3f();
-        this.position = new Vector3f(0.0f, 10.0f, -3.0f);
+        this.position = new Vector3f(0.0f, 1.0f, -3.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
-        this.verticalAngle = Math.toRadians(-60.0f);
+        this.verticalAngle = Math.toRadians(-30.0f);
         this.lookAt = new Vector3f(0.0f, 0.0f, 1.0f);
         this.center = new Vector3f(0.0f, 0.0f, 0.0f);
         this.rotation3fX = new Matrix3f();
         this.rotation3fY = new Matrix3f();
+    }
 
+    public void init() {
         updateRotationMat();
+        updateViewMat();
     }
 
     public void write(ByteBuffer buffer) {
@@ -63,12 +66,14 @@ public class CameraMatrices {
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
     public void update(float zNear, float zFar) {
+        projectionMatrix.identity();
+        projectionMatrix.perspective(FOV, Engine.getMain().getPrimaryWindow().getAspectRatio(), zNear, zFar, false);
+    }
+
+    public void updateViewMat() {
         center.zero();
         position.add(lookAt, center);
-        projectionMatrix.identity();
         viewMatrix.identity();
-
-        projectionMatrix.perspective(FOV, Engine.getMain().getPrimaryWindow().getAspectRatio(), zNear, zFar, false);
         viewMatrix.lookAt(position, center, LOOK_UP);
     }
 

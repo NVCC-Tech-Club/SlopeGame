@@ -1,7 +1,9 @@
 package com.slope.game;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL21;
@@ -10,6 +12,8 @@ import org.lwjgl.system.MemoryUtil;
 class Window {
     private int width;
     private int height;
+    private int[] framebufferWidth;
+    private int[] framebufferHeight;
     private String title;
     private boolean vsync;
     private float aspectRatio;
@@ -28,12 +32,15 @@ class Window {
         this.title = title;
         this.vsync = true;
 
+        this.framebufferWidth = new int[1];
+        this.framebufferHeight = new int[1];
+
         if(this.width <= 0 || this.height <= 0) {
-            this.width = 1280;
-            this.height = 720;
+            this.width = 800;
+            this.height = 800;
         }
 
-        this.aspectRatio = width / height;
+        this.aspectRatio = (float)width / (float)height;
     }
 
     public void create() {
@@ -41,11 +48,22 @@ class Window {
         window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 
         // Signal when window was resized.
-        GLFW.glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+
+        GLFWFramebufferSizeCallbackI bufferSizeCall = (window, width, height) -> {
+            this.framebufferWidth[0] = width;
+            this.framebufferHeight[0] = height;
+            this.aspectRatio = (float)width / (float)height;
+        };
+
+        GLFWWindowSizeCallbackI windowSizeCall = (window, width, height) -> {
             this.width = width;
             this.height = height;
-            this.aspectRatio = width / height;
-        });
+        };
+
+        GLFW.glfwGetFramebufferSize(window, framebufferWidth, framebufferHeight);
+        GLFW.glfwSetFramebufferSizeCallback(window, bufferSizeCall);
+        GLFW.glfwSetWindowSizeCallback(window, windowSizeCall);
+        bufferSizeCall.invoke(window, framebufferWidth[0], framebufferHeight[0]);
 
         // Since we aren't planning on starting the program with a fullscreened window, let's just center it.
         // Our video mode will be our primary monitor.
@@ -81,6 +99,14 @@ class Window {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getFramebufferWidth() {
+        return framebufferWidth[0];
+    }
+
+    public int getFramebufferHeight() {
+        return framebufferHeight[0];
     }
 
     public String getTitle() {

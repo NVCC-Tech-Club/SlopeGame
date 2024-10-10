@@ -51,7 +51,6 @@ public final class RenderManager {
         renderCamera();
 
         for(int i=0; i<loader.getCapacity(); i++) {
-            System.out.println("");
 
             // Receive our components
             int ID = loader.getID(i);

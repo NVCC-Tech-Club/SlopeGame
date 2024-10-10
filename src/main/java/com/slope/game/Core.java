@@ -18,6 +18,7 @@ public class Core implements IComponentManager {
     public void init() {
         createGreenTowers();
 
+        camMatrices.init();
         renderer.init();
         loader.unbind();
     }
@@ -29,8 +30,8 @@ public class Core implements IComponentManager {
 
     @Override
     public void render() {
-        final int width = Engine.getMain().getPrimaryWindow().getWidth();
-        final int height = Engine.getMain().getPrimaryWindow().getHeight();
+        final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
+        final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
         GL21.glViewport(0, 0, width, height);
         renderer.renderInstances(loader);

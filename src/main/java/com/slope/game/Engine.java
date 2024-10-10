@@ -55,7 +55,7 @@ class Engine {
 
         // Initialize window manager and create our window!
         WindowManager.init();
-        primaryWindow = WindowManager.createMainWindow(1280, 720, "Slope Game");
+        primaryWindow = WindowManager.createMainWindow(0, 0, "Slope Game");
         game.init();
     }
 
