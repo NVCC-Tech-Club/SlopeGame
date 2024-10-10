@@ -31,8 +31,9 @@ class Window {
         if(this.width <= 0 || this.height <= 0) {
             this.width = 1280;
             this.height = 720;
-            this.aspectRatio = width / height;
         }
+
+        this.aspectRatio = width / height;
     }
 
     public void create() {

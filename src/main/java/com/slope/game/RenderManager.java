@@ -52,7 +52,7 @@ public final class RenderManager {
     public void renderInstances(ObjectLoader loader) {
         clear();
         shaderManager.bind();
-        //renderCamera();
+        renderCamera();
 
         for(int i=0; i<loader.getCapacity(); i++) {
             System.out.println("");
@@ -60,7 +60,7 @@ public final class RenderManager {
             // Receive our components
             int ID = loader.getID(i);
             int vertexCount = loader.getVertexCount(i);
-            int VBO = loader.getVBO(0);
+            // int VBO = loader.getVBO(0);
 
             // Bind VAO
             GL30.glBindVertexArray(ID);
