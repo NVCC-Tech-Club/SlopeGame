@@ -67,8 +67,6 @@ public final class RenderManager {
             // Enable the vertex attribute array.
             GL20.glEnableVertexAttribArray(0);
 
-            System.out.println("Indices: " + indicesCount);
-
             // Draw the vertices as triangles.
             GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
 
@@ -77,6 +75,9 @@ public final class RenderManager {
 
             // Unbind the VAO to avoid any accidental changes.
             GL30.glBindVertexArray(0);
+
+            // Unbind the EBO to avoid any accidental changes.
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
             // Bind VBO for instance-specific data (e.g., instance position)
             // GL20.glEnableVertexAttribArray(1);
