@@ -61,8 +61,6 @@ public class CameraMatrices {
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
     public void update(float zNear, float zFar) {
-        updateRotationMat();
-
         center.zero();
         position.add(lookAt, center);
         projectionMatrix.identity();
