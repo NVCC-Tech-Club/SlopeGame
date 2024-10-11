@@ -8,7 +8,7 @@ import java.nio.IntBuffer;
 public enum Shape {
     // Using vertices for drawing shapes!
 
-    CUBE(3,
+    CUBE(8,
 
          // Vertices
          new float[] {
@@ -33,11 +33,42 @@ public enum Shape {
         },
 
         // Texture Coords
-        new int[] {
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1
+        new float[] {
+            //front
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+
+            //back
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+
+            //left
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+
+            //right
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+
+            //top
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+
+            //bottom
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f
         }
     );
 
@@ -47,9 +78,9 @@ public enum Shape {
     private final int vertexCount;
     private final float[] vertices;
     private final int[] indices;
-    private final int[] texCoords;
+    private final float[] texCoords;
 
-    Shape(int vertexCount, float[] vertices, int[] indices, int[] texCoords) {
+    Shape(int vertexCount, float[] vertices, int[] indices, float[] texCoords) {
         this.vertexCount = vertexCount;
         this.vertices = vertices;
         this.indices = indices;
@@ -62,9 +93,9 @@ public enum Shape {
         return buffer;
     }
 
-    public IntBuffer storeTexCoordsInBuffer() {
-        IntBuffer buffer = BufferUtils.createIntBuffer(indices.length);
-        buffer.put(indices).flip();
+    public FloatBuffer storeTexCoordsInBuffer() {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(texCoords.length);
+        buffer.put(texCoords).flip();
         return buffer;
     }
 
@@ -80,6 +111,14 @@ public enum Shape {
 
     public int getVertexAmount() {
         return vertices.length;
+    }
+    
+    public int getTexCoordAmount(){
+        return texCoords.length / 2;
+    }
+
+    public float[] getTexCoords(){
+        return texCoords;
     }
 
     public int getIndexCount() { return indices.length; }

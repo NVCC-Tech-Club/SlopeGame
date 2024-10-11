@@ -21,6 +21,7 @@ public final class RenderManager {
 
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
+    private Texture texture;
 
     // Camera Stuff.
     private final SizedShaderBlock<CameraMatrices> camBlock;
@@ -35,6 +36,8 @@ public final class RenderManager {
         shaderManager = new ShaderManager();
         uniformBlockState = new UniformBlockState(shaderManager);
 
+        texture = new Texture("src/main/resources/textures/wood.png");
+
         try {
             shaderManager.createVertexShader(ResourceLoader.loadShader("shaders/main-vertex.glsl"));
             shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
@@ -48,6 +51,7 @@ public final class RenderManager {
     public void renderInstances(ObjectLoader loader) {
         clear();
         shaderManager.bind();
+        texture.bind();
         renderCamera();
 
         for(int i=0; i<loader.getCapacity(); i++) {
@@ -109,6 +113,7 @@ public final class RenderManager {
 
     public void destroy() {
         shaderManager.destroy();
+        texture.cleanup();
     }
 
     private void renderCamera() {
