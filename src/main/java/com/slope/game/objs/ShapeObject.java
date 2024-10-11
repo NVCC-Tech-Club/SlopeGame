@@ -14,6 +14,6 @@ public class ShapeObject implements IObject {
 
     @Override
     public void setTexture(ObjectLoader loader, String filename) {
-        // texture = new Texture(loader.loadT);
+        texture = new Texture(loader.loadTexture(filename));
     }
 }

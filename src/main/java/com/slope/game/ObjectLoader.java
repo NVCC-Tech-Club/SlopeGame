@@ -10,6 +10,7 @@ import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
 
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -22,6 +23,7 @@ public class ObjectLoader implements IGraphics {
 
     private List<Long> vaoList = new ArrayList<Long>();
     private List<Integer> vboList = new ArrayList<Integer>();
+    private List<Integer> textures = new ArrayList<Integer>();
     private List<Long> eboList = new ArrayList<Long>();
 
     public void loadVertexObject(Shape sp) {
@@ -60,19 +62,6 @@ public class ObjectLoader implements IGraphics {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    private void storeDataInAttribList(IntBuffer buffer, int index, int size) {
-        int VBO = GL15.glGenBuffers();
-        vboList.add(VBO);
-
-        // Bind buffer object to array
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-
-        // Set vertex attribute pointer for the shape
-        GL20.glVertexAttribPointer(index, size, GL21.GL_INT, false, 0, 0);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-    }
-
     private int storeIndexInAttribList(Shape sp) {
         int EBO = GL15.glGenBuffers();
 
@@ -83,8 +72,9 @@ public class ObjectLoader implements IGraphics {
     }
 
     public int loadTexture(String filename) {
-        int width, height;
-        ByteBuffer buffer;
+        int width = 0;
+        int height = 0;
+        ByteBuffer buffer = null;
 
         try(MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
@@ -92,33 +82,27 @@ public class ObjectLoader implements IGraphics {
             IntBuffer c = stack.mallocInt(1);
 
             // STBImage.
-
             buffer = STBImage.stbi_load(filename, w, h, c, 4);
 
-            if(buffer == null){
+            if(buffer == null) {
                 System.err.println("Failed to load texture: " + STBImage.stbi_failure_reason());
-                throw new RuntimeException("Failed to load texture.");
-
+                throw new Exception("Failed to load texture on phase two. IMAGE FILENAME: " + filename);
             }
 
             width = w.get();
             height = h.get();
-
-        
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
         }
 
         int textureID = GL11.glGenTextures();
+        textures.add(textureID);
+
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
-
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_INT, buffer);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-
         STBImage.stbi_image_free(buffer);
 
         return textureID;
@@ -141,6 +125,8 @@ public class ObjectLoader implements IGraphics {
     public int getEBO(int index) {
         return (int) (eboList.get(index) >> BIT_32_CAPACITY);
     }
+
+    public int getTextures(int index) { return textures.get(index); }
 
     public int getIndicesCount(int index) {
         return (int) (eboList.get(index) & 0xFFFFFFFFL);
@@ -171,6 +157,11 @@ public class ObjectLoader implements IGraphics {
         while(eboList.size() != 0) {
             GL30.glDeleteBuffers(getEBO(0));
             eboList.remove(0);
+        }
+
+        while(textures.size() != 0) {
+            GL30.glDeleteTextures(getTextures(0));
+            textures.remove(0);
         }
     }
 }

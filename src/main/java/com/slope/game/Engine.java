@@ -21,8 +21,6 @@ class Engine {
     private GLFWErrorCallback errorCallback; // Capture any errors that may arise.
     private boolean isRunning; // Whether or not the application is still running.
     private long frames;
-    private ObjectLoader textureLoader;
-    private int textureID;
 
     private Engine() {
         this.errorCallback = null;
@@ -66,8 +64,6 @@ class Engine {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GLFW.glfwMakeContextCurrent(primaryWindow.getWindow());
         GL.createCapabilities();
-        textureLoader = new ObjectLoader();
-        textureID = textureLoader.loadTexture("src/main/resources/textures/wood.png");
 
         game.init();
         
@@ -127,8 +123,6 @@ class Engine {
     // This method is going to be used for rendering stuff.
     private void render() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 
         game.render();
         primaryWindow.update();

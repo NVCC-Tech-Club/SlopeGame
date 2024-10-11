@@ -2,7 +2,9 @@ package com.slope.game;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import org.joml.Matrix4fc;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.opengl.GL31.*;
 import static org.lwjgl.opengl.GL43.*;
@@ -13,16 +15,39 @@ public class ShaderManager implements IGraphics {
     private final int programID;
     private final Object2IntMap<CharSequence> uniformBlocks;
     private final Object2IntMap<CharSequence> storageBlocks;
+    private final Object2IntMap<CharSequence> uniforms;
     private int vertexShaderID, fragmentShaderID;
 
     public ShaderManager() {
         this.uniformBlocks = new Object2IntArrayMap<>();
         this.storageBlocks = new Object2IntArrayMap<>();
+        this.uniforms = new Object2IntArrayMap<>();
         this.programID = GL20.glCreateProgram();
 
         if(programID == 0) {
             throw new IllegalStateException("Wasn't able to create shaders.");
         }
+    }
+
+    public void createUniform(CharSequence name) throws Exception {
+        int location = GL20.glGetUniformLocation(programID, name);
+
+        if(location < 0) {
+            throw new Exception("Could not find uniform: " + name);
+        }
+
+        uniforms.put(name, location);
+    }
+
+    public void setMatrixUniform(CharSequence name, Matrix4fc value) {
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            GL20.glUniformMatrix4fv(uniforms.getOrDefault(name,-1), false,
+                value.get(stack.mallocFloat(16)));
+        }
+    }
+
+    public void setIntUniform(CharSequence name, int value) {
+        GL20.glUniform1i(uniforms.getOrDefault(name,-1), value);
     }
 
     public void createVertexShader(String shaderCode) throws Exception {

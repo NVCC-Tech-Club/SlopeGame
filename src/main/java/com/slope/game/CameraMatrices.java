@@ -61,7 +61,7 @@ public class CameraMatrices {
         buffer.putFloat(Float.BYTES * 44, this.nearPlane);
         buffer.putFloat(Float.BYTES * 45, this.farPlane);
     }
-    
+
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
     public void update(float zNear, float zFar) {
