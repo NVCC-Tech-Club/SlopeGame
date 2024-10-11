@@ -3,6 +3,8 @@ package com.slope.game;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
 // This class is responsible for the main loop of the game, physics, rendering, etc.
 // All the game logic will be handled here.
@@ -19,6 +21,8 @@ class Engine {
     private GLFWErrorCallback errorCallback; // Capture any errors that may arise.
     private boolean isRunning; // Whether or not the application is still running.
     private long frames;
+    private ObjectLoader textureLoader;
+    private int textureID;
 
     private Engine() {
         this.errorCallback = null;
@@ -36,7 +40,10 @@ class Engine {
 
         main = new Engine();
         initialized = true;
+        
     }
+    
+    
 
     public void start() {
         if(!main.initialized) { // Check if it's been initialized before continuing.
@@ -52,11 +59,18 @@ class Engine {
 
         // Create the "capturer"
         GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-
+        
         // Initialize window manager and create our window!
         WindowManager.init();
         primaryWindow = WindowManager.createMainWindow(0, 0, "Slope Game");
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GLFW.glfwMakeContextCurrent(primaryWindow.getWindow());
+        GL.createCapabilities();
+        textureLoader = new ObjectLoader();
+        textureID = textureLoader.loadTexture("src/main/resources/textures/wood.png");
+
         game.init();
+        
     }
 
     // Overall loop.
@@ -112,6 +126,10 @@ class Engine {
 
     // This method is going to be used for rendering stuff.
     private void render() {
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+
         game.render();
         primaryWindow.update();
     }
