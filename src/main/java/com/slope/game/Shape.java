@@ -9,7 +9,7 @@ import java.nio.IntBuffer;
 public enum Shape {
     // Using vertices for drawing shapes!
 
-    CUBE(8,
+    CUBE(3,
 
          // Model
         new Model(
