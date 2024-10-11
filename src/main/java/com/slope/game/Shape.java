@@ -84,31 +84,11 @@ public enum Shape {
         this.model = model;
     }
 
-    public FloatBuffer storeVerticesInBuffer() {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(model.getVertices().length);
-        buffer.put(model.getVertices()).flip();
-        return buffer;
-    }
-
-    public FloatBuffer storeTexCoordsInBuffer() {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(model.getTexCoord().length);
-        buffer.put(model.getTexCoord()).flip();
-        return buffer;
-    }
-
-    public IntBuffer storeIndicesInBuffer() {
-        IntBuffer buffer = BufferUtils.createIntBuffer(model.getIndices().length);
-        buffer.put(model.getIndices()).flip();
-        return buffer;
-    }
-
     public int getVertexCount() {
         return vertexCount;
     }
 
-    public int getVertexAmount() {
-        return model.getVertices().length;
+    public Model getModel() {
+        return model;
     }
-
-    public int getIndexCount() { return model.getIndices().length; }
 }

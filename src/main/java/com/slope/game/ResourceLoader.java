@@ -10,13 +10,17 @@ import java.util.List;
 public class ResourceLoader {
     public static List<String> readAllLines(String fileName) {
         List<String> list = new ArrayList<>();
+        InputStream is = ResourceLoader.class.getClassLoader().getResourceAsStream(fileName);
 
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(Class.forName(ResourceLoader.class.getName()).getResourceAsStream(fileName)))) {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
             String line;
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 list.add(line);
             }
-        } catch(IOException | ClassNotFoundException e) {
+        } catch(Exception e) {
+            System.out.println("Unable to find file!");
             e.printStackTrace();
             System.exit(1);
         }

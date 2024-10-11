@@ -1,5 +1,6 @@
 package com.slope.game;
 
+import com.slope.game.utils.Model;
 import org.lwjgl.opengl.GL21;
 
 public class Core implements IComponentManager {
@@ -52,6 +53,7 @@ public class Core implements IComponentManager {
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
         loader.loadTexture("textures/Object.png");
-        loader.loadVertexObject(Shape.CUBE);
+        Model m = loader.loadOBJModel("models/bunny.obj");
+        loader.loadVertexObject(m, 3);
     }
 }
