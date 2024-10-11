@@ -82,7 +82,7 @@ public class ObjectLoader implements IGraphics {
             IntBuffer c = stack.mallocInt(1);
 
             // STBImage.
-            buffer = STBImage.stbi_load(filename, w, h, c, 4);
+            // buffer = STBImage.stbi_load(filename, w, h, c, 4);
 
             if(buffer == null) {
                 System.err.println("Failed to load texture: " + STBImage.stbi_failure_reason());
