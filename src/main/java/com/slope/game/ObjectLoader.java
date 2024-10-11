@@ -82,12 +82,12 @@ public class ObjectLoader implements IGraphics {
             IntBuffer c = stack.mallocInt(1);
 
             // STBImage.
-            // buffer = STBImage.stbi_load(filename, w, h, c, 4);
+            buffer = STBImage.stbi_load(filename, w, h, c, 4);
 
-            //if(buffer == null) {
-            //    System.err.println("Failed to load texture: " + STBImage.stbi_failure_reason());
-            //    throw new Exception("Failed to load texture on phase two. IMAGE FILENAME: " + filename);
-            //}
+            if(buffer == null) {
+               System.err.println("Failed to load texture: " + STBImage.stbi_failure_reason());
+               throw new Exception("Failed to load texture on phase two. IMAGE FILENAME: " + filename);
+            }
 
             width = w.get();
             height = h.get();
@@ -101,9 +101,9 @@ public class ObjectLoader implements IGraphics {
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_INT, buffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-        //STBImage.stbi_image_free(buffer);
+        STBImage.stbi_image_free(buffer);
 
         return textureID;
     }
