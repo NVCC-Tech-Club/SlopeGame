@@ -20,6 +20,7 @@ public class Core implements IComponentManager {
 
         camMatrices.init();
         renderer.init();
+        loader.loadTexture("textures/wood.png");
         loader.unbind();
     }
 
@@ -52,6 +53,5 @@ public class Core implements IComponentManager {
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
         loader.loadVertexObject(Shape.CUBE);
-        loader.loadTexture("textures/wood.png");
     }
 }
