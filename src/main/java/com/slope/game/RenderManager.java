@@ -36,8 +36,8 @@ public final class RenderManager {
         uniformBlockState = new UniformBlockState(shaderManager);
 
         try {
-            shaderManager.createVertexShader(ResourceLoader.loadShader("shaders/main-vertex.glsl"));
-            shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
+            shaderManager.createVertexShader(ResourceLoader.loadFile("shaders/main-vertex.glsl"));
+            shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
             shaderManager.link();
         } catch (Exception e) {
             e.printStackTrace();

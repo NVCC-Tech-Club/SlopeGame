@@ -26,11 +26,15 @@ public class ObjectLoader implements IGraphics {
     private List<Integer> textures = new ArrayList<Integer>();
     private List<Long> eboList = new ArrayList<Long>();
 
+    public void loadOBJModel() {
+
+    }
+
     public void loadVertexObject(Shape sp) {
         long vertexAmount = (long) sp.getVertexAmount() / 3;
         int VAO = createVAO();
         int EBO = storeIndexInAttribList(sp);
-        storeDataInAttribList(sp.storeVerticesInBuffer(),0, 3);
+        storeDataInAttribList(sp.storeVerticesInBuffer(),0, sp.getVertexCount());
         storeDataInAttribList(sp.storeTexCoordsInBuffer(), 1, 2);
 
         // Store VAO and vertex count in a 64-bit long (32 bits each)
