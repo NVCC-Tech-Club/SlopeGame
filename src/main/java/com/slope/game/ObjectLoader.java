@@ -27,7 +27,7 @@ public class ObjectLoader implements IGraphics {
     private List<Long> eboList = new ArrayList<Long>();
 
     public void loadOBJModel() {
-
+        // Indevelopmnet
     }
 
     public void loadVertexObject(Shape sp) {
