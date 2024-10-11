@@ -76,6 +76,8 @@ public class ObjectLoader implements IGraphics {
         int height = 0;
         ByteBuffer buffer = null;
 
+        STBImage.stbi_set_flip_vertically_on_load(true);
+
         try(MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
@@ -101,8 +103,18 @@ public class ObjectLoader implements IGraphics {
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
+        // Set texture wrapping options (set this only once after loading)
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);  // Horizontal wrap
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);  // Vertical wrap
+
+        // Set texture filtering options (minification and magnification filters)
+        //GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        //GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+
         STBImage.stbi_image_free(buffer);
 
         return textureID;
@@ -111,6 +123,8 @@ public class ObjectLoader implements IGraphics {
     public int getCapacity() {
         return vaoList.size();
     }
+
+    public int getTextureCapacity() { return textures.size(); }
 
     // Get the left most 32-bit chunk which is our VAO.
     public int getID(int index) {
@@ -130,11 +144,6 @@ public class ObjectLoader implements IGraphics {
 
     public int getIndicesCount(int index) {
         return (int) (eboList.get(index) & 0xFFFFFFFFL);
-    }
-
-    // Get the vertex count by masking the lower 32 bits.
-    public int getVertexCount(int index) {
-        return (int) (vaoList.get(index) & 0xFFFFFFFFL);
     }
 
     @Override

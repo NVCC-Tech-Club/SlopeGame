@@ -39,7 +39,6 @@ public final class RenderManager {
             shaderManager.createVertexShader(ResourceLoader.loadShader("shaders/main-vertex.glsl"));
             shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
             shaderManager.link();
-            // shaderManager.createUniform("textureSampler");
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -57,7 +56,7 @@ public final class RenderManager {
             // Receive our components
             int ID = loader.getID(i);
             int indicesCount = loader.getIndicesCount(i);
-            int textureID = loader.getTextures(i);
+            int textureID = loader.getTextures(0); // If more textures are added then this will be changed.
 
             // Bind VAO
             GL30.glBindVertexArray(ID);
@@ -70,7 +69,7 @@ public final class RenderManager {
 
             // Enable the texture attribute array.
             GL20.glEnableVertexAttribArray(1);
-            
+
             // Active our texture.
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
 

@@ -20,7 +20,6 @@ public class Core implements IComponentManager {
 
         camMatrices.init();
         renderer.init();
-        loader.loadTexture("textures/wood.png");
         loader.unbind();
     }
 
@@ -52,6 +51,7 @@ public class Core implements IComponentManager {
     // These are background objects that can't be interacted with the game in any way.
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
+        loader.loadTexture("textures/checker.png");
         loader.loadVertexObject(Shape.CUBE);
     }
 }

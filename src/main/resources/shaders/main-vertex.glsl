@@ -1,5 +1,8 @@
 #version 410 core
 
+layout(location = 0) in vec3 pos;
+layout(location = 1) in vec2 texCoord;
+
 layout(std140) uniform CameraMatrices {
     mat4 projectionMatrix;
     mat4 viewMatrix;
@@ -9,14 +12,11 @@ layout(std140) uniform CameraMatrices {
     float farPlane;
 } CamMatrix;
 
-in vec3 pos;
-in vec2 texCoords;
-
-// out vec3 color;
+//out vec3 color;
 out vec2 fragTexCoords;
 
 void main() {
-    gl_Position = vec4(pos, 1.0);
-    // color = vec3(pos.x + 0.8, 0.8, pos.y + 0.8);
-    fragTexCoords = texCoords;
+    gl_Position = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * vec4(pos, 1.0);
+    //color = vec3(pos.x + 0.8, 0.8, pos.y + 0.8);
+    fragTexCoords = texCoord;
 }
