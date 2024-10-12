@@ -6,8 +6,8 @@ import org.joml.Math;
 import java.nio.ByteBuffer;
 
 public class CameraMatrices {
-    private static final float COS_X = Math.cos((float)Math.PI);
-    private static final float SIN_X = Math.sin((float)Math.PI);
+    private static final float COS_X = Math.cos(0);
+    private static final float SIN_X = Math.sin(0);
     private static final float FOV = Math.toRadians(45);
     private static final Vector3f LOOK_UP = new Vector3f(0.0f, 1.0f, 0.0f);
 
@@ -37,11 +37,11 @@ public class CameraMatrices {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.rotationMatrix = new Matrix3f();
-        this.position = new Vector3f(0.0f, 0.25f, 0.25f);
+        this.position = new Vector3f(10.0f, 0.0f, -60.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
-        this.verticalAngle = Math.toRadians(-30.0f);
+        this.verticalAngle = Math.toRadians(0.0f);
         this.lookAt = new Vector3f(0.0f, 0.0f, 1.0f);
         this.center = new Vector3f(0.0f, 0.0f, 0.0f);
         this.rotation3fX = new Matrix3f();

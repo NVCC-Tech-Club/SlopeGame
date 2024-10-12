@@ -56,6 +56,7 @@ public class ObjectLoader implements IGraphics {
 
                     break;
                 case "vt":
+
                     //Texture Coordinates
                     Vector2f texCoor = new Vector2f(
                         Float.parseFloat(tokens[1]),
@@ -98,11 +99,23 @@ public class ObjectLoader implements IGraphics {
             i++;
         }
 
-        float[] texCoordArr = new float[vertices.size() * 2];
+        float[] texCoordArr = new float[texCoords.size() * 2];
         float[] normalArray = new float[vertices.size() * 3];
+        int j = 0;
 
         for(Vector3i face: faces) {
             processVertex(face.x, face.y, face.z, texCoords, normals, indices, texCoordArr, normalArray);
+            //indices.add(face.x);
+        }
+
+        for(Vector2f tex: texCoords) {
+            /*
+            texCoordArr[j * 2 + 0] = tex.x;
+            texCoordArr[j * 2 + 1] = tex.y;
+
+            j++;
+
+             */
         }
 
         int[] indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
@@ -285,11 +298,9 @@ public class ObjectLoader implements IGraphics {
                                       float[] texCoordArr, float[] normalArr) {
         indicesList.add(pos);
 
-        if(texCoord >= 0) {
-            Vector2f texCoordVec = texCoordList.get(texCoord);
-            texCoordArr[pos * 2 + 0] = texCoordVec.x;
-            texCoordArr[pos * 2 + 1] = 1 - texCoordVec.y;
-        }
+        Vector2f texCoordVec = texCoordList.get(texCoord);
+        texCoordArr[pos * 2 + 0] = texCoordVec.x;
+        texCoordArr[pos * 2 + 1] = texCoordVec.y;
 
         if(normal >= 0) {
             Vector3f normalVec = normalList.get(normal);
