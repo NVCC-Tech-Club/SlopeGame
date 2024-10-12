@@ -58,28 +58,9 @@ public class Core implements IComponentManager {
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
         loader.loadTexture("textures/Object.png");
-        Model n = loader.loadGLTFModel("src/main/resources/models/ramp.glb");
-
-        loader.loadTexture("textures/173texture.jpeg");
-        Model m = loader.loadOBJModel("models/SCP.obj");
-
-        //  Trying to rotate the ramp :)
-        m.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
-        m.setRotation(new Vector3f(00.0f, 90.0f, 00.0f));
-        m.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
-        m.getTransformationMatrix();
-
-
+        Model n = loader.loadGLTFModel(0,"src/main/resources/models/ramp.glb");
+        n.update();
 
         loader.loadVertexObject(n, 3);
-        loader.loadVertexObject(m, 3);
-
-        System.out.println("Position: " + m.getPosition());
-        System.out.println("Rotation: " + m.getPosition());
-        System.out.println("Scale: " + m.getPosition());
-
-
     }
-
-
 }
