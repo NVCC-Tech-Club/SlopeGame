@@ -13,7 +13,10 @@ public class Game extends Core {
     // This means I need an object pool to store all platform variations.
 
     // TODO: Probably have an ArrayList for the red obstacles in every platform. (Feeshy Task Only)
-
+    protected float sensitivity = 0.015f;
+    protected boolean mouseActive = false;
+    protected boolean initialMouseCentering = true;
+    
     public Game() {
         super();
     }
@@ -58,13 +61,13 @@ public class Game extends Core {
     private void handleMouseInput() {
         Window window = Engine.getMain().getPrimaryWindow();
 
-        if (camMatrices.mouseActive) {
+        if (mouseActive) {
             float[] mousePos = window.getMousePosition();
             float deltaX = mousePos[0] - (window.getWidth() / 2.0f);
             float deltaY = mousePos[1] - (window.getHeight() / 2.0f);
 
-            camMatrices.horizontalAngle -= deltaX * camMatrices.sensitivity;
-            camMatrices.verticalAngle -= deltaY * camMatrices.sensitivity;
+            camMatrices.horizontalAngle -= deltaX * sensitivity;
+            camMatrices.verticalAngle -= deltaY * sensitivity;
 
             camMatrices.verticalAngle = Math.clamp(camMatrices.verticalAngle, Math.toRadians(-89.0f), Math.toRadians(89.0f));
 
@@ -83,32 +86,36 @@ public class Game extends Core {
         super.init();
     }
 
+    public void checkMouseActive(){
+        Window window = Engine.getMain().getPrimaryWindow();
+
+        //HOLD SPACEBAR TO MOVE CAMERA DIRECTION (might change later cuz idk a better way to do it atm).
+        if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+            if (!mouseActive) {
+                mouseActive = true;
+                initialMouseCentering = true;
+                GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+            }
+        } else {
+            mouseActive = false;
+            GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        }
+
+        if (mouseActive && initialMouseCentering) {
+            window.setMousePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
+            initialMouseCentering = false;
+        }
+
+        if (mouseActive) {
+            handleMouseInput();
+        }
+    }
+
     @Override
     public void update(){
         camMatrices.update(0.05f, 160.0f);
 
-        Window window = Engine.getMain().getPrimaryWindow();
-
-        if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            if (!camMatrices.mouseActive) {
-                camMatrices.mouseActive = true;
-                camMatrices.initialMouseCentering = true;
-                GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
-            }
-        } else {
-            camMatrices.mouseActive = false;
-            GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
-        }
-
-        if (camMatrices.mouseActive && camMatrices.initialMouseCentering) {
-            window.setMousePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
-            camMatrices.initialMouseCentering = false;
-        }
-
-        if (camMatrices.mouseActive) {
-            handleMouseInput();
-        }
-
+        checkMouseActive();
         processInput();
     }
 }
