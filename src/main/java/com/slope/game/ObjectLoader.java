@@ -22,9 +22,6 @@ import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.AIVector3D;
 import org.lwjgl.assimp.AIFace;
 
-
-import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
-
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
