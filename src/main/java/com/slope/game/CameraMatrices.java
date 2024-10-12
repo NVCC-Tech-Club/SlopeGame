@@ -12,7 +12,7 @@ public class CameraMatrices {
     private static final float COS_X = Math.cos((float)Math.PI);
     private static final float SIN_X = Math.sin((float)Math.PI);
     private static final float FOV = Math.toRadians(45);
-    private static final Vector3f LOOK_UP = new Vector3f(0.0f, 1.0f, 0.0f);
+    protected static final Vector3f LOOK_UP = new Vector3f(0.0f, 1.0f, 0.0f);
 
     public static final int SIZE =
             Float.BYTES * 16 + // The size of our projection matrix.
@@ -25,21 +25,21 @@ public class CameraMatrices {
     private final Matrix4f projectionMatrix;
     private final Matrix4f viewMatrix;
     private final Matrix3f rotationMatrix;
-    private final Vector3f position;
-    private final Vector3f center;
+    protected final Vector3f position;
+    protected final Vector3f center;
     private float nearPlane;
     private float farPlane;
 
     // Our data that stays.
     private Matrix3f rotation3fX;
     private Matrix3f rotation3fY;
-    private float verticalAngle;
-    private float horizontalAngle;
-    private Vector3f lookAt;
+    protected float verticalAngle;
+    protected float horizontalAngle;
+    protected Vector3f lookAt;
 
-    private float sensitivity = 0.015f;
-    private boolean mouseActive = false;
-    private boolean initialMouseCentering = true;
+    protected float sensitivity = 0.015f;
+    protected boolean mouseActive = false;
+    protected boolean initialMouseCentering = true;
 
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
@@ -48,8 +48,6 @@ public class CameraMatrices {
         this.position = new Vector3f(0.0f, 15.0f, 90.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
-
-
 
         this.lookAt = new Vector3f(0.0f, 0.0f, -1.0f);
 
@@ -79,90 +77,10 @@ public class CameraMatrices {
 
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
-    public void move(float dx, float dy, float dz) {
-        position.add(dx, dy, dz);
-    }
-
-    private void processInput() {
-        Window window = Engine.getMain().getPrimaryWindow();
-
-        Vector3f forward = new Vector3f(lookAt).normalize();
-        Vector3f right = new Vector3f(forward).cross(LOOK_UP).normalize();
-        Vector3f up = new Vector3f(right).cross(forward).normalize();
-
-        // Move forward (W)
-        if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
-            position.add(forward.mul(0.3f));
-        }
-        // Move backward (S)
-        if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
-            position.sub(forward.mul(0.3f));
-        }
-        // Move left (A)
-        if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-            position.sub(right.mul(0.3f));
-        }
-        // Move right (D)
-        if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-            position.add(right.mul(0.3f));
-        }
-        // Move up (E)
-        if (window.isKeyPressed(GLFW.GLFW_KEY_E)) {
-            position.add(up.mul(0.3f));
-        }
-        // Move down (Q)
-        if (window.isKeyPressed(GLFW.GLFW_KEY_Q)) {
-            position.sub(up.mul(0.3f));
-        }
-    }
-
-    private void handleMouseInput() {
-        Window window = Engine.getMain().getPrimaryWindow();
-
-        if (mouseActive) {
-            float[] mousePos = window.getMousePosition();
-            float deltaX = mousePos[0] - (window.getWidth() / 2.0f);
-            float deltaY = mousePos[1] - (window.getHeight() / 2.0f);
-
-            horizontalAngle -= deltaX * sensitivity;
-            verticalAngle -= deltaY * sensitivity;
-
-            verticalAngle = Math.clamp(verticalAngle, Math.toRadians(-89.0f), Math.toRadians(89.0f));
-
-            lookAt.set(
-                    (float) (Math.cos(verticalAngle) * Math.sin(horizontalAngle)),
-                    (float) Math.sin(verticalAngle),
-                    (float) (Math.cos(verticalAngle) * Math.cos(horizontalAngle)));
-        }
-        window.setMousePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
-    }
-
+    
     public void update(float zNear, float zFar) {
         projectionMatrix.identity();
         projectionMatrix.perspective(FOV, Engine.getMain().getPrimaryWindow().getAspectRatio(), zNear, zFar, false);
-        Window window = Engine.getMain().getPrimaryWindow();
-
-
-        if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            if (!mouseActive) {
-                mouseActive = true;
-                initialMouseCentering = true;
-                GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
-            }
-        } else {
-            mouseActive = false;
-            GLFW.glfwSetInputMode(window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
-        }
-
-        if (mouseActive && initialMouseCentering) {
-            window.setMousePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
-            initialMouseCentering = false;
-        }
-
-        if (mouseActive) {
-            handleMouseInput();
-        }
-        processInput();
 
         updateViewMat();
     }
