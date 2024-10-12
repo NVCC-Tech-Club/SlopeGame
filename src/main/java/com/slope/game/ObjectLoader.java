@@ -1,7 +1,6 @@
 package com.slope.game;
 
 import com.slope.game.utils.Model;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
