@@ -34,30 +34,24 @@ import java.util.List;
 
 public class ObjectLoader implements IGraphics {
     private static final int BIT_32_CAPACITY = 32;
-    private static boolean RE = false;
 
     private List<Long> vaoList = new ArrayList<Long>();
     private List<Integer> vboList = new ArrayList<Integer>();
     private List<Integer> textures = new ArrayList<Integer>();
     private List<Long> eboList = new ArrayList<Long>();
 
-    List<Float> positions = new ArrayList<>();
-    List<Float> texCoords = new ArrayList<>();
-    List<Float> normals = new ArrayList<>();
-    
-    //List<Float> colors = new ArrayList<>();
-
-    List<Integer> indices = new ArrayList<>();
-
     public Model loadGLTFModel(String filename){
-        
+        List<Float> positions = new ArrayList<>();
+        List<Float> texCoords = new ArrayList<>();
+        List<Float> normals = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
 
         AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate);
         PointerBuffer buffer = scene.mMeshes();
 
         for (int i = 0; i < buffer.limit(); i++){
             AIMesh mesh = AIMesh.create(buffer.get(i));
-            processMesh(mesh);
+            processMesh(mesh, positions, texCoords, normals, indices);
         }
 
         float[] vertexArray = new float[positions.size()];
@@ -82,7 +76,11 @@ public class ObjectLoader implements IGraphics {
         
     }
 
-    private void processMesh(AIMesh mesh){
+    private void processMesh(AIMesh mesh,
+                             List<Float> positions,
+                             List<Float> texCoords,
+                             List<Float> normals,
+                             List<Integer> indices) {
 
         AIVector3D.Buffer vectors = mesh.mVertices();
 
