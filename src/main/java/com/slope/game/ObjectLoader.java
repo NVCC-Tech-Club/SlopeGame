@@ -32,8 +32,9 @@ public class ObjectLoader implements IGraphics {
     private List<Integer> vboList = new ArrayList<Integer>();
     private List<Integer> textures = new ArrayList<Integer>();
     private List<Long> eboList = new ArrayList<Long>();
+    private List<Model> loadedModels = new ArrayList<>();
 
-    public Model loadGLTFModel(String filename){
+    public Model loadGLTFModel(int texIndex, String filename){
         List<Float> positions = new ArrayList<>();
         List<Float> texCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -65,7 +66,9 @@ public class ObjectLoader implements IGraphics {
             indicesArray[i] = indices.get(i);
         }
 
-        return new Model(vertexArray, indicesArray, texCoordArray);
+        Model m = new Model(texIndex, vertexArray, indicesArray, texCoordArray);
+        loadedModels.add(m);
+        return m;
         
     }
 
@@ -129,7 +132,7 @@ public class ObjectLoader implements IGraphics {
         // }
     }
 
-    public Model loadOBJModel(String fileName) {
+    public Model loadOBJModel(int texIndex, String fileName) {
         List<String> lines = ResourceLoader.readAllLines(fileName);
 
         List<Vector3f> vertices = new ArrayList<>();
@@ -213,11 +216,9 @@ public class ObjectLoader implements IGraphics {
         }
 
         int[] indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
-        return new Model(vertexArray, indicesArr, texCoordArr);
-    }
-
-    public void loadVertexObject(Shape sp) {
-        loadVertexObject(sp.getModel(), sp.getVertexCount());
+        Model m = new Model(texIndex, vertexArray, indicesArr, texCoordArr);
+        loadedModels.add(m);
+        return m;
     }
 
     public void loadVertexObject(Model model, int count) {
@@ -235,6 +236,8 @@ public class ObjectLoader implements IGraphics {
         // Also include the VBO.
         vaoList.add(vaoWithCount);
         eboList.add(eboWithCount);
+
+        model.setIndex(vaoList.size() - 1);
     }
 
     private int createVAO() {
@@ -340,6 +343,10 @@ public class ObjectLoader implements IGraphics {
         return (int) (eboList.get(index) & 0xFFFFFFFFL);
     }
 
+    public Model getModel(int index) {return loadedModels.get(index); }
+
+    public int getModelCapacity() { return loadedModels.size(); }
+
     @Override
     public void unbind() {
         GL30.glBindVertexArray(0);
@@ -366,6 +373,8 @@ public class ObjectLoader implements IGraphics {
             GL30.glDeleteTextures(getTextures(0));
             textures.remove(0);
         }
+
+        loadedModels.clear();
     }
 
     private static void processFace(String token, List<Vector3i> faces) {

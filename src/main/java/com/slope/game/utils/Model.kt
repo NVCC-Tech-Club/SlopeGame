@@ -3,8 +3,20 @@ package com.slope.game.utils
 import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import org.joml.Matrix4f
+import org.joml.Vector3f
 
-data class Model(val vertices: FloatArray, val indices: IntArray, val texCoord: FloatArray) {
+data class Model(val texIndex: Int, val vertices: FloatArray, val indices: IntArray, val texCoord: FloatArray) {
+    var index: Int = 0;
+
+    // position ,scale and rotation
+    private var position: Vector3f = Vector3f(0f, 0f, 0f)
+    private var scale: Vector3f = Vector3f(1f, 1f, 1f)
+    private var rotation: Vector3f = Vector3f(90.0f, 0.0f, 0.0f)
+
+    // Model Matrix
+    private val modelMatrix: Matrix4f = Matrix4f()
+
     fun storeIndicesInBuffer(): IntBuffer? {
         val buffer = BufferUtils.createIntBuffer(indices.size)
         buffer.put(indices).flip()
@@ -19,9 +31,23 @@ data class Model(val vertices: FloatArray, val indices: IntArray, val texCoord: 
         return storeDataInBuffer(texCoord)
     }
 
+    fun update() {
+        modelMatrix.identity()
+            .translate(position)
+            .rotateX(Math.toRadians(rotation.x.toDouble()).toFloat())
+            .rotateY(Math.toRadians(rotation.y.toDouble()).toFloat())
+            .rotateZ(Math.toRadians(rotation.z.toDouble()).toFloat())
+            .scale(scale)
+    }
+
     private fun storeDataInBuffer(obj: FloatArray): FloatBuffer? {
         val buffer = BufferUtils.createFloatBuffer(obj.size)
         buffer.put(obj).flip()
         return buffer
+    }
+
+    // getting the transformation matrix back
+    fun getModelMatrix(): Matrix4f {
+        return modelMatrix
     }
 }

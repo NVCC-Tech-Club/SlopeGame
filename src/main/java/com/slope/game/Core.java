@@ -2,11 +2,13 @@ package com.slope.game;
 
 import com.slope.game.utils.Model;
 import org.lwjgl.opengl.GL21;
+import org.joml.Vector3f;
 
 public class Core implements IComponentManager {
     private final RenderManager renderer;
     private final ObjectLoader loader;
     protected final CameraMatrices camMatrices;
+
     // TODO: Add ComputeShaderManager here.
 
     public Core() {
@@ -25,7 +27,7 @@ public class Core implements IComponentManager {
     }
 
     @Override
-    public IComponent addComponent(IComponent component, Class<IGraphics> hander) {
+    public IComponent addComponent(IComponent component, Class<IGraphics> handler) {
         return null; // TODO: Make this work, meaning implement.
     }
 
@@ -35,6 +37,8 @@ public class Core implements IComponentManager {
         final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
         GL21.glViewport(0, 0, width, height);
+
+
         renderer.renderInstances(loader);
     }
 
@@ -49,11 +53,13 @@ public class Core implements IComponentManager {
         loader.destroy();
     }
 
+
     // These are background objects that can't be interacted with the game in any way.
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
         loader.loadTexture("textures/Object.png");
-        Model n = loader.loadGLTFModel("src/main/resources/models/ramp.glb");
+        Model n = loader.loadGLTFModel(0,"src/main/resources/models/ramp.glb");
+        n.update();
 
         loader.loadVertexObject(n, 3);
     }

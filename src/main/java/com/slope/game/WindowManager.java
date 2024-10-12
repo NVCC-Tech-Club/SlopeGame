@@ -53,6 +53,7 @@ class WindowManager {
 
         // We need this since our sphere might just be raymarched
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_CULL_FACE);
 
         return window;
     }

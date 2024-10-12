@@ -1,15 +1,15 @@
 package com.slope.game.objs;
 
 import com.slope.game.ObjectLoader;
-import com.slope.game.Shape;
 import com.slope.game.Texture;
+import com.slope.game.utils.Model;
 
-public class ShapeObject implements IObject {
+public class ModelObject implements IObject {
     private Texture texture;
-    private Shape shape;
+    private Model model;
 
-    protected ShapeObject(Shape shape) {
-        this.shape = shape;
+    protected ModelObject(Model model) {
+        this.model = model;
     }
 
     @Override

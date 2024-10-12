@@ -1,5 +1,8 @@
 package com.slope.game;
 
+import com.slope.game.utils.Model;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.lwjgl.opengl.*;
 
 import java.util.Locale;
@@ -39,6 +42,11 @@ public final class RenderManager {
             shaderManager.createVertexShader(ResourceLoader.loadFile("shaders/main-vertex.glsl"));
             shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
             shaderManager.link();
+            shaderManager.createUniform("textureSampler");
+            //shaderManager.createUniform("model");
+            shaderManager.setMatrixUniform("model", new Matrix4f().identity());
+            shaderManager.createUniform("model");
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -51,19 +59,16 @@ public final class RenderManager {
         shaderManager.setIntUniform("textureSampler", 0);
         renderCamera();
 
-        for(int i=0; i<loader.getCapacity(); i++) {
+        for(int i=0; i<loader.getModelCapacity(); i++) {
 
             // Receive our components
-            int ID = loader.getID(i);
-            int indicesCount = loader.getIndicesCount(i);
-            int textureID = loader.getTextures(0); // If more textures are added then this will be changed.
-            if (loader.getTextureCapacity() == 1) {
-                // Use the first texture for all models
-                textureID = loader.getTextures(0);
-            } else {
-                // Use the ith texture for each model if more textures are available
-                textureID = loader.getTextures(i);
-            }
+            Model m = loader.getModel(i);
+            int ID = loader.getID(m.getIndex());
+            int indicesCount = loader.getIndicesCount(m.getIndex());
+            int textureID = loader.getTextures(m.getTexIndex());
+
+            // Add model matrix
+            shaderManager.setMatrixUniform("model", m.getModelMatrix());
 
             // Bind VAO
             GL30.glBindVertexArray(ID);
