@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -12,6 +13,14 @@ import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
+
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.assimp.Assimp;
+import org.lwjgl.assimp.AIColor4D;
+import org.lwjgl.assimp.AIMesh;
+import org.lwjgl.assimp.AIScene;
+import org.lwjgl.assimp.AIVector3D;
+
 
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
 
@@ -30,6 +39,73 @@ public class ObjectLoader implements IGraphics {
     private List<Integer> vboList = new ArrayList<Integer>();
     private List<Integer> textures = new ArrayList<Integer>();
     private List<Long> eboList = new ArrayList<Long>();
+
+    List<Float> positions = new ArrayList<>();
+    List<Float> texCoords = new ArrayList<>();
+    List<Float> normals = new ArrayList<>();
+    
+    List<Float> colors = new ArrayList<>();
+
+    public void loadGLTFModel(String filename){
+        
+
+        AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate);
+        PointerBuffer buffer = scene.mMeshes();
+
+        for (int i = 0; i < buffer.limit(); i++){
+            AIMesh mesh = AIMesh.create(buffer.get(i));
+            processMesh(mesh);
+        }
+
+        //Don't know if this should return something.
+    }
+
+    private void processMesh(AIMesh mesh){
+
+        AIVector3D.Buffer vectors = mesh.mVertices();
+
+        for(int i = 0; i < vectors.limit(); i++){
+            AIVector3D vector = vectors.get(i);
+
+            positions.add(vector.x());
+            positions.add(vector.y());
+            positions.add(vector.z());
+
+        }
+
+        AIVector3D.Buffer coords = mesh.mTextureCoords(0);
+
+        for (int i = 0; i < coords.limit(); i++) {
+            AIVector3D coord = coords.get(i);
+
+            texCoords.add(coord.x());
+            texCoords.add(coord.y());
+
+        }
+
+        AIVector3D.Buffer norms = mesh.mNormals();
+
+        for (int i = 0; i < norms.limit(); i++) {
+
+            AIVector3D norm = norms.get(i);
+
+            normals.add(norm.x());
+            normals.add(norm.y());
+            normals.add(norm.z());
+        }
+
+        AIColor4D.Buffer vertexColors = mesh.mColors(0);
+
+        for(int i = 0; i < vertexColors.limit(); i++){
+            AIColor4D vertexColor = vertexColors.get(i);
+
+            colors.add(vertexColor.r());
+            colors.add(vertexColor.g());
+            colors.add(vertexColor.b());
+            colors.add(vertexColor.a());
+
+        }
+    }
 
     public Model loadOBJModel(String fileName) {
         List<String> lines = ResourceLoader.readAllLines(fileName);
