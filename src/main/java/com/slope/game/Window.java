@@ -122,4 +122,19 @@ class Window {
     }
 
     public float getAspectRatio() { return aspectRatio; }
+    
+    public boolean isKeyPressed(int keyCode) {
+        return GLFW.glfwGetKey(window, keyCode) == GLFW.GLFW_PRESS;
+    }
+
+    public float[] getMousePosition() {
+        double[] xPos = new double[1];
+        double[] yPos = new double[1];
+        GLFW.glfwGetCursorPos(window, xPos, yPos);
+        return new float[] { (float) xPos[0], (float) yPos[0] };
+    }
+
+    public void setMousePosition(float x, float y) {
+        GLFW.glfwSetCursorPos(window, x, y);
+    }
 }

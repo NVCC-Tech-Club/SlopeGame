@@ -35,11 +35,18 @@ dependencies {
     implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
 
+    // Assimp library
+    implementation("org.lwjgl:lwjgl-assimp:$lwjglVersion")
+
     // LWJGL natives for the current platform
     runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
+
+    // Assimp natives
+    runtimeOnly("org.lwjgl:lwjgl-assimp:$lwjglVersion:$lwjglNatives")
+    
     implementation(kotlin("stdlib"))
 }
 
