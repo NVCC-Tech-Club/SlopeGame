@@ -57,6 +57,13 @@ public final class RenderManager {
             int ID = loader.getID(i);
             int indicesCount = loader.getIndicesCount(i);
             int textureID = loader.getTextures(0); // If more textures are added then this will be changed.
+            if (loader.getTextureCapacity() == 1) {
+                // Use the first texture for all models
+                textureID = loader.getTextures(0);
+            } else {
+                // Use the ith texture for each model if more textures are available
+                textureID = loader.getTextures(i);
+            }
 
             // Bind VAO
             GL30.glBindVertexArray(ID);

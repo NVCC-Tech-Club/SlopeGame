@@ -52,8 +52,14 @@ public class Core implements IComponentManager {
     // These are background objects that can't be interacted with the game in any way.
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
+        loader.loadTexture("textures/Object.png");
+        Model n = loader.loadGLTFModel("src/main/resources/models/ramp.glb");
+
         loader.loadTexture("textures/173texture.jpeg");
         Model m = loader.loadOBJModel("models/SCP.obj");
-        loader.loadVertexObject(m, 3);
+
+
+        loader.loadVertexObject(n, 3);
+        loader.loadVertexObject(m,3);
     }
 }

@@ -20,6 +20,7 @@ import org.lwjgl.assimp.AIColor4D;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.AIVector3D;
+import org.lwjgl.assimp.AIFace;
 
 
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
@@ -44,9 +45,11 @@ public class ObjectLoader implements IGraphics {
     List<Float> texCoords = new ArrayList<>();
     List<Float> normals = new ArrayList<>();
     
-    List<Float> colors = new ArrayList<>();
+    //List<Float> colors = new ArrayList<>();
 
-    public void loadGLTFModel(String filename){
+    List<Integer> indices = new ArrayList<>();
+
+    public Model loadGLTFModel(String filename){
         
 
         AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate);
@@ -57,7 +60,26 @@ public class ObjectLoader implements IGraphics {
             processMesh(mesh);
         }
 
-        //Don't know if this should return something.
+        float[] vertexArray = new float[positions.size()];
+        float[] texCoordArray = new float[texCoords.size()];
+        float[] normalArray = new float[normals.size()];
+        int[] indicesArray = new int[indices.size()];
+
+        for (int i = 0; i < positions.size(); i++) {
+            vertexArray[i] = positions.get(i);
+        }
+        for (int i = 0; i < texCoords.size(); i++) {
+            texCoordArray[i] = texCoords.get(i);
+        }
+        for (int i = 0; i < normals.size(); i++) {
+            normalArray[i] = normals.get(i);
+        }
+        for (int i = 0; i < indices.size(); i++) {
+            indicesArray[i] = indices.get(i);
+        }
+
+        return new Model(vertexArray, indicesArray, texCoordArray);
+        
     }
 
     private void processMesh(AIMesh mesh){
@@ -94,17 +116,26 @@ public class ObjectLoader implements IGraphics {
             normals.add(norm.z());
         }
 
-        AIColor4D.Buffer vertexColors = mesh.mColors(0);
-
-        for(int i = 0; i < vertexColors.limit(); i++){
-            AIColor4D vertexColor = vertexColors.get(i);
-
-            colors.add(vertexColor.r());
-            colors.add(vertexColor.g());
-            colors.add(vertexColor.b());
-            colors.add(vertexColor.a());
-
+        AIFace.Buffer facesBuffer = mesh.mFaces();
+        for (int i = 0; i < facesBuffer.limit(); i++) {
+            AIFace face = facesBuffer.get(i);
+            IntBuffer indexBuffer = face.mIndices();
+            while (indexBuffer.remaining() > 0) {
+                indices.add(indexBuffer.get());
+            }
         }
+
+        // AIColor4D.Buffer vertexColors = mesh.mColors(0);
+
+        // for(int i = 0; i < vertexColors.limit(); i++){
+        //     AIColor4D vertexColor = vertexColors.get(i);
+
+        //     colors.add(vertexColor.r());
+        //     colors.add(vertexColor.g());
+        //     colors.add(vertexColor.b());
+        //     colors.add(vertexColor.a());
+
+        // }
     }
 
     public Model loadOBJModel(String fileName) {
