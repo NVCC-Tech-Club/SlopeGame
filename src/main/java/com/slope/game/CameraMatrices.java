@@ -45,7 +45,7 @@ public class CameraMatrices {
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
-        this.lookAt = new Vector3f(0.0f, 0.0f, -1.0f);
+        this.lookAt = new Vector3f(0.0f, 0.0f, 0.0f);
 
         this.horizontalAngle = (float) Math.atan2(lookAt.x, lookAt.z);
         this.verticalAngle = (float) Math.asin(lookAt.y);
