@@ -9,8 +9,8 @@ import org.lwjgl.glfw.GLFW;
 
 
 public class CameraMatrices {
-    private static final float COS_X = Math.cos((float)Math.PI);
-    private static final float SIN_X = Math.sin((float)Math.PI);
+    private static final float COS_X = Math.cos(0);
+    private static final float SIN_X = Math.sin(0);
     private static final float FOV = Math.toRadians(45);
     private static final Vector3f LOOK_UP = new Vector3f(0.0f, 1.0f, 0.0f);
 
@@ -45,7 +45,7 @@ public class CameraMatrices {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.rotationMatrix = new Matrix3f();
-        this.position = new Vector3f(0.0f, 15.0f, 90.0f);
+        this.position = new Vector3f(0.0f, 15.0f, -90.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 

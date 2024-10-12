@@ -55,11 +55,6 @@ public class Core implements IComponentManager {
         loader.loadTexture("textures/Object.png");
         Model n = loader.loadGLTFModel("src/main/resources/models/ramp.glb");
 
-        loader.loadTexture("textures/173texture.jpeg");
-        Model m = loader.loadOBJModel("models/SCP.obj");
-
-
         loader.loadVertexObject(n, 3);
-        loader.loadVertexObject(m,3);
     }
 }
