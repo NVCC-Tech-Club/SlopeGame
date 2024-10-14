@@ -61,4 +61,5 @@ data class Model(
     fun getModelMatrix(): Matrix4f {
         return modelMatrix
     }
+
 }
