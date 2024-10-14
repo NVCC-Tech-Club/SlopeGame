@@ -6,10 +6,16 @@ import java.nio.IntBuffer
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
-data class Model(val texIndex: Int, val vertices: FloatArray, val indices: IntArray, val texCoord: FloatArray) {
-    var index: Int = 0;
+data class Model(
+    val texIndex: Int,
+    val vertices: FloatArray,
+    val indices: IntArray,
+    val texCoord: FloatArray,
+    val colorArray: FloatArray // Added colorArray
+) {
+    var index: Int = 0
 
-    // position ,scale and rotation
+    // Position, scale, and rotation
     private var position: Vector3f = Vector3f(0f, 0f, 0f)
     private var scale: Vector3f = Vector3f(1f, 1f, 1f)
     private var rotation: Vector3f = Vector3f(90.0f, 0.0f, 0.0f)
@@ -31,6 +37,11 @@ data class Model(val texIndex: Int, val vertices: FloatArray, val indices: IntAr
         return storeDataInBuffer(texCoord)
     }
 
+    // New method to store color data in a buffer
+    fun storeColorsInBuffer(): FloatBuffer? {
+        return storeDataInBuffer(colorArray)
+    }
+
     fun update() {
         modelMatrix.identity()
             .translate(position)
@@ -46,7 +57,7 @@ data class Model(val texIndex: Int, val vertices: FloatArray, val indices: IntAr
         return buffer
     }
 
-    // getting the transformation matrix back
+    // Getting the transformation matrix back
     fun getModelMatrix(): Matrix4f {
         return modelMatrix
     }
