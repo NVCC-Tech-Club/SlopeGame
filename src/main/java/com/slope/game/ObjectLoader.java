@@ -121,24 +121,23 @@ public class ObjectLoader implements IGraphics {
         }
 
         AIColor4D.Buffer vertexColors = mesh.mColors(0);
-        int vectexLength = (vertexColors != null) ? vertexColors.limit() : vectors.limit();
+        int vertexLength = (vertexColors != null) ? vertexColors.limit() : 0;
+        int nullVertexLength = (vertexColors == null) ? vectors.limit() : 0;
 
-        if(vertexColors == null) {
-            for (int i = 0; i < vectexLength; i++) {
-                colors.add(0.0f);
-                colors.add(1.0f);
-                colors.add(0.0f);
-                colors.add(1.0f);
-            }
-        }else {
-            for (int i = 0; i < vectexLength; i++) {
-                AIColor4D vertexColor = vertexColors.get(i);
+        for (int i = 0; i < nullVertexLength; i++) {
+            colors.add(0.0f);
+            colors.add(1.0f);
+            colors.add(0.0f);
+            colors.add(1.0f);
+        }
 
-                colors.add(vertexColor.r());
-                colors.add(vertexColor.g());
-                colors.add(vertexColor.b());
-                colors.add(vertexColor.a());
-            }
+        for (int i = 0; i < vertexLength; i++) {
+            AIColor4D vertexColor = vertexColors.get(i);
+
+            colors.add(vertexColor.r());
+            colors.add(vertexColor.g());
+            colors.add(vertexColor.b());
+            colors.add(vertexColor.a());
         }
     }
 
