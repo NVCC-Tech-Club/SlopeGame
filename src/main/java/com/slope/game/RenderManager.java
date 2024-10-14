@@ -82,6 +82,9 @@ public final class RenderManager {
             // Enable the texture attribute array.
             GL20.glEnableVertexAttribArray(1);
 
+            // Enable the color attribute array.
+            GL20.glEnableVertexAttribArray(2);
+
             // Active our texture.
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
 
@@ -94,6 +97,7 @@ public final class RenderManager {
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
+            GL20.glDisableVertexAttribArray(2);
 
             // Unbind the VAO to avoid any accidental changes.
             GL30.glBindVertexArray(0);

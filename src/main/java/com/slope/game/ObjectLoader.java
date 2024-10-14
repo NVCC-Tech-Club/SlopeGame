@@ -43,14 +43,11 @@ public class ObjectLoader implements IGraphics {
             AIMesh mesh = AIMesh.create(buffer.get(i));
             processMesh(mesh, positions, texCoords, normals, indices, colors);
         }
-        float[] colorArray = new float[colors.size()];
-        for(int i = 0; i < colors.size(); i++){
-            colorArray[i] = colors.get(i);
-        }
 
         float[] vertexArray = new float[positions.size()];
         float[] texCoordArray = new float[texCoords.size()];
         float[] normalArray = new float[normals.size()];
+        float[] colorArray = new float[colors.size()];
         int[] indicesArray = new int[indices.size()];
 
         for (int i = 0; i < positions.size(); i++) {
@@ -64,6 +61,9 @@ public class ObjectLoader implements IGraphics {
         }
         for (int i = 0; i < indices.size(); i++) {
             indicesArray[i] = indices.get(i);
+        }
+        for(int i = 0; i < colors.size(); i++){
+            colorArray[i] = colors.get(i);
         }
 
         Model m = new Model(texIndex, vertexArray, indicesArray, texCoordArray, colorArray);
@@ -120,100 +120,27 @@ public class ObjectLoader implements IGraphics {
             }
         }
 
-         AIColor4D.Buffer vertexColors = mesh.mColors(0);
+        AIColor4D.Buffer vertexColors = mesh.mColors(0);
+        int vectexLength = (vertexColors != null) ? vertexColors.limit() : vectors.limit();
 
-         for(int i = 0; i < vertexColors.limit(); i++){
-             AIColor4D vertexColor = vertexColors.get(i);
+        if(vertexColors == null) {
+            for (int i = 0; i < vectexLength; i++) {
+                colors.add(0.0f);
+                colors.add(1.0f);
+                colors.add(0.0f);
+                colors.add(1.0f);
+            }
+        }else {
+            for (int i = 0; i < vectexLength; i++) {
+                AIColor4D vertexColor = vertexColors.get(i);
 
-             colors.add(vertexColor.r());
-             colors.add(vertexColor.g());
-             colors.add(vertexColor.b());
-             colors.add(vertexColor.a());
-
-         }
-    }
-
-    public Model loadOBJModel(int texIndex, String fileName) {
-        List<String> lines = ResourceLoader.readAllLines(fileName);
-        List<Vector3f> vertices = new ArrayList<>();
-        List<Vector3f> normals = new ArrayList<>();
-        List<Vector2f> texCoords = new ArrayList<>();
-        List<Vector3i> faces = new ArrayList<>();
-
-        for (String line : lines) {
-            String[] tokens = line.split("\\s+");
-            switch (tokens[0]) {
-                case "v":
-                    // Vertices
-                    Vector3f verticesVec = new Vector3f(
-                            Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])
-                    );
-                    vertices.add(verticesVec);
-                    break;
-                case "vt":
-                    // Texture Coordinates
-                    Vector2f texCoor = new Vector2f(
-                            Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2])
-                    );
-                    texCoords.add(texCoor);
-                    break;
-                case "vn":
-                    // Vertex Normal
-                    Vector3f normal = new Vector3f(
-                            Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])
-                    );
-                    normals.add(normal);
-                    break;
-                case "f":
-                    // Faces
-                    processFace(tokens[1], faces);
-                    processFace(tokens[2], faces);
-                    processFace(tokens[3], faces);
-                    break;
-                default:
-                    break;
+                colors.add(vertexColor.r());
+                colors.add(vertexColor.g());
+                colors.add(vertexColor.b());
+                colors.add(vertexColor.a());
             }
         }
-
-
-        float[] vertexArray = new float[vertices.size() * 3];
-        int[] indicesArr = new int[faces.size() * 3];
-        float[] texCoordArr = new float[texCoords.size() * 2];
-
-
-        int i = 0;
-        for (Vector3f pos : vertices) {
-            vertexArray[i * 3] = pos.x;
-            vertexArray[i * 3 + 1] = pos.y;
-            vertexArray[i * 3 + 2] = pos.z;
-            i++;
-        }
-
-
-        int j = 0;
-        for (Vector3i face : faces) {
-            indicesArr[j * 3] = face.x - 1;
-            indicesArr[j * 3 + 1] = face.y - 1;
-            indicesArr[j * 3 + 2] = face.z - 1;
-            j++;
-        }
-
-        // Default color array (e.g., white for all vertices)
-        float[] colorArray = new float[vertices.size() * 3]; // 3 for RGB
-        for (int k = 0; k < colorArray.length; k++) {
-            colorArray[k] = 1.0f; // Setting to white (1.0 for each channel)
-        }
-
-        Model m = new Model(texIndex, vertexArray, indicesArr, texCoordArr, colorArray);
-        loadedModels.add(m);
-        return m;
     }
-
 
     public void loadVertexObject(Model model, int count) {
         long vertexAmount = (long) model.getVertices().length / 3;
@@ -221,6 +148,7 @@ public class ObjectLoader implements IGraphics {
         int EBO = storeIndexInAttribList(model);
         storeDataInAttribList(model.storeVerticesInBuffer(),0, count);
         storeDataInAttribList(model.storeTexCoordsInBuffer(), 1, 2);
+        storeDataInAttribList(model.storeColorsInBuffer(), 2, 4);
 
         // Store VAO and vertex count in a 64-bit long (32 bits each)
         long vaoWithCount = ((long) VAO << BIT_32_CAPACITY) | (vertexAmount & 0xFFFFFFFFL);
