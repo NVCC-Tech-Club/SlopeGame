@@ -5,6 +5,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.assimp.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -12,12 +13,6 @@ import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
-
-import org.lwjgl.assimp.Assimp;
-import org.lwjgl.assimp.AIMesh;
-import org.lwjgl.assimp.AIScene;
-import org.lwjgl.assimp.AIVector3D;
-import org.lwjgl.assimp.AIFace;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -39,13 +34,18 @@ public class ObjectLoader implements IGraphics {
         List<Float> texCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
+        List<Float> colors = new ArrayList<>();
 
         AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate);
         PointerBuffer buffer = scene.mMeshes();
 
         for (int i = 0; i < buffer.limit(); i++){
             AIMesh mesh = AIMesh.create(buffer.get(i));
-            processMesh(mesh, positions, texCoords, normals, indices);
+            processMesh(mesh, positions, texCoords, normals, indices, colors);
+        }
+        float[] colorArray = new float[colors.size()];
+        for(int i = 0; i < colors.size(); i++){
+            colorArray[i] = colors.get(i);
         }
 
         float[] vertexArray = new float[positions.size()];
@@ -66,7 +66,7 @@ public class ObjectLoader implements IGraphics {
             indicesArray[i] = indices.get(i);
         }
 
-        Model m = new Model(texIndex, vertexArray, indicesArray, texCoordArray);
+        Model m = new Model(texIndex, vertexArray, indicesArray, texCoordArray, colorArray);
         loadedModels.add(m);
         return m;
         
@@ -76,7 +76,8 @@ public class ObjectLoader implements IGraphics {
                              List<Float> positions,
                              List<Float> texCoords,
                              List<Float> normals,
-                             List<Integer> indices) {
+                             List<Integer> indices,
+                             List<Float> colors) {
 
         AIVector3D.Buffer vectors = mesh.mVertices();
 
@@ -119,107 +120,100 @@ public class ObjectLoader implements IGraphics {
             }
         }
 
-        // AIColor4D.Buffer vertexColors = mesh.mColors(0);
+         AIColor4D.Buffer vertexColors = mesh.mColors(0);
 
-        // for(int i = 0; i < vertexColors.limit(); i++){
-        //     AIColor4D vertexColor = vertexColors.get(i);
+         for(int i = 0; i < vertexColors.limit(); i++){
+             AIColor4D vertexColor = vertexColors.get(i);
 
-        //     colors.add(vertexColor.r());
-        //     colors.add(vertexColor.g());
-        //     colors.add(vertexColor.b());
-        //     colors.add(vertexColor.a());
+             colors.add(vertexColor.r());
+             colors.add(vertexColor.g());
+             colors.add(vertexColor.b());
+             colors.add(vertexColor.a());
 
-        // }
+         }
     }
 
     public Model loadOBJModel(int texIndex, String fileName) {
         List<String> lines = ResourceLoader.readAllLines(fileName);
-
         List<Vector3f> vertices = new ArrayList<>();
         List<Vector3f> normals = new ArrayList<>();
         List<Vector2f> texCoords = new ArrayList<>();
         List<Vector3i> faces = new ArrayList<>();
 
-        for(String line: lines) {
+        for (String line : lines) {
             String[] tokens = line.split("\\s+");
-
-            switch(tokens[0]) {
+            switch (tokens[0]) {
                 case "v":
-                    //Vertices
+                    // Vertices
                     Vector3f verticesVec = new Vector3f(
-                        Float.parseFloat(tokens[1]),
-                        Float.parseFloat(tokens[2]),
-                        Float.parseFloat(tokens[3])
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3])
                     );
-
-                    // System.out.println("Line: " + tokens[0]);
                     vertices.add(verticesVec);
-
                     break;
                 case "vt":
-
-                    //Texture Coordinates
+                    // Texture Coordinates
                     Vector2f texCoor = new Vector2f(
-                        Float.parseFloat(tokens[1]),
-                        Float.parseFloat(tokens[2])
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2])
                     );
                     texCoords.add(texCoor);
-
                     break;
                 case "vn":
                     // Vertex Normal
                     Vector3f normal = new Vector3f(
-                        Float.parseFloat(tokens[1]),
-                        Float.parseFloat(tokens[2]),
-                        Float.parseFloat(tokens[3])
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3])
                     );
                     normals.add(normal);
-
                     break;
                 case "f":
-                    //Faces
+                    // Faces
                     processFace(tokens[1], faces);
                     processFace(tokens[2], faces);
                     processFace(tokens[3], faces);
-
                     break;
                 default:
                     break;
             }
         }
 
-        List<Integer> indices = new ArrayList<>();
-        float[] vertexArray = new float[vertices.size() * 3];
-        int i = 0;
 
-        for(Vector3f pos: vertices) {
-            vertexArray[i * 3 + 0] = pos.x;
+        float[] vertexArray = new float[vertices.size() * 3];
+        int[] indicesArr = new int[faces.size() * 3];
+        float[] texCoordArr = new float[texCoords.size() * 2];
+
+
+        int i = 0;
+        for (Vector3f pos : vertices) {
+            vertexArray[i * 3] = pos.x;
             vertexArray[i * 3 + 1] = pos.y;
             vertexArray[i * 3 + 2] = pos.z;
-
             i++;
         }
 
-        float[] texCoordArr = new float[texCoords.size() * 2];
-        float[] normalArray = new float[vertices.size() * 3];
+
         int j = 0;
-
-        for(Vector3i face: faces) {
-            processVertex(face.x, face.y, face.z, texCoords, normals, indices, texCoordArr, normalArray);
-        }
-
-        for(Vector2f tex: texCoords) {
-            texCoordArr[j * 2 + 0] = tex.x;
-            texCoordArr[j * 2 + 1] = tex.y;
-
+        for (Vector3i face : faces) {
+            indicesArr[j * 3] = face.x - 1;
+            indicesArr[j * 3 + 1] = face.y - 1;
+            indicesArr[j * 3 + 2] = face.z - 1;
             j++;
         }
 
-        int[] indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
-        Model m = new Model(texIndex, vertexArray, indicesArr, texCoordArr);
+        // Default color array (e.g., white for all vertices)
+        float[] colorArray = new float[vertices.size() * 3]; // 3 for RGB
+        for (int k = 0; k < colorArray.length; k++) {
+            colorArray[k] = 1.0f; // Setting to white (1.0 for each channel)
+        }
+
+        Model m = new Model(texIndex, vertexArray, indicesArr, texCoordArr, colorArray);
         loadedModels.add(m);
         return m;
     }
+
 
     public void loadVertexObject(Model model, int count) {
         long vertexAmount = (long) model.getVertices().length / 3;
