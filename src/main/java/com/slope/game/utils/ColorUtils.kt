@@ -21,6 +21,7 @@ object ColorUtils {
     }
     fun triggerDangerousSurfaceEvent() {
         println("Player hit a dangerous surface!")
+        
         // Implement your game logic here
     }
 
