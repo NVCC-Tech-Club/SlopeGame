@@ -33,7 +33,7 @@ public class Core implements IComponentManager {
         {
             Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
             loader.loadVertexObject(screen, 3);
-            screen.scale(0.5f, 0.5f, 0.5f);
+            //screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
         }
 
@@ -58,7 +58,7 @@ public class Core implements IComponentManager {
         renderer.renderInstances(loader);
         FrameBuffer.unbind();
 
-        GL21.glViewport(0, 0, width, height);
+        renderer.renderInstances(loader);
         renderer.renderScreen(loader);
     }
 
