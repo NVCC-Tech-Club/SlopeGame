@@ -2,19 +2,21 @@ package com.slope.game;
 
 import com.slope.game.utils.Model;
 import org.lwjgl.opengl.GL21;
-import org.joml.Vector3f;
+import org.lwjgl.opengl.GL30;
+
+import java.nio.IntBuffer;
 
 public class Core implements IComponentManager {
     private final RenderManager renderer;
     private final ObjectLoader loader;
+    private final FrameBuffer frameBuffer;
     protected final CameraMatrices camMatrices;
-
-    // TODO: Add ComputeShaderManager here.
 
     public Core() {
         camMatrices = new CameraMatrices();
         loader = new ObjectLoader();
         renderer = new RenderManager(camMatrices);
+        frameBuffer = new FrameBuffer();
     }
 
     @Override
@@ -22,7 +24,14 @@ public class Core implements IComponentManager {
         createGreenTowers();
 
         {
-            Model screen = renderer.setScreenModel(loader.createScreen());
+            final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
+            final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
+
+            frameBuffer.init(width, height);
+        }
+
+        {
+            Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
             loader.loadVertexObject(screen, 3);
             screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
@@ -43,6 +52,7 @@ public class Core implements IComponentManager {
         final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
         final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
+        frameBuffer.bind();
         GL21.glViewport(0, 0, width, height);
         renderer.renderInstances(loader);
     }

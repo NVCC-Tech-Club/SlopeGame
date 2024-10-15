@@ -29,7 +29,7 @@ public class ObjectLoader implements IGraphics {
     private List<Long> eboList = new ArrayList<Long>();
     private List<Model> loadedModels = new ArrayList<>();
 
-    public Model createScreen() {
+    public Model createScreen(int texIndex) {
         float[] vertices = {
                 -1.0f, 1.0f, 0.0f,
                 -1.0f, -1.0f, 0.0f,
@@ -43,10 +43,12 @@ public class ObjectLoader implements IGraphics {
         int[] indices = {};
 
         float[] texCoords = {
-                0.0f, 0.0f,
-                1.0f, 0.0f,
-                1.0f, 1.0f,
-                0.0f, 1.0f
+                0.0f, 1.0f,  // Top-left corner
+                0.0f, 0.0f,  // Bottom-left corner
+                1.0f, 0.0f,  // Bottom-right corner
+                1.0f, 0.0f,  // Bottom-right corner (again, since it's reused)
+                1.0f, 1.0f,  // Top-right corner
+                0.0f, 1.0f   // Top-left corner (again, since it's reused)
         };
 
         float[] colors = {
@@ -58,7 +60,7 @@ public class ObjectLoader implements IGraphics {
                 1.0f, 0.0f, 0.0f, 0.5f
         };
 
-        Model m = new Model(0, vertices, indices, texCoords, colors);
+        Model m = new Model(texIndex, vertices, indices, texCoords, colors);
         return m;
     }
 
@@ -251,6 +253,7 @@ public class ObjectLoader implements IGraphics {
 
         int textureID = GL11.glGenTextures();
         textures.add(textureID);
+        System.out.println(textureID);
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
@@ -271,11 +274,10 @@ public class ObjectLoader implements IGraphics {
         return textureID;
     }
 
+    // Get capacity of VAO.
     public int getCapacity() {
         return vaoList.size();
     }
-
-    public int getTextureCapacity() { return textures.size(); }
 
     // Get the left most 32-bit chunk which is our VAO.
     public int getID(int index) {
