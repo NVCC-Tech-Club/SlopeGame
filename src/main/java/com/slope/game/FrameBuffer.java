@@ -19,9 +19,8 @@ public class FrameBuffer {
     public void init(int width, int height) {
 
         // Create FBO
-        int fbo = GL30.glGenFramebuffers();
+        fbo = GL30.glGenFramebuffers();
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
-        GL11.glDrawBuffer(GL30.GL_COLOR_ATTACHMENT0);
 
         // Create texture to attach to FBO
         texture = GL11.glGenTextures();
@@ -37,10 +36,11 @@ public class FrameBuffer {
         // Create depth renderbuffer
         rbo = GL30.glGenRenderbuffers();
         GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT32F, width, height);
+        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT, width, height);
         GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, rbo);
 
         // Check if FBO is complete
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
         if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
             System.out.println("Framebuffer not complete!");
             System.exit(1);

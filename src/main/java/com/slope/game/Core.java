@@ -54,7 +54,12 @@ public class Core implements IComponentManager {
 
         frameBuffer.bind();
         GL21.glViewport(0, 0, width, height);
+        renderer.clear();
         renderer.renderInstances(loader);
+        FrameBuffer.unbind();
+        
+        renderer.renderScreen(loader);
+        //FrameBuffer.unbind();
     }
 
     @Override

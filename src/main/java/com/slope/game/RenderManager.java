@@ -55,7 +55,6 @@ public final class RenderManager {
     }
 
     public void renderInstances(ObjectLoader loader) {
-        clear();
         shaderManager.bind();
         renderCamera();
 
@@ -120,55 +119,57 @@ public final class RenderManager {
 
         unbind(this.camBlock);
         shaderManager.unbind();
-        FrameBuffer.unbind();
+    }
 
-        if(screen != null) {
-            shaderManager.bind();
-
-            int ID = loader.getID(screen.getIndex());
-            int textureID = screen.getTexIndex();
-
-            // Reset Our Camera Matrices
-            camMatrices.projectionMatrix.identity();
-            camMatrices.viewMatrix.identity();
-            renderCamera();
-
-            // Add model matrix
-            shaderManager.setMatrixUniform("model", screen.getModelMatrix());
-
-            // Update uniform texture sampler
-            shaderManager.setIntUniform("textureSampler", 0);
-
-            // Bind VAO
-            GL30.glBindVertexArray(ID);
-
-            // Enable the vertex attribute array.
-            GL20.glEnableVertexAttribArray(0);
-            GL20.glEnableVertexAttribArray(1);
-            GL20.glEnableVertexAttribArray(2);
-
-            // Active our texture.
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-
-            // Bind our texture.
-            GL21.glBindTexture(GL21.GL_TEXTURE_2D, screen.getTexIndex());
-
-            // Draw the vertices as triangles.
-            GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
-
-            // Disable our attributes
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL20.glDisableVertexAttribArray(2);
-
-            // Unbind the texture.
-            GL21.glBindTexture(GL21.GL_TEXTURE_2D, 0);
-
-            // Unbind the VAO to avoid any accidental changes.
-            GL30.glBindVertexArray(0);
-        }else {
+    public void renderScreen(ObjectLoader loader) {
+        if(screen == null) {
             return;
         }
+
+        shaderManager.bind();
+        renderCamera();
+
+        int ID = loader.getID(screen.getIndex());
+        int textureID = screen.getTexIndex();
+
+        // Reset Our Camera Matrices
+        camMatrices.projectionMatrix.identity();
+        camMatrices.viewMatrix.identity();
+        renderCamera();
+
+        // Add model matrix
+        shaderManager.setMatrixUniform("model", screen.getModelMatrix());
+
+        // Update uniform texture sampler
+        shaderManager.setIntUniform("textureSampler", 0);
+
+        // Bind VAO
+        GL30.glBindVertexArray(ID);
+
+        // Enable the vertex attribute array.
+        GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(1);
+        GL20.glEnableVertexAttribArray(2);
+
+        // Active our texture.
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+
+        // Bind our texture.
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
+
+        // Draw the vertices as triangles.
+        GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
+
+        // Disable our attributes
+        GL20.glDisableVertexAttribArray(0);
+        GL20.glDisableVertexAttribArray(1);
+        GL20.glDisableVertexAttribArray(2);
+
+        // Unbind the texture.
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, 0);
+
+        // Unbind the VAO to avoid any accidental changes.
+        GL30.glBindVertexArray(0);
 
         unbind(this.camBlock);
         shaderManager.unbind();
