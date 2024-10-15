@@ -57,7 +57,6 @@ public final class RenderManager {
         clear();
         shaderManager.bind();
         shaderManager.setIntUniform("textureSampler", 0);
-        renderCamera();
 
         for(int i=0; i<loader.getModelCapacity(); i++) {
 
@@ -115,6 +114,11 @@ public final class RenderManager {
             // GL33.glVertexAttribDivisor(1, 1);
         }
 
+        if(screen != null) {
+
+        }
+
+        renderCamera();
         shaderManager.unbind();
     }
 
