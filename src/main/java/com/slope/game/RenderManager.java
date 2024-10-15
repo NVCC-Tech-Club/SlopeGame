@@ -151,7 +151,7 @@ public final class RenderManager {
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
 
             // Bind our texture.
-            GL21.glBindTexture(GL21.GL_TEXTURE_2D, 2);
+            GL21.glBindTexture(GL21.GL_TEXTURE_2D, screen.getTexIndex());
 
             // Draw the vertices as triangles.
             GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
