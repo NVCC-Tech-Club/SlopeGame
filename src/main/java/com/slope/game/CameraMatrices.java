@@ -21,7 +21,7 @@ public class CameraMatrices {
 
     // Our data sent to the GPU.
     protected final Matrix4f projectionMatrix;
-    protected final Matrix4f viewMatrix;
+    protected final Matrix4f modelViewMatrix;
     protected final Matrix3f rotationMatrix;
     protected final Vector3f position;
     protected final Vector3f center;
@@ -29,8 +29,9 @@ public class CameraMatrices {
     protected float farPlane;
 
     // Our data that stays.
-    protected Matrix3f rotation3fX;
-    protected Matrix3f rotation3fY;
+    protected final Matrix4f viewMatrix;
+    protected final Matrix3f rotation3fX;
+    protected final Matrix3f rotation3fY;
     protected float verticalAngle;
     protected float horizontalAngle;
     protected Vector3f lookAt;
@@ -39,6 +40,7 @@ public class CameraMatrices {
 
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
+        this.modelViewMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.rotationMatrix = new Matrix3f();
         this.position = new Vector3f(0.0f, 15.0f, -90.0f);
@@ -76,8 +78,6 @@ public class CameraMatrices {
     public void update(float zNear, float zFar) {
         projectionMatrix.identity();
         projectionMatrix.perspective(FOV, Engine.getMain().getPrimaryWindow().getAspectRatio(), zNear, zFar, false);
-
-        updateViewMat();
     }
 
     public void updateViewMat() {
@@ -86,6 +86,10 @@ public class CameraMatrices {
         position.add(lookAt, center);
         viewMatrix.identity();
         viewMatrix.lookAt(position, center, LOOK_UP);
+    }
+
+    public void mulModelToView() {
+        projectionMatrix.mul(viewMatrix, modelViewMatrix);
     }
 
     public void updateRotationMat() {

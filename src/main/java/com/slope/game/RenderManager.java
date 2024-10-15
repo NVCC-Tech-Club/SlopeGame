@@ -67,6 +67,9 @@ public final class RenderManager {
             // Bind VAO
             GL30.glBindVertexArray(ID);
 
+            // Mutliply camera model matrix.
+            camMatrices.mulModelToView();
+
             // Bind the element buffer object (EBO) for the indices
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(i));
 
@@ -136,6 +139,7 @@ public final class RenderManager {
     }
 
     private void renderCamera() {
+        camMatrices.update(0.05f, 160.0f);
         camBlock.set(camMatrices);
         bind("CameraMatrices", this.camBlock);
     }

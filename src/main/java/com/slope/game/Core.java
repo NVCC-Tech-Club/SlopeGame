@@ -49,8 +49,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void update() {
-        //camMatrices.updateViewMat();
-        camMatrices.update(0.05f, 160.0f);
+        camMatrices.updateViewMat();
     }
 
     @Override

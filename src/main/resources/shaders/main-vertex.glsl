@@ -6,7 +6,7 @@ layout(location = 2) in vec4 inColor;
 
 layout(std140) uniform CameraMatrices {
     mat4 projectionMatrix;
-    mat4 viewMatrix;
+    mat4 modelViewMatrix;
     mat3 rotationMatrix;
     vec3 position;
     float nearPlane;
@@ -18,7 +18,7 @@ out vec2 fragTexCoords;
 out vec4 outColor;
 
 void main() {
-    gl_Position = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * vec4(pos, 1.0);
+    gl_Position = CamMatrix.projectionMatrix * CamMatrix.modelViewMatrix * vec4(pos, 1.0);
     //color = vec3(pos.x + 0.8, 0.8, pos.y + 0.8);
     fragTexCoords = texCoord;
     outColor = inColor;
