@@ -253,7 +253,6 @@ public class ObjectLoader implements IGraphics {
 
         int textureID = GL11.glGenTextures();
         textures.add(textureID);
-        System.out.println(textureID);
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
@@ -270,7 +269,6 @@ public class ObjectLoader implements IGraphics {
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 
         STBImage.stbi_image_free(buffer);
-
         return textureID;
     }
 

@@ -26,7 +26,6 @@ public final class RenderManager {
     private Model screen;
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
-    private ShaderManager sphereShaderManager;
 
     // Camera Stuff.
     private final SizedShaderBlock<CameraMatrices> camBlock;
@@ -39,18 +38,12 @@ public final class RenderManager {
 
     public void init() {
         shaderManager = new ShaderManager();
-        sphereShaderManager = new ShaderManager();
         uniformBlockState = new UniformBlockState(shaderManager);
 
         try {
-            sphereShaderManager.createVertexShader(ResourceLoader.loadFile("shaders/sphere-vertex.glsl"));
-            sphereShaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/sphere-fragment.glsl"));
-            sphereShaderManager.link();
-
             shaderManager.createVertexShader(ResourceLoader.loadFile("shaders/main-vertex.glsl"));
             shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
             shaderManager.link();
-            //createSphereUniforms();
             createGameUniforms();
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,7 +192,6 @@ public final class RenderManager {
 
     public void destroy() {
         shaderManager.destroy();
-        sphereShaderManager.destroy();
     }
 
     private void renderCamera() {
@@ -211,10 +203,5 @@ public final class RenderManager {
         shaderManager.createUniform("textureSampler");
         shaderManager.setMatrixUniform("model", new Matrix4f().identity());
         shaderManager.createUniform("model");
-    }
-
-    private void createSphereUniforms() throws Exception {
-        sphereShaderManager.createUniform("resolution");
-        sphereShaderManager.setVec2Uniform("resolution", new Vector2f());
     }
 }
