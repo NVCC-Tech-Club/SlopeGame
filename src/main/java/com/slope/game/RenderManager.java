@@ -43,9 +43,6 @@ public final class RenderManager {
             shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
             shaderManager.link();
             shaderManager.createUniform("textureSampler");
-            //shaderManager.createUniform("model");
-            shaderManager.setMatrixUniform("model", new Matrix4f().identity());
-            shaderManager.createUniform("model");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,9 +63,6 @@ public final class RenderManager {
             int ID = loader.getID(m.getIndex());
             int indicesCount = loader.getIndicesCount(m.getIndex());
             int textureID = loader.getTextures(m.getTexIndex());
-
-            // Add model matrix
-            shaderManager.setMatrixUniform("model", m.getModelMatrix());
 
             // Bind VAO
             GL30.glBindVertexArray(ID);
