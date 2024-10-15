@@ -19,13 +19,13 @@ public class Core implements IComponentManager {
 
     @Override
     public void init() {
+        createGreenTowers();
+
         {
             Model screen = renderer.setScreenModel(loader.createScreen());
             screen.update();
             loader.loadVertexObject(screen, 3);
         }
-
-        createGreenTowers();
 
         camMatrices.init();
         renderer.init();
