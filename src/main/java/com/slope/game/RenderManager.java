@@ -134,12 +134,14 @@ public final class RenderManager {
 
             // Enable the vertex attribute array.
             GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(2);
 
             // Draw the vertices as triangles.
             GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
 
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(2);
 
             // Unbind the VAO to avoid any accidental changes.
             GL30.glBindVertexArray(0);

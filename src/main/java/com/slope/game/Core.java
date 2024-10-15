@@ -66,6 +66,7 @@ public class Core implements IComponentManager {
         loader.loadTexture("textures/Object.png");
         Model n = loader.loadGLTFModel(0,"src/main/resources/models/ramp.glb");
         n.rotate(90.0f, 0.0f, 0.0f);
+        n.scale(2.0f, 2.0f, 2.0f);
         n.update();
 
         loader.loadVertexObject(n, 3);
