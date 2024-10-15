@@ -18,10 +18,22 @@ data class Model(
     // Position, scale, and rotation
     private var position: Vector3f = Vector3f(0f, 0f, 0f)
     private var scale: Vector3f = Vector3f(1f, 1f, 1f)
-    private var rotation: Vector3f = Vector3f(90.0f, 0.0f, 0.0f)
+    private var rotation: Vector3f = Vector3f(0.0f, 0.0f, 0.0f)
 
     // Model Matrix
     private val modelMatrix: Matrix4f = Matrix4f()
+
+    fun rotate(x: Float, y: Float, z: Float) {
+        rotation.x = x;
+        rotation.y = y;
+        rotation.z = z;
+    }
+
+    fun scale(x: Float, y: Float, z: Float) {
+        scale.x = x;
+        scale.y = y;
+        scale.z = z;
+    }
 
     fun storeIndicesInBuffer(): IntBuffer? {
         val buffer = BufferUtils.createIntBuffer(indices.size)

@@ -23,8 +23,9 @@ public class Core implements IComponentManager {
 
         {
             Model screen = renderer.setScreenModel(loader.createScreen());
-            screen.update();
             loader.loadVertexObject(screen, 3);
+            screen.scale(0.5f, 0.5f, 0.5f);
+            screen.update();
         }
 
         camMatrices.init();
@@ -43,8 +44,6 @@ public class Core implements IComponentManager {
         final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
         GL21.glViewport(0, 0, width, height);
-
-
         renderer.renderInstances(loader);
     }
 
@@ -66,6 +65,7 @@ public class Core implements IComponentManager {
     private void createGreenTowers() {
         loader.loadTexture("textures/Object.png");
         Model n = loader.loadGLTFModel(0,"src/main/resources/models/ramp.glb");
+        n.rotate(90.0f, 0.0f, 0.0f);
         n.update();
 
         loader.loadVertexObject(n, 3);

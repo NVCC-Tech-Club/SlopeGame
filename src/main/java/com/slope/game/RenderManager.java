@@ -57,6 +57,7 @@ public final class RenderManager {
         clear();
         shaderManager.bind();
         shaderManager.setIntUniform("textureSampler", 0);
+        renderCamera();
 
         for(int i=0; i<loader.getModelCapacity(); i++) {
 
@@ -114,11 +115,37 @@ public final class RenderManager {
             // GL33.glVertexAttribDivisor(1, 1);
         }
 
-        if(screen != null) {
+        unbind(this.camBlock);
 
+        if(screen != null) {
+            int ID = loader.getID(screen.getIndex());
+            int textureID = loader.getTextures(screen.getTexIndex());
+
+            // Reset Our Camera Matrices
+            camMatrices.projectionMatrix.identity();
+            camMatrices.viewMatrix.identity();
+            renderCamera();
+
+            // Add model matrix
+            shaderManager.setMatrixUniform("model", screen.getModelMatrix());
+
+            // Bind VAO
+            GL30.glBindVertexArray(ID);
+
+            // Enable the vertex attribute array.
+            GL20.glEnableVertexAttribArray(0);
+
+            // Draw the vertices as triangles.
+            GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
+
+            // Disable our attributes
+            GL20.glDisableVertexAttribArray(0);
+
+            // Unbind the VAO to avoid any accidental changes.
+            GL30.glBindVertexArray(0);
         }
 
-        renderCamera();
+        unbind(this.camBlock);
         shaderManager.unbind();
     }
 
