@@ -42,8 +42,6 @@ public class Core implements IComponentManager {
         final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
         GL21.glViewport(0, 0, width, height);
-
-
         renderer.renderInstances(loader);
     }
 

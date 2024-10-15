@@ -113,7 +113,7 @@ public class Game extends Core {
 
     @Override
     public void update() {
-        camMatrices.update(0.05f, 160.0f);
+        camMatrices.updateViewMat();
 
         checkMouseActive();
         processInput();
