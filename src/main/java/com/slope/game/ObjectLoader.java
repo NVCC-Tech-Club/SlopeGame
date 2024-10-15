@@ -29,6 +29,36 @@ public class ObjectLoader implements IGraphics {
     private List<Long> eboList = new ArrayList<Long>();
     private List<Model> loadedModels = new ArrayList<>();
 
+    public Model createScreen() {
+        float[] vertices = {
+            -1.0f, -1.0f,
+            1.0f, -1.0f,
+            1.0f, 1.0f,
+            -1.0f, 1.0f
+        };
+
+        int[] indices = {
+            0, 1, 2,
+            0, 2, 3
+        };
+
+        float[] texCoords = {
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f
+        };
+
+        float[] colors = {
+            0.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
+
+        return new Model(0, vertices, indices, texCoords, colors);
+    }
+
     public Model loadGLTFModel(int texIndex, String filename){
         List<Float> positions = new ArrayList<>();
         List<Float> texCoords = new ArrayList<>();
