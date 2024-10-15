@@ -2,9 +2,6 @@ package com.slope.game;
 
 import com.slope.game.utils.Model;
 import org.lwjgl.opengl.GL21;
-import org.lwjgl.opengl.GL30;
-
-import java.nio.IntBuffer;
 
 public class Core implements IComponentManager {
     private final RenderManager renderer;
@@ -52,14 +49,14 @@ public class Core implements IComponentManager {
         final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
         final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
-        frameBuffer.bind();
         GL21.glViewport(0, 0, width, height);
+
         renderer.clear();
         renderer.renderInstances(loader);
-        FrameBuffer.unbind();
 
-        renderer.renderInstances(loader);
+        frameBuffer.bind();
         renderer.renderScreen(loader);
+        FrameBuffer.unbind();
     }
 
     @Override
@@ -70,6 +67,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void destroy() {
+        frameBuffer.destroy();
         renderer.destroy();
         loader.destroy();
     }

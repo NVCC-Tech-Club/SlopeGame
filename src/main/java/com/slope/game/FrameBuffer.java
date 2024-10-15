@@ -8,12 +8,10 @@ import java.nio.ByteBuffer;
 public class FrameBuffer {
     private int fbo;
     private int texture;
-    private int rbo;
 
     public FrameBuffer() {
         fbo = 0;
         texture = 0;
-        rbo = 0;
     }
 
     public void init(int width, int height) {
@@ -32,12 +30,6 @@ public class FrameBuffer {
         // Attach texture to FBO
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, texture, 0);
 
-        // Create depth renderbuffer
-        rbo = GL30.glGenRenderbuffers();
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT, width, height);
-        GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, rbo);
-
         // Check if FBO is complete
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
         if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
@@ -55,6 +47,8 @@ public class FrameBuffer {
     public void bind() {
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
     }
+
+    public void destroy() { GL30.glDeleteFramebuffers(fbo); }
 
     public static void unbind() {
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
