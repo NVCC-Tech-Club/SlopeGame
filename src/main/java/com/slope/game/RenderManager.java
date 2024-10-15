@@ -46,11 +46,11 @@ public final class RenderManager {
             sphereShaderManager.createVertexShader(ResourceLoader.loadFile("shaders/sphere-vertex.glsl"));
             sphereShaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/sphere-fragment.glsl"));
             sphereShaderManager.link();
-            //createSphereUniforms();
 
             shaderManager.createVertexShader(ResourceLoader.loadFile("shaders/main-vertex.glsl"));
             shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
             shaderManager.link();
+            //createSphereUniforms();
             createGameUniforms();
         } catch (Exception e) {
             e.printStackTrace();

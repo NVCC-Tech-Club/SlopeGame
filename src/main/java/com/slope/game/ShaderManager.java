@@ -7,31 +7,43 @@ import org.joml.Vector2f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL31.*;
 import static org.lwjgl.opengl.GL43.*;
 
 public class ShaderManager implements IGraphics {
     private static final int BUFFER_SIZE = 1024;
 
-    private final int programID;
+    private final List<Integer> programIDs;
     private final Object2IntMap<CharSequence> uniformBlocks;
     private final Object2IntMap<CharSequence> storageBlocks;
     private final Object2IntMap<CharSequence> uniforms;
     private int vertexShaderID, fragmentShaderID;
 
     public ShaderManager() {
+        this.programIDs = new ArrayList<>();
         this.uniformBlocks = new Object2IntArrayMap<>();
         this.storageBlocks = new Object2IntArrayMap<>();
         this.uniforms = new Object2IntArrayMap<>();
-        this.programID = GL20.glCreateProgram();
+        createShaderProgram();
 
-        if(programID == 0) {
+        if(programIDs.get(0) == 0) {
             throw new IllegalStateException("Wasn't able to create shaders.");
         }
     }
 
+    public void createShaderProgram() {
+        programIDs.add(GL20.glCreateProgram());
+    }
+
     public void createUniform(CharSequence name) throws Exception {
-        int location = GL20.glGetUniformLocation(programID, name);
+        createUniform(0, name);
+    }
+
+    public void createUniform(int programIndex, CharSequence name) throws Exception {
+        int location = GL20.glGetUniformLocation(programIDs.get(programIndex), name);
 
         if(location < 0) {
             throw new Exception("Could not find uniform: " + name);
@@ -66,6 +78,12 @@ public class ShaderManager implements IGraphics {
     }
 
     public void link() throws Exception {
+        link(0);
+    }
+
+    public void link(int programIndex) throws Exception {
+        int programID = programIDs.get(programIndex);
+
         GL20.glAttachShader(programID, vertexShaderID);
         GL20.glAttachShader(programID, fragmentShaderID);
         GL20.glLinkProgram(programID);
@@ -90,39 +108,65 @@ public class ShaderManager implements IGraphics {
     }
 
     public int getUniformBlock(CharSequence name) {
-        if(this.programID == 0) {
-            return GL_INVALID_INDEX;
-        }
-
-        return this.uniformBlocks.computeIfAbsent(name, k -> glGetUniformBlockIndex(this.programID, name));
+        return getUniformBlock(0, name);
     }
 
     public int getStorageBlock(CharSequence name) {
-        if(this.programID == 0) {
+        return getStorageBlock(0, name);
+    }
+
+    public int getUniformBlock(int programIndex, CharSequence name) {
+        int programID = this.programIDs.get(programIndex);
+
+        if(programID == 0) {
             return GL_INVALID_INDEX;
         }
 
-        return this.storageBlocks.computeIfAbsent(name, k -> glGetProgramResourceIndex(this.programID, GL_SHADER_STORAGE_BLOCK, name));
+        return this.uniformBlocks.computeIfAbsent(name, k -> glGetUniformBlockIndex(programID, name));
+    }
+
+    public int getStorageBlock(int programIndex, CharSequence name) {
+        int programID = this.programIDs.get(programIndex);
+
+        if(programID == 0) {
+            return GL_INVALID_INDEX;
+        }
+
+        return this.storageBlocks.computeIfAbsent(name, k -> glGetProgramResourceIndex(programID, GL_SHADER_STORAGE_BLOCK, name));
     }
 
     public void setUniformBlock(CharSequence name, int binding) {
-        int index = this.getUniformBlock(name);
-
-        if(index != GL_INVALID_INDEX) {
-            glUniformBlockBinding(this.programID, index, binding);
-        }
+        setUniformBlock(0, name, binding);
     }
 
     public void setStorageBlock(CharSequence name, int binding) {
+        setStorageBlock(0, name, binding);
+    }
+
+    public void setUniformBlock(int programIndex, CharSequence name, int binding) {
+        int programID = this.programIDs.get(programIndex);
+        int index = this.getUniformBlock(name);
+
+        if(index != GL_INVALID_INDEX) {
+            glUniformBlockBinding(programID, index, binding);
+        }
+    }
+
+    public void setStorageBlock(int programIndex, CharSequence name, int binding) {
+        int programID = this.programIDs.get(programIndex);
         int index = this.getStorageBlock(name);
 
         if (index != GL_INVALID_INDEX) {
-            glShaderStorageBlockBinding(this.programID, index, binding);
+            glShaderStorageBlockBinding(programID, index, binding);
         }
     }
 
     public void bind() {
-        GL20.glUseProgram(programID);
+        bind(0);
+    }
+
+    public void bind(int programIndex) {
+        GL20.glUseProgram(programIDs.get(programIndex));
     }
 
     private int createShader(String shaderCode, int shaderType) throws Exception {
@@ -152,10 +196,11 @@ public class ShaderManager implements IGraphics {
     public void destroy() {
         unbind();
 
-        if(programID != 0) {
+        while(programIDs.size() != 0) {
             GL20.glDeleteShader(fragmentShaderID);
             GL20.glDeleteShader(vertexShaderID);
-            GL20.glDeleteProgram(programID);
+            GL20.glDeleteProgram(programIDs.get(0));
+            programIDs.remove(0);
         }
 
         this.uniformBlocks.clear();
