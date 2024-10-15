@@ -65,7 +65,7 @@ public class CameraMatrices {
 
     public void write(ByteBuffer buffer) {
         this.projectionMatrix.get(0, buffer);
-        this.viewMatrix.get(Float.BYTES * 16, buffer);
+        this.modelViewMatrix.get(Float.BYTES * 16, buffer);
         this.rotationMatrix.get(Float.BYTES * 32, buffer);
         this.position.get(Float.BYTES * 41, buffer);
         buffer.putFloat(Float.BYTES * 44, this.nearPlane);
@@ -88,8 +88,8 @@ public class CameraMatrices {
         viewMatrix.lookAt(position, center, LOOK_UP);
     }
 
-    public void mulModelToView() {
-        projectionMatrix.mul(viewMatrix, modelViewMatrix);
+    public void mulModelToView(Matrix4f modelMat) {
+        viewMatrix.mul(modelMat, modelViewMatrix);
     }
 
     public void updateRotationMat() {

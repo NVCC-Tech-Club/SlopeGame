@@ -69,7 +69,7 @@ public final class RenderManager {
             GL30.glBindVertexArray(ID);
 
             // Mutliply camera model matrix.
-            camMatrices.mulModelToView();
+            camMatrices.mulModelToView(m.getModelMatrix());
 
             // Bind the element buffer object (EBO) for the indices
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(i));
