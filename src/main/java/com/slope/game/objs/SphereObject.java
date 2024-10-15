@@ -7,7 +7,11 @@ import java.nio.ByteBuffer;
 
 public class SphereObject extends Object {
     private CameraMatrices camMatrices;
-    private Matrix4f modelMatrix;
+
+    private static int SIZE =
+            Float.BYTES * 16 + // The size of our projection matrix.
+            Float.BYTES * 16; // The size of our model matrix.
+
 
     protected SphereObject(CameraMatrices camMatrices) {
         this.camMatrices = camMatrices;
