@@ -22,6 +22,7 @@ public final class RenderManager {
 
     // How the renderer works at runtime.
 
+    private Model screen;
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
 
@@ -43,7 +44,6 @@ public final class RenderManager {
             shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
             shaderManager.link();
             shaderManager.createUniform("textureSampler");
-            //shaderManager.createUniform("model");
             shaderManager.setMatrixUniform("model", new Matrix4f().identity());
             shaderManager.createUniform("model");
 
@@ -118,9 +118,8 @@ public final class RenderManager {
         shaderManager.unbind();
     }
 
-    // Assigns the specified block to the next available binding slot.
-    public void bind(SizedShaderBlock<?> block) {
-        uniformBlockState.bind(block);
+    public Model setScreenModel(Model value) {
+        return screen = value;
     }
 
     // Assigns the specified block to the next available binding slot.

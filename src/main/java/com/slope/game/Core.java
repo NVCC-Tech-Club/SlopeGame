@@ -20,8 +20,9 @@ public class Core implements IComponentManager {
     @Override
     public void init() {
         {
-            // Model screen = renderer.setScreenModel(loader.createScreen());
-            // loader.loadVertexObject(screen, 2);
+            Model screen = renderer.setScreenModel(loader.createScreen());
+            screen.update();
+            loader.loadVertexObject(screen, 3);
         }
 
         createGreenTowers();
