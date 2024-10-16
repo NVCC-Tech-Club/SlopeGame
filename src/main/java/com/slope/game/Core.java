@@ -26,6 +26,23 @@ public class Core implements IComponentManager {
 
         createGreenTowers();
 
+<<<<<<< Updated upstream
+=======
+        {
+            final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
+            final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
+
+            frameBuffer.init(width, height);
+        }
+
+        {
+            Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
+            loader.loadVertexObject(screen, 3);
+            //screen.scale(0.5f, 0.5f, 0.5f);
+            screen.update();
+        }
+
+>>>>>>> Stashed changes
         camMatrices.init();
         renderer.init();
         loader.unbind();
@@ -42,7 +59,22 @@ public class Core implements IComponentManager {
         final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
         GL21.glViewport(0, 0, width, height);
+<<<<<<< Updated upstream
         renderer.renderInstances(loader);
+=======
+
+        frameBuffer.bind();
+        graphicsPass();
+        FrameBuffer.unbind();
+
+        renderer.clear();
+        renderer.renderInstances(loader);
+        renderer.renderScreen(1, null, this.loader);
+    }
+
+    public void graphicsPass() {
+        renderer.clear();
+>>>>>>> Stashed changes
     }
 
     @Override
