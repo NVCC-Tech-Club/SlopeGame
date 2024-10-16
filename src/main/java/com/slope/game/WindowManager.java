@@ -43,8 +43,6 @@ class WindowManager {
             throw new IllegalStateException("Window was not created.");
         }
 
-        GLFW.glfwMakeContextCurrent(window.getWindow());
-
         // Create our OpenGL capabilities, meaning our function pointers to our current context.
         GL.createCapabilities();
 
@@ -54,6 +52,10 @@ class WindowManager {
         // We need this since our sphere might just be raymarched
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
+
+        // Have blending between screen and world
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         return window;
     }

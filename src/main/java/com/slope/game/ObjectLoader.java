@@ -29,34 +29,39 @@ public class ObjectLoader implements IGraphics {
     private List<Long> eboList = new ArrayList<Long>();
     private List<Model> loadedModels = new ArrayList<>();
 
-    public Model createScreen() {
+    public Model createScreen(int texIndex) {
         float[] vertices = {
-            -1.0f, -1.0f,
-            1.0f, -1.0f,
-            1.0f, 1.0f,
-            -1.0f, 1.0f
+                -1.0f, 1.0f, 0.0f,
+                -1.0f, -1.0f, 0.0f,
+                1.0f, -1.0f, 0.0f,
+                1.0f, -1.0f, 0.0f,
+                1.0f, 1.0f, 0.0f,
+                -1.0f, 1.0f, 0.0f
         };
 
-        int[] indices = {
-            0, 1, 2,
-            0, 2, 3
-        };
+        // No indices needed.
+        int[] indices = {};
 
         float[] texCoords = {
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f
+                0.0f, 1.0f,  // Top-left corner
+                0.0f, 0.0f,  // Bottom-left corner
+                1.0f, 0.0f,  // Bottom-right corner
+                1.0f, 0.0f,  // Bottom-right corner (again, since it's reused)
+                1.0f, 1.0f,  // Top-right corner
+                0.0f, 1.0f   // Top-left corner (again, since it's reused)
         };
 
         float[] colors = {
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
+                1.0f, 0.0f, 0.0f, 0.5f,
+                1.0f, 0.0f, 0.0f, 0.5f,
+                1.0f, 0.0f, 0.0f, 0.5f,
+                1.0f, 0.0f, 0.0f, 0.5f,
+                1.0f, 0.0f, 0.0f, 0.5f,
+                1.0f, 0.0f, 0.0f, 0.5f
         };
 
-        return new Model(0, vertices, indices, texCoords, colors);
+        Model m = new Model(texIndex, vertices, indices, texCoords, colors);
+        return m;
     }
 
     public Model loadGLTFModel(int texIndex, String filename){
@@ -257,22 +262,20 @@ public class ObjectLoader implements IGraphics {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);  // Vertical wrap
 
         // Set texture filtering options (minification and magnification filters)
-        //GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        //GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 
         STBImage.stbi_image_free(buffer);
-
         return textureID;
     }
 
+    // Get capacity of VAO.
     public int getCapacity() {
         return vaoList.size();
     }
-
-    public int getTextureCapacity() { return textures.size(); }
 
     // Get the left most 32-bit chunk which is our VAO.
     public int getID(int index) {

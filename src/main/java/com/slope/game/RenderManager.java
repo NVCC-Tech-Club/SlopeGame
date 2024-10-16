@@ -3,7 +3,6 @@ package com.slope.game;
 import com.slope.game.objs.SphereObject;
 import com.slope.game.utils.Model;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 import org.lwjgl.opengl.*;
 
 import java.util.Locale;
@@ -36,13 +35,8 @@ public final class RenderManager {
 
     public RenderManager(CameraMatrices camMatrices) {
         this.camMatrices = camMatrices;
-<<<<<<< Updated upstream
-        this.camBlock = new SizedShaderBlock<CameraMatrices>(this, GL_UNIFORM_BUFFER, CameraMatrices.SIZE, CameraMatrices::write);
-=======
-
         this.camBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, CameraMatrices.SIZE, CameraMatrices::write);
         this.sphereBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, SphereObject.SIZE, SphereObject::write);
->>>>>>> Stashed changes
     }
 
     public void init() {
@@ -53,8 +47,9 @@ public final class RenderManager {
             shaderManager.createVertexShader(ResourceLoader.loadFile("shaders/main-vertex.glsl"));
             shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
             shaderManager.link();
-            shaderManager.createUniform("textureSampler");
+            createGameUniforms();
 
+            shaderManager.createShaderProgram();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -62,9 +57,7 @@ public final class RenderManager {
     }
 
     public void renderInstances(ObjectLoader loader) {
-        clear();
         shaderManager.bind();
-        shaderManager.setIntUniform("textureSampler", 0);
         renderCamera();
 
         for(int i=0; i<loader.getModelCapacity(); i++) {
@@ -74,6 +67,12 @@ public final class RenderManager {
             int ID = loader.getID(m.getIndex());
             int indicesCount = loader.getIndicesCount(m.getIndex());
             int textureID = loader.getTextures(m.getTexIndex());
+
+            // Add model matrix
+            shaderManager.setMatrixUniform("model", m.getModelMatrix());
+
+            // Update uniform texture sampler
+            shaderManager.setIntUniform("textureSampler", 0);
 
             // Bind VAO
             GL30.glBindVertexArray(ID);
@@ -114,7 +113,7 @@ public final class RenderManager {
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
             // Unbind the texture.
-            GL21.glBindBuffer(GL15.GL_TEXTURE_2D, 0);
+            GL21.glBindTexture(GL15.GL_TEXTURE_2D, 0);
 
             // Bind VBO for instance-specific data (e.g., instance position)
             // GL20.glEnableVertexAttribArray(1);
@@ -122,9 +121,7 @@ public final class RenderManager {
             // Set the divisor for instance attribute
             // GL33.glVertexAttribDivisor(1, 1);
         }
-
-<<<<<<< Updated upstream
-=======
+      
         unbind(this.camBlock);
         shaderManager.unbind();
     }
@@ -194,7 +191,6 @@ public final class RenderManager {
                 break;
         }
 
->>>>>>> Stashed changes
         shaderManager.unbind();
     }
 
@@ -225,8 +221,6 @@ public final class RenderManager {
         camBlock.set(camMatrices);
         bind("CameraMatrices", this.camBlock);
     }
-<<<<<<< Updated upstream
-=======
 
     public void renderSphere(SphereObject object) {
         sphereBlock.set(object);
@@ -238,5 +232,4 @@ public final class RenderManager {
         shaderManager.setMatrixUniform("model", new Matrix4f().identity());
         shaderManager.createUniform("model");
     }
->>>>>>> Stashed changes
 }

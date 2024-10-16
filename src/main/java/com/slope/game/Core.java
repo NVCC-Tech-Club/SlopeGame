@@ -2,32 +2,24 @@ package com.slope.game;
 
 import com.slope.game.utils.Model;
 import org.lwjgl.opengl.GL21;
-import org.joml.Vector3f;
 
 public class Core implements IComponentManager {
-    private final RenderManager renderer;
-    private final ObjectLoader loader;
+    protected final ObjectLoader loader;
+    protected final RenderManager renderer;
+    protected final FrameBuffer frameBuffer;
     protected final CameraMatrices camMatrices;
-
-    // TODO: Add ComputeShaderManager here.
 
     public Core() {
         camMatrices = new CameraMatrices();
         loader = new ObjectLoader();
         renderer = new RenderManager(camMatrices);
+        frameBuffer = new FrameBuffer();
     }
 
     @Override
     public void init() {
-        {
-            // Model screen = renderer.setScreenModel(loader.createScreen());
-            // loader.loadVertexObject(screen, 2);
-        }
-
         createGreenTowers();
-
-<<<<<<< Updated upstream
-=======
+      
         {
             final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
             final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
@@ -41,8 +33,7 @@ public class Core implements IComponentManager {
             //screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
         }
-
->>>>>>> Stashed changes
+      
         camMatrices.init();
         renderer.init();
         loader.unbind();
@@ -59,9 +50,6 @@ public class Core implements IComponentManager {
         final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
         GL21.glViewport(0, 0, width, height);
-<<<<<<< Updated upstream
-        renderer.renderInstances(loader);
-=======
 
         frameBuffer.bind();
         graphicsPass();
@@ -74,7 +62,8 @@ public class Core implements IComponentManager {
 
     public void graphicsPass() {
         renderer.clear();
->>>>>>> Stashed changes
+        renderer.renderInstances(loader);
+        renderer.renderScreen(this.loader);
     }
 
     @Override
@@ -84,6 +73,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void destroy() {
+        frameBuffer.destroy();
         renderer.destroy();
         loader.destroy();
     }
@@ -94,6 +84,8 @@ public class Core implements IComponentManager {
     private void createGreenTowers() {
         loader.loadTexture("textures/Object.png");
         Model n = loader.loadGLTFModel(0,"src/main/resources/models/ramp.glb");
+        n.rotate(90.0f, 0.0f, 0.0f);
+        n.scale(2.0f, 2.0f, 2.0f);
         n.update();
 
         loader.loadVertexObject(n, 3);

@@ -62,7 +62,6 @@ class Engine {
         WindowManager.init();
         primaryWindow = WindowManager.createMainWindow(0, 0, "Slope Game");
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GLFW.glfwMakeContextCurrent(primaryWindow.getWindow());
         GL.createCapabilities();
 
         game.init();
