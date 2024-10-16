@@ -118,6 +118,13 @@ public class Game extends Core {
     }
 
     @Override
+    public void graphicsPass() {
+        super.graphicsPass();
+
+        renderer.renderScreen(1, this.sphere, this.loader);
+    }
+
+    @Override
     public void update() {
         camMatrices.update(0.05f, 160.0f);
 

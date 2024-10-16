@@ -4,8 +4,7 @@ import com.slope.game.utils.Model;
 import org.lwjgl.opengl.GL21;
 
 public class Core implements IComponentManager {
-    private final ObjectLoader loader;
-
+    protected final ObjectLoader loader;
     protected final RenderManager renderer;
     protected final FrameBuffer frameBuffer;
     protected final CameraMatrices camMatrices;
@@ -31,7 +30,7 @@ public class Core implements IComponentManager {
         {
             Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
             loader.loadVertexObject(screen, 3);
-            //screen.scale(0.5f, 0.5f, 0.5f);
+            screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
         }
 
@@ -52,12 +51,17 @@ public class Core implements IComponentManager {
 
         GL21.glViewport(0, 0, width, height);
 
+        frameBuffer.bind();
+        graphicsPass();
+        FrameBuffer.unbind();
+
         renderer.clear();
         renderer.renderInstances(loader);
+        renderer.renderScreen(0, null, this.loader);
+    }
 
-        frameBuffer.bind();
-        renderer.renderScreen(loader);
-        FrameBuffer.unbind();
+    public void graphicsPass() {
+        renderer.clear();
     }
 
     @Override
