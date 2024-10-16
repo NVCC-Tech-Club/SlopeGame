@@ -35,7 +35,6 @@ public class CameraMatrices {
 
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
-        this.modelViewMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.position = new Vector3f(0.0f, 15.0f, -90.0f);
         this.nearPlane = 0.0f;
@@ -77,10 +76,6 @@ public class CameraMatrices {
         position.add(lookAt, center);
         viewMatrix.identity();
         viewMatrix.lookAt(position, center, LOOK_UP);
-    }
-
-    public void mulModelToView(Matrix4f modelMat) {
-        viewMatrix.mul(modelMat, modelViewMatrix);
     }
 
     public void updateRotationMat() {

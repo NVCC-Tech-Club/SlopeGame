@@ -57,13 +57,12 @@ public class Core implements IComponentManager {
 
         renderer.clear();
         renderer.renderInstances(loader);
-        renderer.renderScreen(1, null, this.loader);
     }
 
     public void graphicsPass() {
         renderer.clear();
         renderer.renderInstances(loader);
-        renderer.renderScreen(this.loader);
+        renderer.renderScreen(1, null, this.loader);
     }
 
     @Override
