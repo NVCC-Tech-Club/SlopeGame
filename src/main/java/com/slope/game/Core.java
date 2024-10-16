@@ -4,9 +4,10 @@ import com.slope.game.utils.Model;
 import org.lwjgl.opengl.GL21;
 
 public class Core implements IComponentManager {
-    private final RenderManager renderer;
     private final ObjectLoader loader;
-    private final FrameBuffer frameBuffer;
+
+    protected final RenderManager renderer;
+    protected final FrameBuffer frameBuffer;
     protected final CameraMatrices camMatrices;
 
     public Core() {

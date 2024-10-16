@@ -1,5 +1,6 @@
 package com.slope.game;
 
+import com.slope.game.objs.SphereObject;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.joml.Math;
@@ -13,12 +14,17 @@ public class Game extends Core {
     // This means I need an object pool to store all platform variations.
 
     // TODO: Probably have an ArrayList for the red obstacles in every platform. (Feeshy Task Only)
-    protected float sensitivity = 0.015f;
-    protected boolean mouseActive = false;
-    protected boolean initialMouseCentering = true;
+    private float sensitivity = 0.015f;
+    private boolean mouseActive = false;
+    private boolean initialMouseCentering = true;
+
+    // Player properties
+    private SphereObject sphere;
     
     public Game() {
         super();
+
+        sphere = new SphereObject(this.camMatrices);
     }
     
     public void move(float dx, float dy, float dz) {

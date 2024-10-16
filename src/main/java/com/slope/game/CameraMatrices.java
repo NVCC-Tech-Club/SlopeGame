@@ -42,8 +42,8 @@ public class CameraMatrices {
 
         this.lookAt = new Vector3f(0.0f, 0.0f, 0.0f);
 
-        this.horizontalAngle = (float) Math.atan2(lookAt.x, lookAt.z);
-        this.verticalAngle = (float) Math.asin(lookAt.y);
+        this.horizontalAngle = Math.atan2(lookAt.x, lookAt.z);
+        this.verticalAngle = Math.asin(lookAt.y);
 
         this.center = new Vector3f(0.0f, 0.0f, 0.0f);
         
@@ -87,4 +87,7 @@ public class CameraMatrices {
         lookAt.set(SIN_X * cos_y, sin_y, cos_y * COS_X);
     }
 
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
+    }
 }
