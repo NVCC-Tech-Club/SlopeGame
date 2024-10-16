@@ -19,7 +19,7 @@ public class Core implements IComponentManager {
     @Override
     public void init() {
         createGreenTowers();
-
+      
         {
             final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
             final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
@@ -30,10 +30,10 @@ public class Core implements IComponentManager {
         {
             Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
             loader.loadVertexObject(screen, 3);
-            screen.scale(0.5f, 0.5f, 0.5f);
+            //screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
         }
-
+      
         camMatrices.init();
         renderer.init();
         loader.unbind();
@@ -51,6 +51,16 @@ public class Core implements IComponentManager {
 
         GL21.glViewport(0, 0, width, height);
 
+        frameBuffer.bind();
+        graphicsPass();
+        FrameBuffer.unbind();
+
+        renderer.clear();
+        renderer.renderInstances(loader);
+        renderer.renderScreen(1, null, this.loader);
+    }
+
+    public void graphicsPass() {
         renderer.clear();
         renderer.renderInstances(loader);
         renderer.renderScreen(this.loader);
@@ -58,8 +68,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void update() {
-        //camMatrices.updateViewMat();
-        camMatrices.update(0.05f, 160.0f);
+        camMatrices.updateViewMat();
     }
 
     @Override
