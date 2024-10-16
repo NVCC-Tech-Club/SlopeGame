@@ -50,7 +50,7 @@ public class SphereObject extends Object {
             }
         }
 
-        // Define indices for sphere rendering
+        
         indices = new int[stacks * sectors * 6]; // 6 indices per quad
         int index = 0;
 
@@ -73,54 +73,54 @@ public class SphereObject extends Object {
     }
 
     private void setupVAO() {
-        // Create VAO
+        // Creating VAO
         vaoID = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vaoID);
     
-        // Create VBO for vertices
+        // Creating VBO for vertices
         vboID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
     
-        // Fill VBO with vertex data
+        // Filling up the VBO with vertex data
         float[] vertexArray = new float[vertices.size()];
         for (int i = 0; i < vertices.size(); i++) {
             vertexArray[i] = vertices.get(i);
         }
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexArray, GL15.GL_STATIC_DRAW);
     
-        // Setup vertex attributes
+        // Setting up the vertex attributes
         GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
         GL20.glEnableVertexAttribArray(0);
     
-        // Create EBO for indices
+        // Creating EBO for indices
         int eboID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, eboID);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
     
-        // Unbind VBO and VAO
+        // Unbinding VBO and VAO
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         GL30.glBindVertexArray(0);
     }
     
 
     public void render() {
-        // Bind shader
+        // Binding shader
         shaderManager.bind();
 
         // Update uniforms if needed
         shaderManager.setMatrixUniform("projection", camMatrices.getProjectionMatrix());
         shaderManager.setMatrixUniform("model", getModelMatrix());
 
-        // Bind VAO
+        // Binding VAO
         GL30.glBindVertexArray(vaoID);
         
-        // Draw the sphere using indices
+        // Drawing the sphere using the indices
         GL30.glDrawElements(GL11.GL_TRIANGLES, indices.length, GL11.GL_UNSIGNED_INT, 0); 
 
         // Unbind VAO
         GL30.glBindVertexArray(0);
         
-        // Optionally unbind shader
+        
         shaderManager.unbind();
     }
 
