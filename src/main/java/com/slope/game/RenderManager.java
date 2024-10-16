@@ -52,70 +52,70 @@ public final class RenderManager {
     }
 
     public void renderInstances(ObjectLoader loader) {
-        shaderManager.bind();
-        renderCamera();
+        // shaderManager.bind();
+        // renderCamera();
 
-        for(int i=0; i<loader.getModelCapacity(); i++) {
+        // for(int i=0; i<loader.getModelCapacity(); i++) {
 
-            // Receive our components
-            Model m = loader.getModel(i);
-            int ID = loader.getID(m.getIndex());
-            int indicesCount = loader.getIndicesCount(m.getIndex());
-            int textureID = loader.getTextures(m.getTexIndex());
+        //     // Receive our components
+        //     Model m = loader.getModel(i);
+        //     int ID = loader.getID(m.getIndex());
+        //     int indicesCount = loader.getIndicesCount(m.getIndex());
+        //     int textureID = loader.getTextures(m.getTexIndex());
 
-            // Add model matrix
-            shaderManager.setMatrixUniform("model", m.getModelMatrix());
+        //     // Add model matrix
+        //     shaderManager.setMatrixUniform("model", m.getModelMatrix());
 
-            // Update uniform texture sampler
-            shaderManager.setIntUniform("textureSampler", 0);
+        //     // Update uniform texture sampler
+        //     shaderManager.setIntUniform("textureSampler", 0);
 
-            // Bind VAO
-            GL30.glBindVertexArray(ID);
+        //     // Bind VAO
+        //     GL30.glBindVertexArray(ID);
 
-            // Bind the element buffer object (EBO) for the indices
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(i));
+        //     // Bind the element buffer object (EBO) for the indices
+        //     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(i));
 
-            // Enable the vertex attribute array.
-            GL20.glEnableVertexAttribArray(0);
+        //     // Enable the vertex attribute array.
+        //     GL20.glEnableVertexAttribArray(0);
 
-            // Enable the texture attribute array.
-            GL20.glEnableVertexAttribArray(1);
+        //     // Enable the texture attribute array.
+        //     GL20.glEnableVertexAttribArray(1);
 
-            // Enable the color attribute array.
-            GL20.glEnableVertexAttribArray(2);
+        //     // Enable the color attribute array.
+        //     GL20.glEnableVertexAttribArray(2);
 
-            // Active our texture.
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        //     // Active our texture.
+        //     GL13.glActiveTexture(GL13.GL_TEXTURE0);
 
-            // Bind our texture.
-            GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
+        //     // Bind our texture.
+        //     GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
 
-            // Draw the vertices as triangles.
-            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+        //     // Draw the vertices as triangles.
+        //     GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
 
-            // Disable our attributes
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL20.glDisableVertexAttribArray(2);
+        //     // Disable our attributes
+        //     GL20.glDisableVertexAttribArray(0);
+        //     GL20.glDisableVertexAttribArray(1);
+        //     GL20.glDisableVertexAttribArray(2);
 
-            // Unbind the VAO to avoid any accidental changes.
-            GL30.glBindVertexArray(0);
+        //     // Unbind the VAO to avoid any accidental changes.
+        //     GL30.glBindVertexArray(0);
 
-            // Unbind the EBO to avoid any accidental changes.
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        //     // Unbind the EBO to avoid any accidental changes.
+        //     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
-            // Unbind the texture.
-            GL21.glBindTexture(GL15.GL_TEXTURE_2D, 0);
+        //     // Unbind the texture.
+        //     GL21.glBindTexture(GL15.GL_TEXTURE_2D, 0);
 
-            // Bind VBO for instance-specific data (e.g., instance position)
-            // GL20.glEnableVertexAttribArray(1);
+        //     // Bind VBO for instance-specific data (e.g., instance position)
+        //     // GL20.glEnableVertexAttribArray(1);
 
-            // Set the divisor for instance attribute
-            // GL33.glVertexAttribDivisor(1, 1);
-        }
+        //     // Set the divisor for instance attribute
+        //     // GL33.glVertexAttribDivisor(1, 1);
+        // }
 
-        unbind(this.camBlock);
-        shaderManager.unbind();
+        // unbind(this.camBlock);
+        // shaderManager.unbind();
     }
 
     public void renderScreen(ObjectLoader loader) {

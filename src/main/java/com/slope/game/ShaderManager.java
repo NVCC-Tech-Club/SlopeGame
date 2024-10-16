@@ -1,17 +1,21 @@
 package com.slope.game;
 
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import org.joml.Matrix4fc;
-import org.joml.Vector2f;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.system.MemoryStack;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL31.*;
-import static org.lwjgl.opengl.GL43.*;
+import org.joml.Matrix4fc;
+import org.joml.Vector2f;
+import org.lwjgl.opengl.GL20;
+import static org.lwjgl.opengl.GL31.GL_INVALID_INDEX;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
+import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BLOCK;
+import static org.lwjgl.opengl.GL43.glGetProgramResourceIndex;
+import static org.lwjgl.opengl.GL43.glShaderStorageBlockBinding;
+import org.lwjgl.system.MemoryStack;
+
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 public class ShaderManager implements IGraphics {
     private static final int BUFFER_SIZE = 1024;

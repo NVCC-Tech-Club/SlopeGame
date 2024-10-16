@@ -1,9 +1,10 @@
 package com.slope.game;
 
-import com.slope.game.objs.SphereObject;
+import org.joml.Math;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.joml.Math;
+
+import com.slope.game.objs.SphereObject;
 
 public class Game extends Core {
     private static final int MAX_PlATFORM_CAPACITY = 10;
@@ -20,11 +21,13 @@ public class Game extends Core {
 
     // Player properties
     private SphereObject sphere;
+    private ShaderManager shaderManager;
     
     public Game() {
         super();
-
-        sphere = new SphereObject(this.camMatrices);
+        
+        
+        sphere = new SphereObject(this.camMatrices, shaderManager);
     }
     
     public void move(float dx, float dy, float dz) {
@@ -90,6 +93,10 @@ public class Game extends Core {
         // TODO: Add stuff above our pre-init to it can get loaded to the renderer. (Feeshy Task Only)
 
         super.init();
+
+        shaderManager = new ShaderManager();
+
+        sphere = new SphereObject(this.camMatrices, shaderManager);
     }
 
     public void checkMouseActive(){
