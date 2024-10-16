@@ -1,10 +1,7 @@
 package com.slope.game;
 
-import com.slope.game.objs.SphereObject;
 import com.slope.game.utils.Model;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.joml.Vector2f;
 import org.lwjgl.opengl.*;
 
 import java.util.Locale;
@@ -28,9 +25,6 @@ public final class RenderManager {
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
 
-    // Sphere Stuff
-    private final SizedShaderBlock<SphereObject> sphereBlock;
-
     // Camera Stuff.
     private final SizedShaderBlock<CameraMatrices> camBlock;
     private final CameraMatrices camMatrices;
@@ -39,7 +33,6 @@ public final class RenderManager {
         this.camMatrices = camMatrices;
 
         this.camBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, CameraMatrices.SIZE, CameraMatrices::write);
-        this.sphereBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, SphereObject.SIZE, SphereObject::write);
     }
 
     public void init() {
@@ -126,33 +119,25 @@ public final class RenderManager {
         shaderManager.unbind();
     }
 
-    public void renderScreen(int programIndex, SphereObject sphere, ObjectLoader loader) {
+    public void renderScreen(ObjectLoader loader) {
         if(screen == null) {
             return;
         }
 
-        shaderManager.bind(programIndex);
+        shaderManager.bind();
 
         int ID = loader.getID(screen.getIndex());
         int textureID = screen.getTexIndex();
 
-        switch(programIndex) {
-            case 0:
-                // Add model matrix
-                camMatrices.projectionMatrix.identity();
-                camMatrices.viewMatrix.identity();
-                renderCamera();
+        // Add model matrix
+        camMatrices.projectionMatrix.identity();
+        camMatrices.viewMatrix.identity();
+        renderCamera();
 
-                shaderManager.setMatrixUniform("model", screen.getModelMatrix());
+        shaderManager.setMatrixUniform("model", screen.getModelMatrix());
 
-                // Update uniform texture sampler
-                shaderManager.setIntUniform("textureSampler", 0);
-
-                break;
-            case 1:
-                renderSphere(sphere);
-                break;
-        }
+        // Update uniform texture sampler
+        shaderManager.setIntUniform("textureSampler", 0);
 
         // Bind VAO
         GL30.glBindVertexArray(ID);
@@ -182,15 +167,7 @@ public final class RenderManager {
         // Unbind the VAO to avoid any accidental changes.
         GL30.glBindVertexArray(0);
 
-        switch(programIndex) {
-            case 0:
-                unbind(this.camBlock);
-                break;
-            case 1:
-                unbind(this.sphereBlock);
-                break;
-        }
-
+        unbind(this.camBlock);
         shaderManager.unbind();
     }
 
@@ -219,11 +196,6 @@ public final class RenderManager {
     private void renderCamera() {
         camBlock.set(camMatrices);
         bind("CameraMatrices", this.camBlock);
-    }
-
-    public void renderSphere(SphereObject object) {
-        sphereBlock.set(object);
-        bind("SphereBlock", this.sphereBlock);
     }
 
     private void createGameUniforms() throws Exception {

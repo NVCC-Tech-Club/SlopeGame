@@ -51,17 +51,9 @@ public class Core implements IComponentManager {
 
         GL21.glViewport(0, 0, width, height);
 
-        frameBuffer.bind();
-        graphicsPass();
-        FrameBuffer.unbind();
-
         renderer.clear();
         renderer.renderInstances(loader);
-        renderer.renderScreen(0, null, this.loader);
-    }
-
-    public void graphicsPass() {
-        renderer.clear();
+        renderer.renderScreen(this.loader);
     }
 
     @Override

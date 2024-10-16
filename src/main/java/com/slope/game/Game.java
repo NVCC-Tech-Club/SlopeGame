@@ -1,6 +1,5 @@
 package com.slope.game;
 
-import com.slope.game.objs.SphereObject;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.joml.Math;
@@ -19,12 +18,12 @@ public class Game extends Core {
     private boolean initialMouseCentering = true;
 
     // Player properties
-    private SphereObject sphere;
+    // private SphereObject sphere;
     
     public Game() {
         super();
 
-        sphere = new SphereObject(this.camMatrices);
+        // sphere = new SphereObject(this.camMatrices);
     }
     
     public void move(float dx, float dy, float dz) {
@@ -115,13 +114,6 @@ public class Game extends Core {
         if (mouseActive) {
             handleMouseInput();
         }
-    }
-
-    @Override
-    public void graphicsPass() {
-        super.graphicsPass();
-
-        renderer.renderScreen(1, this.sphere, this.loader);
     }
 
     @Override
