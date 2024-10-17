@@ -137,6 +137,9 @@ public final class RenderManager {
         int ID = loader.getID(screen.getIndex());
         int textureID = screen.getTexIndex();
 
+        // Bind VAO
+        GL30.glBindVertexArray(ID);
+
         switch(programIndex) {
             case 0:
 
@@ -150,19 +153,16 @@ public final class RenderManager {
 
                 // Update uniform texture sampler
                 shaderManager.setIntUniform("textureSampler", 0);
+                GL20.glEnableVertexAttribArray(1);
+                GL20.glEnableVertexAttribArray(2);
                 break;
             case 1:
                 //renderSphere(sphere);
                 break;
         }
 
-        // Bind VAO
-        GL30.glBindVertexArray(ID);
-
         // Enable the vertex attribute array.
         GL20.glEnableVertexAttribArray(0);
-        GL20.glEnableVertexAttribArray(1);
-        GL20.glEnableVertexAttribArray(2);
 
         // Active our texture.
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -175,8 +175,6 @@ public final class RenderManager {
 
         // Disable our attributes
         GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
-        GL20.glDisableVertexAttribArray(2);
 
         // Unbind the texture.
         GL21.glBindTexture(GL21.GL_TEXTURE_2D, 0);
@@ -187,6 +185,8 @@ public final class RenderManager {
         switch(programIndex) {
             case 0:
                 unbind(this.camBlock);
+                GL20.glDisableVertexAttribArray(1);
+                GL20.glDisableVertexAttribArray(2);
                 break;
             case 1:
                 //unbind(this.sphereBlock);
