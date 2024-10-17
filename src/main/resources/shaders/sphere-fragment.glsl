@@ -11,12 +11,13 @@ in vec3 position;
 
 const float FOV = 1.0;
 
+uniform vec3 camPosition;
+
 layout(std140) uniform SphereBlock {
     mat4 projectionMatrix;
     mat4 modelMatrix;
     vec2 resolution;
     mat4 viewMatrix;
-    vec3 camPosition;
 } SphBlock;
 
 struct ray {
@@ -54,13 +55,13 @@ vec2 getUV(vec2 rayOffset) {
 }
 
 vec4 render(vec2 uv) {
-    vec3 ro = vec3(0.0, 0.0, -1.1);
+    vec3 ro = vec3(0.0, 15.0, -90.0);
     vec3 rd = normalize(normalize(vec3(uv, FOV)));
 
     ray r = ray(ro, rd);
     float distance = 0.0;
 
-    if (hit_sphere(r, 1.0, distance)) {
+    if (hit_sphere(r, 85.0, distance)) {
         return vec4(1.0, 0.0, 0.0, 1.0);
     }
 

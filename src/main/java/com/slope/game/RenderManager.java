@@ -157,6 +157,8 @@ public final class RenderManager {
                 GL20.glEnableVertexAttribArray(2);
                 break;
             case 1:
+                shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
+
                 sphere.updateResolution();
                 renderSphere(sphere);
                 break;
@@ -233,6 +235,10 @@ public final class RenderManager {
         shaderManager.createUniform("textureSampler");
         shaderManager.setMatrixUniform("model", new Matrix4f().identity());
         shaderManager.createUniform("model");
+
+
+        shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
+        shaderManager.createUniform(1, "camPosition");
     }
 
     private void link(int index) {

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.joml.Matrix4fc;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
@@ -54,9 +55,11 @@ public class ShaderManager implements IGraphics {
     }
 
     public void setVec2Uniform(CharSequence name, Vector2f value) {
-        try(MemoryStack stack = MemoryStack.stackPush()) {
-            GL20.glUniform2f(uniforms.getOrDefault(name, -1), value.x, value.y);
-        }
+        GL20.glUniform2f(uniforms.getOrDefault(name, -1), value.x, value.y);
+    }
+
+    public void setVec3Uniform(CharSequence name, Vector3f value) {
+        GL20.glUniform3f(uniforms.getOrDefault(name, -1), value.x, value.y, value.z);
     }
 
     public void setMatrixUniform(CharSequence name, Matrix4fc value) {
