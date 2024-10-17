@@ -11,7 +11,8 @@ public class SphereObject extends Object {
             Float.BYTES * 16 +
             Float.BYTES * 16 +
             Float.BYTES * 2 +
-            Float.BYTES * 16;
+            Float.BYTES * 16 +
+            Float.BYTES * 3;
 
     private final CameraMatrices camMatrices;
     private final Vector2f resolution;
@@ -30,6 +31,7 @@ public class SphereObject extends Object {
         getModelMatrix().get(Float.BYTES * 16, buffer);
         resolution.get(Float.BYTES * 32, buffer);
         camMatrices.getViewMatrix().get(Float.BYTES * 34, buffer);
+        camMatrices.getPosition().get(Float.BYTES * 50, buffer);
     }
 
     public void updateResolution() {

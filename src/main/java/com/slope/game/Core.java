@@ -30,7 +30,7 @@ public class Core implements IComponentManager {
         {
             Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
             loader.loadVertexObject(screen, 3);
-            screen.scale(0.5f, 0.5f, 0.5f);
+            //screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
         }
 

@@ -90,4 +90,6 @@ public class CameraMatrices {
     }
 
     public Matrix4f getViewMatrix() { return viewMatrix; }
+
+    public Vector3f getPosition() { return position; }
 }
