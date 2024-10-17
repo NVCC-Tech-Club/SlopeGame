@@ -11,12 +11,12 @@ import org.lwjgl.opengl.GL30;
 
 import com.slope.game.CameraMatrices;
 import com.slope.game.ShaderManager;
-import com.slope.game.FrameBuffer; // Import your FrameBuffer class
+import com.slope.game.FrameBuffer; 
 
 public class SphereObject extends Object {
     private CameraMatrices camMatrices;
     private ShaderManager shaderManager;
-    private FrameBuffer frameBuffer; // Add FrameBuffer field
+    private FrameBuffer frameBuffer; 
     private int vaoID, vboID;
     private List<Float> vertices;
     private int[] indices;
@@ -24,7 +24,7 @@ public class SphereObject extends Object {
     public SphereObject(CameraMatrices camMatrices, ShaderManager shaderManager, FrameBuffer frameBuffer) {
         this.camMatrices = camMatrices;
         this.shaderManager = shaderManager;
-        this.frameBuffer = frameBuffer; // Initialize FrameBuffer
+        this.frameBuffer = frameBuffer; // Initializing FrameBuffer
         createSphere(1.0f, 36, 18); // radius, sectors, stacks
         setupVAO(); // Set up the VAO and VBO
     }
