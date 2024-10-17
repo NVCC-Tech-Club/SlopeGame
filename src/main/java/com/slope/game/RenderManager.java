@@ -25,6 +25,7 @@ public final class RenderManager {
     private Model screen;
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
+    private int __dirtyLink = -1;
 
     // Sphere Stuff
     private final SizedShaderBlock<SphereObject> sphereBlock;
@@ -49,7 +50,7 @@ public final class RenderManager {
             shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
             shaderManager.createVertexShader(1, ResourceLoader.loadShader("shaders/sphere-vertex.glsl"));
             shaderManager.createFragmentShader(1, ResourceLoader.loadShader("shaders/sphere-fragment.glsl"));
-            shaderManager.link();
+            link(0);
             createGameUniforms();
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,6 +59,7 @@ public final class RenderManager {
     }
 
     public void renderInstances(ObjectLoader loader) {
+        link(0);
         shaderManager.bind();
         camMatrices.update(0.05f, 160.0f);
         renderCamera();
@@ -130,12 +132,14 @@ public final class RenderManager {
             return;
         }
 
+        link(programIndex);
         shaderManager.bind(programIndex);
         int ID = loader.getID(screen.getIndex());
         int textureID = screen.getTexIndex();
 
         switch(programIndex) {
             case 0:
+
                 // Add model matrix
                 camMatrices.projectionMatrix.identity();
                 camMatrices.viewMatrix.identity();
@@ -148,7 +152,7 @@ public final class RenderManager {
                 shaderManager.setIntUniform("textureSampler", 0);
                 break;
             case 1:
-                renderSphere(sphere);
+                //renderSphere(sphere);
                 break;
         }
 
@@ -185,7 +189,7 @@ public final class RenderManager {
                 unbind(this.camBlock);
                 break;
             case 1:
-                unbind(this.sphereBlock);
+                //unbind(this.sphereBlock);
                 break;
         }
 
@@ -228,5 +232,19 @@ public final class RenderManager {
         shaderManager.createUniform("textureSampler");
         shaderManager.setMatrixUniform("model", new Matrix4f().identity());
         shaderManager.createUniform("model");
+    }
+
+    private void link(int index) {
+        if(__dirtyLink == index) {
+            return;
+        }
+
+        __dirtyLink = index;
+
+        try {
+            shaderManager.link(index);
+        }catch (Exception e) {
+            return;
+        }
     }
 }
