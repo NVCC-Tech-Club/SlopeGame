@@ -118,7 +118,10 @@ public class Game extends Core {
     }
 
     public void graphicsPass() {
+        super.graphicsPass();
+        
         //renderer.renderScreen(1, null, this.loader);
+        renderer.renderInstances(loader);
     }
 
     @Override

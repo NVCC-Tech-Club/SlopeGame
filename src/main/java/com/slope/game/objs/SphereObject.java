@@ -16,7 +16,7 @@ public class SphereObject extends Object {
     }
 
     public void write(ByteBuffer buffer) {
-        //camMatrices.getProjectionMatrix().get(0, buffer);
-        //getModelMatrix().get(Float.BYTES * 16, buffer);
+        camMatrices.getProjectionMatrix().get(0, buffer);
+        getModelMatrix().get(Float.BYTES * 16, buffer);
     }
 }

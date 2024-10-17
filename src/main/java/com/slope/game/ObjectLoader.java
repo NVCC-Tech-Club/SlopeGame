@@ -52,12 +52,12 @@ public class ObjectLoader implements IGraphics {
         };
 
         float[] colors = {
-                1.0f, 0.0f, 0.0f, 0.5f,
-                1.0f, 0.0f, 0.0f, 0.5f,
-                1.0f, 0.0f, 0.0f, 0.5f,
-                1.0f, 0.0f, 0.0f, 0.5f,
-                1.0f, 0.0f, 0.0f, 0.5f,
-                1.0f, 0.0f, 0.0f, 0.5f
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f
         };
 
         Model m = new Model(texIndex, vertices, indices, texCoords, colors);

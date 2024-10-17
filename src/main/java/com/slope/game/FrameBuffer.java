@@ -31,7 +31,7 @@ public class FrameBuffer {
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, texture, 0);
 
         // Check if FBO is complete
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
+        //GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
         if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
             System.out.println("Framebuffer not complete!");
             System.exit(1);
