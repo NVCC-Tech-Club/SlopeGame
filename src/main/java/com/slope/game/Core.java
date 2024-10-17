@@ -18,8 +18,6 @@ public class Core implements IComponentManager {
 
     @Override
     public void init() {
-        createGreenTowers();
-      
         {
             final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
             final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
@@ -27,13 +25,15 @@ public class Core implements IComponentManager {
             frameBuffer.init(width, height);
         }
 
+        createGreenTowers();
+
         {
             Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
             loader.loadVertexObject(screen, 3);
-            //screen.scale(0.5f, 0.5f, 0.5f);
+            screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
         }
-      
+
         camMatrices.init();
         renderer.init();
         loader.unbind();
@@ -57,12 +57,11 @@ public class Core implements IComponentManager {
 
         renderer.clear();
         renderer.renderInstances(loader);
+        renderer.renderScreen(0, null, loader);
     }
 
     public void graphicsPass() {
         renderer.clear();
-        renderer.renderInstances(loader);
-        renderer.renderScreen(1, null, this.loader);
     }
 
     @Override
@@ -81,12 +80,14 @@ public class Core implements IComponentManager {
     // These are background objects that can't be interacted with the game in any way.
     // That's why they are in the Core Class rather than the Game Class.
     private void createGreenTowers() {
-        loader.loadTexture("textures/Object.png");
-        Model n = loader.loadGLTFModel(0,"src/main/resources/models/ramp.glb");
-        n.rotate(90.0f, 0.0f, 0.0f);
-        n.scale(2.0f, 2.0f, 2.0f);
-        n.update();
+        {
+            loader.loadTexture("textures/Object.png");
+            Model n = loader.loadGLTFModel(0, "src/main/resources/models/ramp.glb");
+            n.rotate(90.0f, 0.0f, 0.0f);
+            n.scale(2.0f, 2.0f, 2.0f);
+            n.update();
 
-        loader.loadVertexObject(n, 3);
+            loader.loadVertexObject(n, 3);
+        }
     }
 }

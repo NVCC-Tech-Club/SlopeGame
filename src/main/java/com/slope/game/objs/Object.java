@@ -22,6 +22,12 @@ public abstract class Object {
         this.modelMatrix = new Matrix4f();
     }
 
+    public void setPosition(float x, float y, float z) {
+        position.x = x;
+        position.y = y;
+        position.z = z;
+    }
+
     public void rotate(float x, float y, float z) {
         rotation.x = x;
         rotation.y = y;

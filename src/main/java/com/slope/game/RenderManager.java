@@ -49,7 +49,7 @@ public final class RenderManager {
             shaderManager.link();
             createGameUniforms();
 
-            shaderManager.createShaderProgram();
+            //shaderManager.createShaderProgram();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -58,6 +58,7 @@ public final class RenderManager {
 
     public void renderInstances(ObjectLoader loader) {
         shaderManager.bind();
+        camMatrices.update(0.05f, 160.0f);
         renderCamera();
 
         for(int i=0; i<loader.getModelCapacity(); i++) {
@@ -129,7 +130,6 @@ public final class RenderManager {
         }
 
         shaderManager.bind(programIndex);
-
         int ID = loader.getID(screen.getIndex());
         int textureID = screen.getTexIndex();
 
@@ -140,11 +140,11 @@ public final class RenderManager {
                 camMatrices.viewMatrix.identity();
                 renderCamera();
 
+                // Add model matrix
                 shaderManager.setMatrixUniform("model", screen.getModelMatrix());
 
                 // Update uniform texture sampler
                 shaderManager.setIntUniform("textureSampler", 0);
-
                 break;
             case 1:
                 renderSphere(sphere);
@@ -163,7 +163,7 @@ public final class RenderManager {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
 
         // Bind our texture.
-        GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, 2);
 
         // Draw the vertices as triangles.
         GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
@@ -214,7 +214,6 @@ public final class RenderManager {
     }
 
     private void renderCamera() {
-        camMatrices.update(0.05f, 160.0f);
         camBlock.set(camMatrices);
         bind("CameraMatrices", this.camBlock);
     }
