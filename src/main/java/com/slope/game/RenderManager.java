@@ -44,12 +44,13 @@ public final class RenderManager {
         uniformBlockState = new UniformBlockState(shaderManager);
 
         try {
-            shaderManager.createVertexShader(ResourceLoader.loadFile("shaders/main-vertex.glsl"));
-            shaderManager.createFragmentShader(ResourceLoader.loadFile("shaders/main-fragment.glsl"));
+            shaderManager.createShaderProgram();
+            shaderManager.createVertexShader(ResourceLoader.loadShader("shaders/main-vertex.glsl"));
+            shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
+            shaderManager.createVertexShader(1, ResourceLoader.loadShader("shaders/sphere-vertex.glsl"));
+            shaderManager.createFragmentShader(1, ResourceLoader.loadShader("shaders/sphere-fragment.glsl"));
             shaderManager.link();
             createGameUniforms();
-
-            //shaderManager.createShaderProgram();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
