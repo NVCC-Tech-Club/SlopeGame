@@ -9,12 +9,7 @@ import com.slope.game.objs.SphereObject;
 public class Game extends Core {
     private static final int MAX_PlATFORM_CAPACITY = 10;
 
-    // TODO: Also add multiple Fixed Sized Queues here for platforms and red block pillars. (Feeshy Task Only)
-    // NOTE: I will have to create my own Fixed Size Queue class that uses LWJGL's direct memory components to
-    // allocate and deallocate my capacity and map memory to it like I was in C.
-    // This means I need an object pool to store all platform variations.
-
-    // TODO: Probably have an ArrayList for the red obstacles in every platform. (Feeshy Task Only)
+    // Sensitivity and Mouse States
     private float sensitivity = 0.015f;
     private boolean mouseActive = false;
     private boolean initialMouseCentering = true;
@@ -22,14 +17,13 @@ public class Game extends Core {
     // Player properties
     private SphereObject sphere;
     private ShaderManager shaderManager;
-    
+    private FrameBuffer frameBuffer; // Declare FrameBuffer
+
+    // Constructor
     public Game() {
         super();
-        
-        
-        sphere = new SphereObject(this.camMatrices, shaderManager);
     }
-    
+
     public void move(float dx, float dy, float dz) {
         camMatrices.position.add(dx, dy, dz);
     }
@@ -81,28 +75,31 @@ public class Game extends Core {
             camMatrices.verticalAngle = Math.clamp(camMatrices.verticalAngle, Math.toRadians(-89.0f), Math.toRadians(89.0f));
 
             camMatrices.lookAt.set(
-                    (float) (Math.cos(camMatrices.verticalAngle) * Math.sin(camMatrices.horizontalAngle)),
-                    (float) Math.sin(camMatrices.verticalAngle),
-                    (float) (Math.cos(camMatrices.verticalAngle) * Math.cos(camMatrices.horizontalAngle)));
+                (float) (Math.cos(camMatrices.verticalAngle) * Math.sin(camMatrices.horizontalAngle)),
+                (float) Math.sin(camMatrices.verticalAngle),
+                (float) (Math.cos(camMatrices.verticalAngle) * Math.cos(camMatrices.horizontalAngle))
+            );
         }
         window.setMousePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
     }
 
     @Override
     public void init() {
-        // TODO: Add stuff above our pre-init to it can get loaded to the renderer. (Feeshy Task Only)
-
         super.init();
 
+        // Initialize ShaderManager and FrameBuffer
         shaderManager = new ShaderManager();
+        frameBuffer = new FrameBuffer(); // Initialize the FrameBuffer
+        frameBuffer.init(800, 600); // Set the size for FrameBuffer, adjust as necessary
 
-        sphere = new SphereObject(this.camMatrices, shaderManager);
+        // Now pass the FrameBuffer to SphereObject
+        sphere = new SphereObject(this.camMatrices, shaderManager, frameBuffer);
     }
 
-    public void checkMouseActive(){
+    public void checkMouseActive() {
         Window window = Engine.getMain().getPrimaryWindow();
 
-        //HOLD SPACEBAR TO MOVE CAMERA DIRECTION (might change later cuz idk a better way to do it atm).
+        // Hold SPACEBAR to move camera direction
         if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
             if (!mouseActive) {
                 mouseActive = true;
