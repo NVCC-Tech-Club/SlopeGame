@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL21;
 import org.lwjgl.system.MemoryUtil;
 
-class Window {
+public class Window {
     private int width;
     private int height;
     private int[] framebufferWidth;

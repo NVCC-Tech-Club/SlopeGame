@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 // This class is responsible for the main loop of the game, physics, rendering, etc.
 // All the game logic will be handled here.
-class Engine {
+public class Engine {
     private static Engine main = null; // The main game engine component.
     private static boolean initialized = false; // Whether or not the application has already been initialized.
 

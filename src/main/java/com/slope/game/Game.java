@@ -90,6 +90,7 @@ public class Game extends Core {
         // TODO: Add stuff above our pre-init to it can get loaded to the renderer. (Feeshy Task Only)
 
         super.init();
+        sphere.init();
     }
 
     public void checkMouseActive(){
@@ -120,7 +121,7 @@ public class Game extends Core {
     public void graphicsPass() {
         super.graphicsPass();
 
-        renderer.renderScreen(1, null, this.loader);
+        renderer.renderScreen(1, this.sphere, this.loader);
         //renderer.renderInstances(loader);
     }
 

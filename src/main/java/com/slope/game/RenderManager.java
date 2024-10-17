@@ -157,7 +157,8 @@ public final class RenderManager {
                 GL20.glEnableVertexAttribArray(2);
                 break;
             case 1:
-                //renderSphere(sphere);
+                sphere.updateResolution();
+                renderSphere(sphere);
                 break;
         }
 
@@ -189,7 +190,7 @@ public final class RenderManager {
                 GL20.glDisableVertexAttribArray(2);
                 break;
             case 1:
-                //unbind(this.sphereBlock);
+                unbind(this.sphereBlock);
                 break;
         }
 

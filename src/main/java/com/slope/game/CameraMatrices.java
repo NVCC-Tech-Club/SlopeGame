@@ -88,4 +88,6 @@ public class CameraMatrices {
     public Matrix4f getProjectionMatrix() {
         return projectionMatrix;
     }
+
+    public Matrix4f getViewMatrix() { return viewMatrix; }
 }
