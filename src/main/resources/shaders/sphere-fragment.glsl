@@ -35,17 +35,17 @@ struct march {
     int steps;
 };
 
-bool hit_sphere(ray r, float radius, inout float distance) {
-    vec3 oc = r.origin;
+bool hit_sphere(ray r, vec3 center, float radius, inout float distance) {
+    vec3 oc = r.origin - center;
     float A = dot(r.direction, r.direction);
-    float B = dot(r.direction, oc);
+    float B = dot(oc, r.direction);
     float C = dot(oc, oc) - radius * radius;
-    float discriminant = B*B - 4*A*C;
+    float discriminant = B*B - A*C;
 
     if (discriminant < 0.0) {
         return false;
     } else {
-        distance = (-B - sqrt(discriminant)) / (2.0 * A);
+        distance = (-B - sqrt(discriminant)) / A;
         return true;
     }
 }
@@ -55,23 +55,26 @@ vec2 getUV(vec2 rayOffset) {
 }
 
 vec4 render(vec2 uv) {
-    vec3 ro = vec3(0.0, 15.0, -90.0);
-    vec3 rd = normalize(normalize(vec3(uv, FOV)));
+    // Camera position
+    vec3 ro = camPosition;
+    
+    // Convert UV to ray direction
+    vec3 rd = normalize(vec3(uv, FOV));
 
     ray r = ray(ro, rd);
     float distance = 0.0;
 
-    if (hit_sphere(r, 85.0, distance)) {
-        return vec4(1.0, 0.0, 0.0, 1.0);
+    // Sphere position and radius
+    vec3 spherePos = vec3(0.0, 0.0, -10.0);  // Place the sphere in front of the camera
+    float sphereRadius = 85.0;
+    
+    if (hit_sphere(r, spherePos, sphereRadius, distance)) {
+        return vec4(1.0, 0.0, 0.0, 1.0);  // Red color for the sphere
     }
 
-    return vec4(0.0);
+    return vec4(0.0);  // Background color (black)
 }
 
 void main() {
-    sphere sp = sphere(vec3(0.0), 1.0f);
-    //sp.position = vec3(0.0);
-    //sp.radius = 1.0f;
     fragColor = render(getUV(vec2(0.0)));
-    //fragColor = vec4(getUV(vec2(0.0)), 0.0, 1.0);
 }

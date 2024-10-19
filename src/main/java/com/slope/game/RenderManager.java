@@ -1,13 +1,19 @@
 package com.slope.game;
 
-import com.slope.game.objs.SphereObject;
-import com.slope.game.utils.Model;
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.*;
-
 import java.util.Locale;
 
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL21;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL31;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+
+import com.slope.game.objs.SphereObject;
+import com.slope.game.utils.Model;
 
 public final class RenderManager {
     // Nice utils to have
@@ -237,8 +243,8 @@ public final class RenderManager {
         shaderManager.createUniform("model");
 
 
-        shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
-        shaderManager.createUniform(1, "camPosition");
+        // shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
+        // shaderManager.createUniform(1, "camPosition");
     }
 
     private void link(int index) {
