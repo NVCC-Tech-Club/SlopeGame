@@ -7,71 +7,71 @@
 #define TAU PI * 2.0
 
 out vec4 fragColor;
-in vec3 position;
 
-const float FOV = 1.0;
-
-uniform vec3 camPosition;
+const float FOV = 1.0; 
 
 layout(std140) uniform SphereBlock {
-    mat4 projectionMatrix;
+    mat4 projectionMatrix;  
     mat4 modelMatrix;
-    vec2 resolution;
-    mat4 viewMatrix;
-} SphBlock;
+    vec2 resolution;        
+    mat4 viewMatrix;        
+};
+
+
 
 struct ray {
     vec3 origin;
     vec3 direction;
 };
 
-struct sphere {
-    vec3 position;
-    float radius;
-};
 
-struct march {
-    float dist;
-    int steps;
-};
-
-bool hit_sphere(ray r, float radius, inout float distance) {
-    vec3 oc = r.origin;
+bool hit_sphere(ray r, vec3 center, float radius, inout float distance) {
+    vec3 oc = r.origin - center;
     float A = dot(r.direction, r.direction);
-    float B = dot(r.direction, oc);
+    float B = dot(oc, r.direction);
     float C = dot(oc, oc) - radius * radius;
-    float discriminant = B*B - 4*A*C;
+    float discriminant = B * B - A * C;
 
     if (discriminant < 0.0) {
         return false;
     } else {
-        distance = (-B - sqrt(discriminant)) / (2.0 * A);
+        distance = (-B - sqrt(discriminant)) / A;
         return true;
     }
 }
 
-vec2 getUV(vec2 rayOffset) {
-    return (2.0 * (gl_FragCoord.xy + rayOffset) - SphBlock.resolution.xy) / SphBlock.resolution.y;
+// Function to get normalized UV coordinates
+vec2 getUV() {
+    return (gl_FragCoord.xy / resolution) * 2.0 - 1.0;  // Normalized coordinates between -1 and 1
 }
 
-vec4 render(vec2 uv) {
-    vec3 ro = vec3(0.0, 15.0, -90.0);
-    vec3 rd = normalize(normalize(vec3(uv, FOV)));
+// Function to render the scene
+vec4 render() {
+    vec3 ro = vec3(0.0, 0.0, -5.0); 
+    vec2 uv = getUV();  
+
+    
+    uv.x *= resolution.x / resolution.y ; // Maintain aspect ratio
+
+    // Creating a ray direction, adjusting for the field of view and aspect ratio
+    vec3 rd = normalize(vec3(uv.x * tan(FOV / 2.0), uv.y * tan(FOV / 2.0) * (resolution.y / resolution.x), 1.0));
 
     ray r = ray(ro, rd);
     float distance = 0.0;
 
-    if (hit_sphere(r, 85.0, distance)) {
-        return vec4(1.0, 0.0, 0.0, 1.0);
+    
+    vec3 spherePos = vec3(0.0, 0.0, 0.0);  // origin
+    float sphereRadius = 1.0;
+
+    // Check for intersection with the sphere
+    if (hit_sphere(r, spherePos, sphereRadius, distance)) {
+        return vec4(1.0, 0.0, 0.0, 1.0);  
     }
 
-    return vec4(0.0);
+    return vec4(0.0);  
 }
 
 void main() {
-    sphere sp = sphere(vec3(0.0), 1.0f);
-    //sp.position = vec3(0.0);
-    //sp.radius = 1.0f;
-    fragColor = render(getUV(vec2(0.0)));
-    //fragColor = vec4(getUV(vec2(0.0)), 0.0, 1.0);
+    // Render the scene
+    fragColor = render();
 }
