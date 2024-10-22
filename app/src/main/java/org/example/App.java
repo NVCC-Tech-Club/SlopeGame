@@ -5,6 +5,7 @@ package org.example;
 
 public class App {
     public String getGreeting() {
+        System.out.println("Amongus");
         return "Hello World!";
     }
 
