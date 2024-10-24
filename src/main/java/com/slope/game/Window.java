@@ -18,6 +18,8 @@ public class Window {
     private boolean vsync;
     private float aspectRatio;
 
+    private GLFWFramebufferSizeCallbackI frambufferCallback;
+
     private long window;
 
     public Window(int width, int height, String title) {
@@ -53,6 +55,10 @@ public class Window {
             this.framebufferWidth[0] = width;
             this.framebufferHeight[0] = height;
             this.aspectRatio = (float)width / (float)height;
+
+            if(this.frambufferCallback != null) {
+                this.frambufferCallback.invoke(this.window, this.width << 1, this.height << 1);
+            }
         };
 
         GLFWWindowSizeCallbackI windowSizeCall = (window, width, height) -> {
@@ -79,6 +85,10 @@ public class Window {
 
         // Display our window.
         GLFW.glfwShowWindow(window);
+    }
+
+    public void setFramebufferSizeCall(GLFWFramebufferSizeCallbackI frambufferCallback) {
+        this.frambufferCallback = frambufferCallback;
     }
 
     public boolean shouldClose() {

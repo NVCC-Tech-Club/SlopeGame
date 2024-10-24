@@ -59,11 +59,6 @@ public class Core implements IComponentManager {
         renderer.renderScreen(1, null, loader);
     }
 
-    public void graphicsPass() {
-        renderer.clear();
-        renderer.renderInstances(loader);
-    }
-
     @Override
     public void update() {
         camMatrices.updateViewMat();
@@ -74,6 +69,17 @@ public class Core implements IComponentManager {
         frameBuffer.destroy();
         renderer.destroy();
         loader.destroy();
+    }
+
+    @Override
+    public void onWindowResize(int width, int height) {
+        System.out.println("Hi");
+        frameBuffer.onWindowResize(width, height);
+    }
+
+    public void graphicsPass() {
+        renderer.clear();
+        renderer.renderInstances(loader);
     }
 
 

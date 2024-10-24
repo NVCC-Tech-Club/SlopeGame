@@ -40,6 +40,11 @@ public class FrameBuffer {
         unbind();
     }
 
+    public void onWindowResize(int width, int height) {
+        destroy();
+        init(width, height);
+    }
+
     public int getTextureID() {
         return texture;
     }
@@ -48,7 +53,10 @@ public class FrameBuffer {
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
     }
 
-    public void destroy() { GL30.glDeleteFramebuffers(fbo); }
+    public void destroy() {
+        GL30.glDeleteTextures(texture);
+        GL30.glDeleteFramebuffers(fbo);
+    }
 
     public static void unbind() {
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);

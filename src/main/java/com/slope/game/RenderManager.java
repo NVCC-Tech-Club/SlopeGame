@@ -151,6 +151,14 @@ public final class RenderManager {
         camMatrices.viewMatrix.identity();
         renderCamera();
 
+        // Add model matrix
+        {
+            final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
+            final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
+
+            //shaderManager.setVec2Uniform("resolution", width, height);
+        }
+
         // Update uniform texture sampler
         shaderManager.setIntUniform("textureSampler", 0);
 

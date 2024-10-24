@@ -38,7 +38,6 @@ public class Engine {
 
         main = new Engine();
         initialized = true;
-        
     }
     
     
@@ -60,12 +59,17 @@ public class Engine {
         
         // Initialize window manager and create our window!
         WindowManager.init();
+
+        // Setup Window
         primaryWindow = WindowManager.createMainWindow(0, 0, "Slope Game");
+        primaryWindow.setFramebufferSizeCall((window, width, height) -> {
+            game.onWindowResize(width, height);
+        });
+
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL.createCapabilities();
 
         game.init();
-        
     }
 
     // Overall loop.
