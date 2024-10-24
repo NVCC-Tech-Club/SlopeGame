@@ -7,6 +7,8 @@ import org.joml.Vector2f;
 import java.nio.ByteBuffer;
 
 public class SphereObject extends Object {
+    private static final float AVG_SCALE = (float)Math.sqrt(12);
+
     public static final int SIZE =
             Float.BYTES * 16 +
             Float.BYTES * 16 +
