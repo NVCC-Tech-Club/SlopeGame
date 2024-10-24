@@ -20,12 +20,14 @@ layout(std140) uniform CameraMatrices {
     float farPlane;
 } CamMatrix;
 
+// Source: https://iquilezles.org/articles/distfunctions/
 float sdSphere(vec3 p, float s) {
     return length(p)-s;
 }
 
 
 // Raymarching Algorithm made by Diego Fonseca + various online videos
+// Source for linear view transformation: https://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/
 bool raymarched(vec2 uv, vec2 ndc) {
 
     // Get World View
