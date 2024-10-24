@@ -9,8 +9,6 @@ public class Core implements IComponentManager {
     protected final FrameBuffer frameBuffer;
     protected final CameraMatrices camMatrices;
 
-    private Model screen;
-
     public Core() {
         camMatrices = new CameraMatrices();
         loader = new ObjectLoader();
@@ -30,10 +28,9 @@ public class Core implements IComponentManager {
         createGreenTowers();
 
         {
-            //screen = loader.createScreen(loader.addTexture(frameBuffer.getTextureID()));
-            screen = loader.createScreen(0);
+            Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
             loader.loadVertexObject(screen, 3);
-            //screen.scale(5.0f, 0.5f, 5.0f);
+            //screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
         }
 
@@ -59,11 +56,12 @@ public class Core implements IComponentManager {
         FrameBuffer.unbind();
 
         renderer.clear();
-        renderer.renderSpecific(0, loader, screen);
+        renderer.renderScreen(0, null, loader);
     }
 
     public void graphicsPass() {
         renderer.clear();
+        renderer.renderInstances(loader);
     }
 
     @Override

@@ -20,7 +20,8 @@ out vec4 outColor;
 uniform mat4 model;
 
 void main() {
-    gl_Position = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * model * vec4(pos, 1.0);
+    mat4 u = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * model;
+    gl_Position = u * vec4(pos, 1.0);
     //gl_Position = CamMatrix.viewMatrix * model * vec4(pos, 1.0);
     //color = vec3(pos.x + 0.8, 0.8, pos.y + 0.8);
     fragTexCoords = texCoord;

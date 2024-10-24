@@ -32,24 +32,28 @@ public class ObjectLoader implements IGraphics {
     public Model createScreen(int texIndex) {
         float[] vertices = {
                 -1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
+                -1.0f, -1.0f, 0.0f,
                 1.0f, -1.0f, 0.0f,
-                -1.0f, -1.0f, 0.0f
+                1.0f, -1.0f, 0.0f,
+                1.0f, 1.0f, 0.0f,
+                -1.0f, 1.0f, 0.0f
         };
 
-        int[] indices = {
-            0, 1, 2,
-            2, 3, 0
-        };
+        // No indices needed.
+        int[] indices = {};
 
         float[] texCoords = {
-                0.0f, -1.0f,
-                1.0f, -1.0f,
-                1.0f, 0.0f,
-                0.0f, 0.0f
+                0.0f, 1.0f,  // Top-left corner
+                0.0f, 0.0f,  // Bottom-left corner
+                1.0f, 0.0f,  // Bottom-right corner
+                1.0f, 0.0f,  // Bottom-right corner (again, since it's reused)
+                1.0f, 1.0f,  // Top-right corner
+                0.0f, 1.0f   // Top-left corner (again, since it's reused)
         };
 
         float[] colors = {
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
                 1.0f, 1.0f, 1.0f, 1.0f,
                 1.0f, 1.0f, 1.0f, 1.0f,
                 1.0f, 1.0f, 1.0f, 1.0f,
@@ -266,11 +270,6 @@ public class ObjectLoader implements IGraphics {
 
         STBImage.stbi_image_free(buffer);
         return textureID;
-    }
-
-    public int addTexture(int textureID) {
-        textures.add(textureID);
-        return textures.size() - 1;
     }
 
     // Get capacity of VAO.

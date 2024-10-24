@@ -47,11 +47,11 @@ class WindowManager {
         GL.createCapabilities();
 
         // Have our window screen be black.
-        GL11.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         // We need this since our sphere might just be raymarched
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        //GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_CULL_FACE);
 
         // Have blending between screen and world
         GL11.glEnable(GL11.GL_BLEND);

@@ -36,7 +36,7 @@ public class CameraMatrices {
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
-        this.position = new Vector3f(0.0f, 0.0f, 0.0f);
+        this.position = new Vector3f(0.0f, 15.0f, -90.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 

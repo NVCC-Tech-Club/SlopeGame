@@ -118,12 +118,6 @@ public class Game extends Core {
         }
     }
 
-    public void graphicsPass() {
-        super.graphicsPass();
-
-        renderer.renderInstances(loader);
-    }
-
     @Override
     public void update() {
         camMatrices.updateViewMat();

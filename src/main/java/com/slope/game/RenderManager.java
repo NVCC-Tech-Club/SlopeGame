@@ -28,6 +28,7 @@ public final class RenderManager {
 
     // How the renderer works at runtime.
 
+    private Model screen;
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
     private int __dirtyLink = -1;
@@ -63,20 +64,131 @@ public final class RenderManager {
         }
     }
 
-    public void renderSpecific(int index, ObjectLoader loader, Model m) {
-        renderBegin(index);
-        renderModel(loader, m);
-        renderEnd();
-    }
-
     public void renderInstances(ObjectLoader loader) {
-        renderBegin(0);
+        link(0);
+        shaderManager.bind();
+        camMatrices.update(0.05f, 160.0f);
+        renderCamera();
 
         for(int i=0; i<loader.getModelCapacity(); i++) {
-            renderModel(loader, loader.getModel(i));
+
+            // Receive our components
+            Model m = loader.getModel(i);
+            int ID = loader.getID(m.getIndex());
+            int indicesCount = loader.getIndicesCount(m.getIndex());
+            int textureID = loader.getTextures(m.getTexIndex());
+
+            // Add model matrix
+            shaderManager.setMatrixUniform("model", m.getModelMatrix());
+
+            // Update uniform texture sampler
+            shaderManager.setIntUniform("textureSampler", 0);
+
+            // Bind VAO
+            GL30.glBindVertexArray(ID);
+
+            // Bind the element buffer object (EBO) for the indices
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(i));
+
+            // Enable the vertex attribute array.
+            GL20.glEnableVertexAttribArray(0);
+
+            // Enable the texture attribute array.
+            GL20.glEnableVertexAttribArray(1);
+
+            // Enable the color attribute array.
+            GL20.glEnableVertexAttribArray(2);
+
+            // Active our texture.
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+
+            // Bind our texture.
+            GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
+
+            // Draw the vertices as triangles.
+            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+
+            // Disable our attributes
+            GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(1);
+            GL20.glDisableVertexAttribArray(2);
+
+            // Unbind the VAO to avoid any accidental changes.
+            GL30.glBindVertexArray(0);
+
+            // Unbind the EBO to avoid any accidental changes.
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+            // Unbind the texture.
+            GL21.glBindTexture(GL15.GL_TEXTURE_2D, 0);
+
+            // Bind VBO for instance-specific data (e.g., instance position)
+            // GL20.glEnableVertexAttribArray(1);
+
+            // Set the divisor for instance attribute
+            // GL33.glVertexAttribDivisor(1, 1);
         }
       
-        renderEnd();
+        unbind(this.camBlock);
+        shaderManager.unbind();
+    }
+
+    public void renderScreen(int programIndex, SphereObject sphere, ObjectLoader loader) {
+        if(screen == null) {
+            return;
+        }
+
+        link(programIndex);
+        shaderManager.bind(programIndex);
+        int ID = loader.getID(screen.getIndex());
+        int textureID = screen.getTexIndex();
+
+        // Bind VAO
+        GL30.glBindVertexArray(ID);
+
+        // Add model matrix
+        camMatrices.projectionMatrix.identity();
+        camMatrices.viewMatrix.identity();
+        renderCamera();
+
+        // Add model matrix
+        shaderManager.setMatrixUniform("model", screen.getModelMatrix());
+
+        // Update uniform texture sampler
+        shaderManager.setIntUniform("textureSampler", 0);
+        GL20.glEnableVertexAttribArray(1);
+        GL20.glEnableVertexAttribArray(2);
+
+        // Enable the vertex attribute array.
+        GL20.glEnableVertexAttribArray(0);
+
+        // Active our texture.
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+
+        // Bind our texture.
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
+
+        // Draw the vertices as triangles.
+        GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
+
+        // Disable our attributes
+        GL20.glDisableVertexAttribArray(0);
+
+        // Unbind the texture.
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, 0);
+
+        // Unbind the VAO to avoid any accidental changes.
+        GL30.glBindVertexArray(0);
+
+        unbind(this.camBlock);
+        GL20.glDisableVertexAttribArray(1);
+        GL20.glDisableVertexAttribArray(2);
+
+        shaderManager.unbind();
+    }
+
+    public Model setScreenModel(Model value) {
+        return screen = value;
     }
 
     // Assigns the specified block to the next available binding slot.
@@ -105,73 +217,6 @@ public final class RenderManager {
     public void renderSphere(SphereObject object) {
         sphereBlock.set(object);
         bind("SphereBlock", this.sphereBlock);
-    }
-
-    private void renderModel(ObjectLoader loader, Model m) {
-
-        // Receive our components
-        int ID = loader.getID(m.getIndex());
-        int indicesCount = loader.getIndicesCount(m.getIndex());
-        int textureID = loader.getTextures(m.getTexIndex());
-
-        // Add model matrix
-        shaderManager.setMatrixUniform("model", m.getModelMatrix());
-
-        // Update uniform texture sampler
-        shaderManager.setIntUniform("textureSampler", 0);
-
-        // Bind VAO
-        GL30.glBindVertexArray(ID);
-
-        // Bind the element buffer object (EBO) for the indices
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(m.getIndex()));
-
-        // Enable the vertex attribute array.
-        GL20.glEnableVertexAttribArray(0);
-
-        // Enable the texture attribute array.
-        GL20.glEnableVertexAttribArray(1);
-
-        // Enable the color attribute array.
-        GL20.glEnableVertexAttribArray(2);
-
-        // Active our texture.
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-
-        // Bind our texture.
-        GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
-
-        // Draw the vertices as triangles.
-        GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
-
-        // Disable our attributes
-        GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
-        GL20.glDisableVertexAttribArray(2);
-
-        // Unbind the VAO to avoid any accidental changes.
-        GL30.glBindVertexArray(0);
-
-        // Unbind the EBO to avoid any accidental changes.
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-        // Unbind the texture.
-        GL21.glBindTexture(GL15.GL_TEXTURE_2D, 0);
-    }
-
-    private void renderBegin(int index) {
-        link(0);
-        shaderManager.bind(index);
-        camMatrices.update(0.05f, 160.0f);
-        renderCamera();
-
-        //camMatrices.projectionMatrix.identity();
-        //camMatrices.viewMatrix.identity();
-    }
-
-    private void renderEnd() {
-        unbind(this.camBlock);
-        shaderManager.unbind();
     }
 
     private void createGameUniforms() throws Exception {
