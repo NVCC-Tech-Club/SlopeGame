@@ -24,6 +24,8 @@ float sdSphere( vec3 p, float s) {
     return length(p)-s;
 }
 
+
+// Raymarching Algorithm made by Diego Fonseca + various online videos
 bool raymarched(vec2 uv, vec2 ndc) {
 
     // Get World View
@@ -39,6 +41,7 @@ bool raymarched(vec2 uv, vec2 ndc) {
     float t = 0.0;
 
     // Raymarching
+    // TODO: Instead of MIN and MAX distance use z-near and z-far.
     for(int i=0; i<MAX_STEPS; i++) {
         vec3 p = ro + rd * t;
         float d = sdSphere(p, 10.0);
