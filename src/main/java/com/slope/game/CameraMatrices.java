@@ -15,7 +15,6 @@ public class CameraMatrices {
     public static final int SIZE =
             Float.BYTES * 16 + // The size of our projection matrix.
             Float.BYTES * 16 + // The size of our view matrix.
-            Float.BYTES * 3 + // The size of our camera position.
             Float.BYTES * 2; // The size of our near and far plane.
 
     // Our data sent to the GPU.
@@ -46,7 +45,6 @@ public class CameraMatrices {
         this.verticalAngle = Math.asin(lookAt.y);
 
         this.center = new Vector3f(0.0f, 0.0f, 0.0f);
-        
     }
 
     public void init() {
@@ -57,9 +55,8 @@ public class CameraMatrices {
     public void write(ByteBuffer buffer) {
         this.projectionMatrix.get(0, buffer);
         this.viewMatrix.get(Float.BYTES * 16, buffer);
-        this.position.get(Float.BYTES * 32, buffer);
-        buffer.putFloat(Float.BYTES * 35, this.nearPlane);
-        buffer.putFloat(Float.BYTES * 36, this.farPlane);
+        buffer.putFloat(Float.BYTES * 32, this.nearPlane);
+        buffer.putFloat(Float.BYTES * 33, this.farPlane);
     }
 
     // @param zFar (datatype: float) -> The far clipping plane of the camera.

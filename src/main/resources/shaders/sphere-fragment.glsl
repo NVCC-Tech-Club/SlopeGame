@@ -1,8 +1,8 @@
 #version 410 core
 
 #define MAX_STEPS 80
-#define MIN_DIST 0.001
-#define MAX_DIST 100.0
+#define MIN_DIST 0.05
+#define MAX_DIST 160.0
 
 in vec3 color;
 in vec2 fragTexCoords;
@@ -15,7 +15,6 @@ uniform vec2 iResolution;
 layout(std140) uniform CameraMatrices {
     mat4 projectionMatrix;
     mat4 viewMatrix;
-    vec3 position;
     float nearPlane;
     float farPlane;
 } CamMatrix;
@@ -38,9 +37,16 @@ float sdSphere( vec3 p, float s) {
     return length(p)-s;
 }
 
-bool raymarched(vec2 uv) {
-    vec3 ro = CamMatrix.position - vec3(0, 0, -3);
-    vec3 rd = normalize(normalize(vec3(uv, 1.0)) * 1);
+bool raymarched(vec2 uv, vec2 ndc) {
+
+    // Get World View
+    vec4 clipSpacePos = vec4(ndc, -1.0, 1.0);
+    vec4 viewSpacePos = inverse(CamMatrix.projectionMatrix) * clipSpacePos;
+    viewSpacePos /= viewSpacePos.w;
+
+    // Ray Marching
+    vec3 ro = vec3(0, 0, -90);
+    vec3 rd = normalize((inverse(CamMatrix.viewMatrix) * vec4(viewSpacePos.xyz, 0.0)).xyz);
 
     // Total distance
     float t = 0.0;
@@ -48,7 +54,7 @@ bool raymarched(vec2 uv) {
     // Raymarching
     for(int i=0; i<MAX_STEPS; i++) {
         vec3 p = ro + rd * t;
-        float d = sdSphere(p, 1.0);
+        float d = sdSphere(p, 10.0);
         t += d;
 
         if(d < MIN_DIST) {
@@ -65,8 +71,11 @@ bool raymarched(vec2 uv) {
 
 void main() {
     vec2 uv = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+    vec2 ndc = (gl_FragCoord.xy / iResolution) * 2.0 - 1.0;
+    float aspectRatio = iResolution.x / iResolution.y;
+    ndc.y *= -1.0;
 
-    bool hit = raymarched(uv);
+    bool hit = raymarched(uv, ndc);
 
     vec4 tex = hit ? vec4(1.0, 0.0, 0.0, 1.0) : texture(textureSampler, fragTexCoords);
     fragColor = tex;
