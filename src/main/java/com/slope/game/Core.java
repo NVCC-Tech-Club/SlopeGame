@@ -56,7 +56,7 @@ public class Core implements IComponentManager {
         FrameBuffer.unbind();
 
         renderer.clear();
-        renderer.renderScreen(0, null, loader);
+        renderer.renderScreen(1, null, loader);
     }
 
     public void graphicsPass() {

@@ -151,16 +151,12 @@ public final class RenderManager {
         camMatrices.viewMatrix.identity();
         renderCamera();
 
-        // Add model matrix
-        shaderManager.setMatrixUniform("model", screen.getModelMatrix());
-
         // Update uniform texture sampler
         shaderManager.setIntUniform("textureSampler", 0);
-        GL20.glEnableVertexAttribArray(1);
-        GL20.glEnableVertexAttribArray(2);
 
         // Enable the vertex attribute array.
         GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(1);
 
         // Active our texture.
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -181,8 +177,8 @@ public final class RenderManager {
         GL30.glBindVertexArray(0);
 
         unbind(this.camBlock);
+        GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
-        GL20.glDisableVertexAttribArray(2);
 
         shaderManager.unbind();
     }
