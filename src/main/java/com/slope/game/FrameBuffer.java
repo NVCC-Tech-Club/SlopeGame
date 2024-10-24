@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 
 public class FrameBuffer {
     private int fbo;
+    private int rbo;
     private int texture;
 
     public FrameBuffer() {
