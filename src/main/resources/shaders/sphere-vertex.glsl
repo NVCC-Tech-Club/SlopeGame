@@ -1,12 +1,21 @@
-#version 410
+#version 410 core
 
 layout(location = 0) in vec3 pos;
+layout(location = 1) in vec2 texCoord;
+
+layout(std140) uniform CameraMatrices {
+    mat4 projectionMatrix;
+    mat4 viewMatrix;
+    mat3 rotationMatrix;
+    vec3 position;
+    float nearPlane;
+    float farPlane;
+} CamMatrix;
 
 //uniform vec2 resolution;
-
-out vec3 position;
+out vec2 fragTexCoords;
 
 void main() {
-    position = pos;
-    gl_Position = vec4(position, 1.0);
+    fragTexCoords = texCoord;
+    gl_Position = vec4(pos, 1.0);
 }
