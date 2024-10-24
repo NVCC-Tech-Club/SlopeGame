@@ -1,12 +1,61 @@
 #version 410 core
 
+#define MAX_STEPS 80
+#define MIN_DIST 0.001
+#define MAX_DIST 100.0
+
+in vec3 color;
 in vec2 fragTexCoords;
+in vec4 outColor;
 out vec4 fragColor;
 
 uniform sampler2D textureSampler;
+uniform vec2 iResolution;
+
+layout(std140) uniform CameraMatrices {
+    mat4 projectionMatrix;
+    mat4 viewMatrix;
+    mat3 rotationMatrix;
+    vec3 position;
+    float nearPlane;
+    float farPlane;
+} CamMatrix;
+
+float sdSphere( vec3 p, float s )
+{
+    return length(p)-s;
+}
+
+bool raymarched(vec2 uv) {
+    vec3 ro = vec3(0,0,-3);
+    vec3 rd = normalize(vec3(uv, 1));
+
+    // Total distance
+    float t = 0.0;
+
+    // Raymarching
+    for(int i=0; i<MAX_STEPS; i++) {
+        vec3 p = ro + rd * t;
+        float d = sdSphere(p, 1.0);
+        t += d;
+
+        if(d < MIN_DIST) {
+            return true;
+        }
+
+        if(d > MAX_DIST) {
+            return false;
+        }
+    }
+
+    return false;
+}
 
 void main() {
-    // Render the scene
-    vec4 tex = texture(textureSampler, fragTexCoords);
-    fragColor = vec4(tex.r, tex.g, tex.b, tex.a);
+    vec2 uv = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+
+    bool hit = raymarched(uv);
+
+    vec4 tex = hit ? vec4(1.0, 0.0, 0.0, 1.0) : texture(textureSampler, fragTexCoords);
+    fragColor = tex;
 }

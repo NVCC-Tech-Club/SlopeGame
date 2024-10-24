@@ -3,6 +3,7 @@ package com.slope.game;
 import java.util.Locale;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -31,6 +32,7 @@ public final class RenderManager {
     private Model screen;
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
+    private Vector2f resolution;
     private int __dirtyLink = -1;
 
     // Sphere Stuff
@@ -44,11 +46,21 @@ public final class RenderManager {
         this.camMatrices = camMatrices;
         this.camBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, CameraMatrices.SIZE, CameraMatrices::write);
         this.sphereBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, SphereObject.SIZE, SphereObject::write);
+
+        {
+            this.resolution = new Vector2f(0, 0);
+        }
     }
 
     public void init() {
         shaderManager = new ShaderManager();
         uniformBlockState = new UniformBlockState(shaderManager);
+
+        {
+            final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
+            final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
+            this.resolution = new Vector2f(width, height);
+        }
 
         try {
             shaderManager.createShaderProgram();
@@ -56,7 +68,6 @@ public final class RenderManager {
             shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
             shaderManager.createVertexShader(1, ResourceLoader.loadShader("shaders/sphere-vertex.glsl"));
             shaderManager.createFragmentShader(1, ResourceLoader.loadShader("shaders/sphere-fragment.glsl"));
-            link(0);
             createGameUniforms();
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,7 +167,7 @@ public final class RenderManager {
             final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
             final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
 
-            //shaderManager.setVec2Uniform("resolution", width, height);
+            shaderManager.setVec2Uniform("iResolution", resolution);
         }
 
         // Update uniform texture sampler
@@ -223,10 +234,22 @@ public final class RenderManager {
         bind("SphereBlock", this.sphereBlock);
     }
 
+    public void onWindowResize(int width, int height) {
+        resolution.set(width, height);
+    }
+
     private void createGameUniforms() throws Exception {
+        link(0);
+
+        shaderManager.bind(0);
         shaderManager.createUniform("textureSampler");
-        shaderManager.setMatrixUniform("model", new Matrix4f().identity());
         shaderManager.createUniform("model");
+        shaderManager.unbind();
+
+        link(1);
+        shaderManager.bind(1);
+        shaderManager.createUniform(1,"iResolution");
+        shaderManager.unbind();
 
 
         // shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());

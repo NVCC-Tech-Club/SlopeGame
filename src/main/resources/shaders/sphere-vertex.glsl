@@ -14,6 +14,7 @@ layout(std140) uniform CameraMatrices {
 
 //uniform vec2 resolution;
 out vec2 fragTexCoords;
+uniform vec2 resolution;
 
 void main() {
     fragTexCoords = texCoord;

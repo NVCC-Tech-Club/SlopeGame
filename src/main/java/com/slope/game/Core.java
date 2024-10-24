@@ -73,7 +73,7 @@ public class Core implements IComponentManager {
 
     @Override
     public void onWindowResize(int width, int height) {
-        System.out.println("Hi");
+        frameBuffer.onWindowResize(width, height);
         frameBuffer.onWindowResize(width, height);
     }
 

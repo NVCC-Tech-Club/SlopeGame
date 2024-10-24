@@ -19,7 +19,7 @@ class WindowManager {
 
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, 0); // The window will not be visible until we set it to be.
-        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, 1); // The window will be resizable.
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, 0); // The window will be resizable.
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4); // The major version of OpenGL.
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 1); // The minor version of OpenGL.
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE); // The profile of OpenGL.
