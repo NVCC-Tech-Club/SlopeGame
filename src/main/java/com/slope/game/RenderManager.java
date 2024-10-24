@@ -166,6 +166,7 @@ public final class RenderManager {
         // Add resolution vector
         {
             shaderManager.setVec2Uniform("iResolution", resolution);
+            shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
         }
 
         // Update uniform texture sampler
@@ -247,11 +248,8 @@ public final class RenderManager {
         link(1);
         shaderManager.bind(1);
         shaderManager.createUniform(1,"iResolution");
+        shaderManager.createUniform(1, "camPosition");
         shaderManager.unbind();
-
-
-        // shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
-        // shaderManager.createUniform(1, "camPosition");
     }
 
     private void link(int index) {

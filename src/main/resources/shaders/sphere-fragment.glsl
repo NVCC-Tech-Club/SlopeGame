@@ -11,6 +11,7 @@ out vec4 fragColor;
 
 uniform sampler2D textureSampler;
 uniform vec2 iResolution;
+uniform vec3 camPosition;
 
 layout(std140) uniform CameraMatrices {
     mat4 projectionMatrix;
@@ -18,20 +19,6 @@ layout(std140) uniform CameraMatrices {
     float nearPlane;
     float farPlane;
 } CamMatrix;
-
-vec3 viewPosFromDepth(float depth, vec2 uv) {
-    float z = depth * 2.0 - 1.0;
-
-    vec4 positionCS = vec4(uv * 2.0 - 1.0, z, 1.0);
-    vec4 positionVS = CamMatrix.projectionMatrix * positionCS;
-    positionVS /= positionVS.w;
-
-    return positionVS.xyz;
-}
-
-vec3 viewDirFromUv(vec2 uv) {
-    return (CamMatrix.viewMatrix * vec4(normalize(viewPosFromDepth(1.0, uv)), 0.0)).xyz;
-}
 
 float sdSphere( vec3 p, float s) {
     return length(p)-s;
@@ -45,7 +32,7 @@ bool raymarched(vec2 uv, vec2 ndc) {
     viewSpacePos /= viewSpacePos.w;
 
     // Ray Marching
-    vec3 ro = vec3(0, 0, -90);
+    vec3 ro = camPosition;
     vec3 rd = normalize((inverse(CamMatrix.viewMatrix) * vec4(viewSpacePos.xyz, 0.0)).xyz);
 
     // Total distance
@@ -73,7 +60,6 @@ void main() {
     vec2 uv = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
     vec2 ndc = (gl_FragCoord.xy / iResolution) * 2.0 - 1.0;
     float aspectRatio = iResolution.x / iResolution.y;
-    ndc.y *= -1.0;
 
     bool hit = raymarched(uv, ndc);
 
