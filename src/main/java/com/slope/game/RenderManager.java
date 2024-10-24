@@ -78,7 +78,7 @@ public final class RenderManager {
     public void renderInstances(ObjectLoader loader) {
         link(0);
         shaderManager.bind();
-        camMatrices.update(0.05f, 160.0f);
+        camMatrices.update(CameraMatrices.Z_NEAR, CameraMatrices.Z_FAR);
         renderCamera();
 
         for(int i=0; i<loader.getModelCapacity(); i++) {
@@ -160,7 +160,7 @@ public final class RenderManager {
         // Add model matrix
         //camMatrices.projectionMatrix.identity();
         //camMatrices.viewMatrix.identity();
-        camMatrices.update(0.05f, 160.0f);
+        camMatrices.update(CameraMatrices.Z_NEAR, CameraMatrices.Z_FAR);
         renderCamera();
 
         // Add resolution vector
@@ -183,6 +183,10 @@ public final class RenderManager {
 
         // Active our texture 1
         GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, loader.getTextures(0));
+
+        // Active our texture 2
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
         GL21.glBindTexture(GL21.GL_TEXTURE_2D, loader.getTextures(0));
 
         // Draw the vertices as triangles.

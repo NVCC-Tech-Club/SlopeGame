@@ -1,8 +1,6 @@
 #version 410 core
 
 #define MAX_STEPS 80
-#define MIN_DIST 0.05
-#define MAX_DIST 160.0
 #define PI 3.14159265
 #define TAU (2*PI)
 
@@ -99,11 +97,11 @@ bool raymarched(vec2 uv, vec2 ndc, inout vec3 p) {
         float d = sdSphere(p, 3.0);
         t += d;
 
-        if(d < MIN_DIST) {
+        if(d < CamMatrix.nearPlane) {
             return true;
         }
 
-        if(d > MAX_DIST) {
+        if(d > CamMatrix.farPlane) {
             return false;
         }
     }

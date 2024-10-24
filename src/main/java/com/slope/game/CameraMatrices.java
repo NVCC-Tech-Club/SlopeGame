@@ -7,6 +7,9 @@ import java.nio.ByteBuffer;
 
 
 public class CameraMatrices {
+    public static final float Z_NEAR = 0.05f;
+    public static final float Z_FAR = 480.0f;
+
     private static final float COS_X = Math.cos(0);
     private static final float SIN_X = Math.sin(0);
     private static final float FOV = Math.toRadians(45);
@@ -63,6 +66,9 @@ public class CameraMatrices {
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
     
     public void update(float zNear, float zFar) {
+        this.nearPlane = zNear;
+        this.farPlane = zFar;
+
         projectionMatrix.identity();
         projectionMatrix.perspective(FOV, Engine.getMain().getPrimaryWindow().getAspectRatio(), zNear, zFar, false);
     }
