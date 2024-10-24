@@ -170,17 +170,20 @@ public final class RenderManager {
         }
 
         // Update uniform texture sampler
-        shaderManager.setIntUniform("textureSampler", 0);
+        shaderManager.setIntUniform("textureSampler0", 0);
+        shaderManager.setIntUniform("textureSampler1", 1);
 
         // Enable the vertex attribute array.
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
 
-        // Active our texture.
+        // Active our texture 0
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-
-        // Bind our texture.
         GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
+
+        // Active our texture 1
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, loader.getTextures(0));
 
         // Draw the vertices as triangles.
         GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
@@ -249,6 +252,8 @@ public final class RenderManager {
         shaderManager.bind(1);
         shaderManager.createUniform(1,"iResolution");
         shaderManager.createUniform(1, "camPosition");
+        shaderManager.createUniform(1, "textureSampler0");
+        shaderManager.createUniform(1, "textureSampler1");
         shaderManager.unbind();
     }
 
