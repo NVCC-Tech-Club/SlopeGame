@@ -37,17 +37,16 @@ public class ObjectLoader implements IGraphics {
                 -1.0f, -1.0f, 0.0f
         };
 
-        // No indices needed.
         int[] indices = {
             0, 1, 2,
             2, 3, 0
         };
 
         float[] texCoords = {
-                0.0f, -1.0f,  // Top-left corner
-                1.0f, -1.0f,  // Bottom-left corner
-                1.0f, 0.0f,  // Bottom-right corner
-                0.0f, 0.0f,  // Bottom-right corner (again, since it's reused)
+                0.0f, -1.0f,
+                1.0f, -1.0f,
+                1.0f, 0.0f,
+                0.0f, 0.0f
         };
 
         float[] colors = {
