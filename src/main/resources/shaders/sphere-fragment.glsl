@@ -20,7 +20,7 @@ layout(std140) uniform CameraMatrices {
     float farPlane;
 } CamMatrix;
 
-float sdSphere( vec3 p, float s) {
+float sdSphere(vec3 p, float s) {
     return length(p)-s;
 }
 
@@ -62,8 +62,6 @@ bool raymarched(vec2 uv, vec2 ndc) {
 void main() {
     vec2 uv = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
     vec2 ndc = (gl_FragCoord.xy / iResolution) * 2.0 - 1.0;
-    float aspectRatio = iResolution.x / iResolution.y;
-
     bool hit = raymarched(uv, ndc);
 
     vec4 tex = hit ? vec4(1.0, 0.0, 0.0, 1.0) : texture(textureSampler, fragTexCoords);
