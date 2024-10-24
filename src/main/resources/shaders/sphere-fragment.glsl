@@ -21,14 +21,27 @@ layout(std140) uniform CameraMatrices {
     float farPlane;
 } CamMatrix;
 
-float sdSphere( vec3 p, float s )
-{
+vec3 viewPosFromDepth(float depth, vec2 uv) {
+    float z = depth * 2.0 - 1.0;
+
+    vec4 positionCS = vec4(uv * 2.0 - 1.0, z, 1.0);
+    vec4 positionVS = CamMatrix.projectionMatrix * positionCS;
+    positionVS /= positionVS.w;
+
+    return positionVS.xyz;
+}
+
+vec3 viewDirFromUv(vec2 uv) {
+    return (CamMatrix.viewMatrix * vec4(normalize(viewPosFromDepth(1.0, uv)), 0.0)).xyz;
+}
+
+float sdSphere( vec3 p, float s) {
     return length(p)-s;
 }
 
 bool raymarched(vec2 uv) {
-    vec3 ro = vec3(0,0,-3);
-    vec3 rd = normalize(vec3(uv, 1));
+    vec3 ro = CamMatrix.position - vec3(0, 0, -3);
+    vec3 rd = normalize(normalize(vec3(uv, 1.0)) * 1);
 
     // Total distance
     float t = 0.0;

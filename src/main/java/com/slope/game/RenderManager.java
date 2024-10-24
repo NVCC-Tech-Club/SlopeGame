@@ -158,15 +158,13 @@ public final class RenderManager {
         GL30.glBindVertexArray(ID);
 
         // Add model matrix
-        camMatrices.projectionMatrix.identity();
-        camMatrices.viewMatrix.identity();
+        //camMatrices.projectionMatrix.identity();
+        //camMatrices.viewMatrix.identity();
+        camMatrices.update(0.05f, 160.0f);
         renderCamera();
 
-        // Add model matrix
+        // Add resolution vector
         {
-            final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
-            final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
-
             shaderManager.setVec2Uniform("iResolution", resolution);
         }
 

@@ -36,7 +36,7 @@ public class CameraMatrices {
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
-        this.position = new Vector3f(0.0f, 15.0f, -90.0f);
+        this.position = new Vector3f(0.0f, 0.0f, -3.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
@@ -57,9 +57,8 @@ public class CameraMatrices {
     public void write(ByteBuffer buffer) {
         this.projectionMatrix.get(0, buffer);
         this.viewMatrix.get(Float.BYTES * 16, buffer);
-        this.position.get(Float.BYTES * 32, buffer);
-        buffer.putFloat(Float.BYTES * 35, this.nearPlane);
-        buffer.putFloat(Float.BYTES * 36, this.farPlane);
+        buffer.putFloat(Float.BYTES * 19, this.nearPlane);
+        buffer.putFloat(Float.BYTES * 20, this.farPlane);
     }
 
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
