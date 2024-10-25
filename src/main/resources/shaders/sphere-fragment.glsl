@@ -4,7 +4,7 @@
 #define PI 3.14159265
 #define TAU (2*PI)
 
-const vec3 c = vec3(0.0, 0.0, 0.0);
+const vec3 c = vec3(0.0, 5.0, 0.0);
 
 in vec3 color;
 in vec2 fragTexCoords;
@@ -134,11 +134,11 @@ void main() {
         col = texture(textureSampler1, spTexCoord * 6);
 
         float sphDepth = length((p - c) - camPosition);
-        float ndcDepth = 1.0 - (sphDepth - CamMatrix.nearPlane) / (CamMatrix.farPlane - CamMatrix.nearPlane);
+        float ndcDepth = (sphDepth - CamMatrix.nearPlane) / (CamMatrix.farPlane - CamMatrix.nearPlane);
         ndcDepth = clamp(ndcDepth, 0.0, 1.0);
 
-        if(ndcDepth > (1.0 - depth)) {
-            fragColor = sqrt(ndcDepth) * vec4(0.0, col.g, 0.0, col.a);
+        if(ndcDepth < depth) {
+            fragColor = sqrt(1.0 - ndcDepth) * vec4(0.0, col.g, 0.0, col.a);
             return;
         }
     }
