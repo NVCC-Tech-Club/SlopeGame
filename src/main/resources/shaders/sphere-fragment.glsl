@@ -138,10 +138,10 @@ void main() {
         ndcDepth = clamp(ndcDepth, 0.0, 1.0);
 
         if(ndcDepth < depth) {
-            fragColor = sqrt(1.0 - ndcDepth) * vec4(0.0, col.g, 0.0, col.a);
+            fragColor = vec4(0.0, col.g, 0.0, col.a);
             return;
         }
     }
 
-    fragColor = sqrt(1.0 - depth) * tex;
+    fragColor = tex;
 }
