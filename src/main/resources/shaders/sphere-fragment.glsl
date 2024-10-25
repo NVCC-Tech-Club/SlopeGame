@@ -62,7 +62,7 @@ float atan2(in float y, in float x) {
 }
 
 vec2 sphereUV(vec3 p) {
-    p = rotateX(p, 0);
+    p = rotateX(p, PI / 4);
     p = rotateY(p, 0);
     p = rotateZ(p, 0);
 
