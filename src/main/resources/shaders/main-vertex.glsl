@@ -14,10 +14,13 @@ layout(std140) uniform CameraMatrices {
 //out vec3 color;
 out vec2 fragTexCoords;
 out vec4 outColor;
+out vec2 projSpace;
+out float depth;
 
 uniform mat4 model;
 
 void main() {
+    projSpace = vec2(CamMatrix.nearPlane, CamMatrix.farPlane);
     mat4 u = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * model;
     gl_Position = u * vec4(pos, 1.0);
 

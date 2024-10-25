@@ -4,6 +4,8 @@
 #define PI 3.14159265
 #define TAU (2*PI)
 
+const vec3 c = vec3(0.0, 0.0, 0.0);
+
 in vec3 color;
 in vec2 fragTexCoords;
 in vec4 outColor;
@@ -11,6 +13,7 @@ out vec4 fragColor;
 
 uniform sampler2D textureSampler0;
 uniform sampler2D textureSampler1;
+uniform sampler2D textureSampler2;
 uniform vec2 iResolution;
 uniform vec3 camPosition;
 
@@ -94,7 +97,7 @@ bool raymarched(vec2 uv, vec2 ndc, inout vec3 p) {
     // TODO: Instead of MIN and MAX distance use z-near and z-far.
     for(int i=0; i<MAX_STEPS; i++) {
         p = ro + rd * t;
-        float d = sdSphere(p, 3.0);
+        float d = sdSphere(p - c, 3.0);
         t += d;
 
         if(d < CamMatrix.nearPlane) {
@@ -109,20 +112,36 @@ bool raymarched(vec2 uv, vec2 ndc, inout vec3 p) {
     return false;
 }
 
+float LinearizeDepth(float d)  {
+    float z = d * 2.0 - 1.0;
+    return (2.0 * CamMatrix.nearPlane * CamMatrix.farPlane)
+    / (CamMatrix.farPlane + CamMatrix.nearPlane - z * (CamMatrix.farPlane - CamMatrix.nearPlane));
+}
+
 void main() {
     vec3 p = vec3(0.0);
     vec2 uv = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
     vec2 ndc = (gl_FragCoord.xy / iResolution) * 2.0 - 1.0;
     bool hit = raymarched(uv, ndc, p);
     vec4 col = vec4(0.0);
+    float depth = texture(textureSampler2, fragTexCoords).r;
+    vec4 tex = texture(textureSampler0, fragTexCoords);
+
 
     if(hit) {
-        vec3 nor = normalize(p);
+        vec3 nor = normalize(p - c);
         vec2 spTexCoord = sphereUV(nor);
         col = texture(textureSampler1, spTexCoord * 6);
-        fragColor = vec4(0.0, col.g, 0.0, col.a);
-    }else {
-        vec4 tex = texture(textureSampler0, fragTexCoords);
-        fragColor = tex;
+
+        float sphDepth = length((p - c) - camPosition);
+        float ndcDepth = 1.0 - (sphDepth - CamMatrix.nearPlane) / (CamMatrix.farPlane - CamMatrix.nearPlane);
+        ndcDepth = clamp(ndcDepth, 0.0, 1.0);
+
+        if(ndcDepth > (1.0 - depth)) {
+            fragColor = sqrt(ndcDepth) * vec4(0.0, col.g, 0.0, col.a);
+            return;
+        }
     }
+
+    fragColor = sqrt(1.0 - depth) * tex;
 }

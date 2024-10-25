@@ -7,8 +7,6 @@ import org.lwjgl.opengl.GL30;
 import java.nio.ByteBuffer;
 
 public class FrameBuffer {
-    private static final int BIT_16_CAPACITY = 16;
-
     private int fbo;
     private int rbo;
     private int texture;
@@ -48,9 +46,12 @@ public class FrameBuffer {
         // Create texture to attach to RBO
         depthTexture = GL11.glGenTextures();
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, depthTexture);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL21.GL_DEPTH_COMPONENT32, width, height, 0, GL11.GL_DEPTH, GL11.GL_UNSIGNED_INT, (ByteBuffer) null);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL21.GL_DEPTH_COMPONENT32, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, (ByteBuffer) null);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
+        // Attach FBO depth to the actual depth texture
+        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture, 0);
 
         // Check if FBO is complete
         if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
@@ -72,9 +73,12 @@ public class FrameBuffer {
         return texture;
     }
 
+    public int getDepthTexture() { return depthTexture; }
+
     public void bind() {
+        GL30.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
+        //GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
     }
 
     public void destroy() {

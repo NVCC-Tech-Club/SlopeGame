@@ -28,7 +28,9 @@ public class Core implements IComponentManager {
         createGreenTowers();
 
         {
-            Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
+            Model screen = renderer.setScreenModel(loader.createScreen(
+        frameBuffer.getTextureID() | (frameBuffer.getDepthTexture() << ObjectLoader.BIT_16_CAPACITY)
+            ));
             loader.loadVertexObject(screen, 3);
             //screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();

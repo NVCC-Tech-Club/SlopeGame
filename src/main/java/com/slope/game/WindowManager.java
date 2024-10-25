@@ -51,6 +51,8 @@ class WindowManager {
 
         // We need this since our sphere might just be raymarched
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        //GL11.glDepthFunc(GL11.GL_LESS);
+
         GL11.glEnable(GL11.GL_CULL_FACE);
 
         // Have blending between screen and world

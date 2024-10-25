@@ -122,7 +122,7 @@ public final class RenderManager {
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
-            GL20.glDisableVertexAttribArray(2);
+            GL20.glDisableVertexAttribArray(0);
 
             // Unbind the VAO to avoid any accidental changes.
             GL30.glBindVertexArray(0);
@@ -152,14 +152,13 @@ public final class RenderManager {
         link(programIndex);
         shaderManager.bind(programIndex);
         int ID = loader.getID(screen.getIndex());
-        int textureID = screen.getTexIndex();
+        int textureID = screen.getTexIndex() & 0xFF;
+        int depthTextureID = screen.getTexIndex() >> ObjectLoader.BIT_16_CAPACITY;
 
         // Bind VAO
         GL30.glBindVertexArray(ID);
 
         // Add model matrix
-        //camMatrices.projectionMatrix.identity();
-        //camMatrices.viewMatrix.identity();
         camMatrices.update(CameraMatrices.Z_NEAR, CameraMatrices.Z_FAR);
         renderCamera();
 
@@ -172,6 +171,7 @@ public final class RenderManager {
         // Update uniform texture sampler
         shaderManager.setIntUniform("textureSampler0", 0);
         shaderManager.setIntUniform("textureSampler1", 1);
+        shaderManager.setIntUniform("textureSampler2", 2);
 
         // Enable the vertex attribute array.
         GL20.glEnableVertexAttribArray(0);
@@ -187,7 +187,8 @@ public final class RenderManager {
 
         // Active our texture 2
         GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL21.glBindTexture(GL21.GL_TEXTURE_2D, loader.getTextures(0));
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, depthTextureID);
+        //System.out.println(depthTextureID);
 
         // Draw the vertices as triangles.
         GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
@@ -258,6 +259,7 @@ public final class RenderManager {
         shaderManager.createUniform(1, "camPosition");
         shaderManager.createUniform(1, "textureSampler0");
         shaderManager.createUniform(1, "textureSampler1");
+        shaderManager.createUniform(1, "textureSampler2");
         shaderManager.unbind();
     }
 
