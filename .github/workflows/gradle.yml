@@ -90,7 +90,7 @@ jobs:
     #   run: gradle build
 
   run-application-cheerpj:
-    run-application:
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
