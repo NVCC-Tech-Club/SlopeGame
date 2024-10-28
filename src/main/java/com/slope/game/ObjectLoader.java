@@ -68,8 +68,7 @@ public class ObjectLoader implements IGraphics {
     public Model loadGLTFModel(int texIndex, String filename) {
         return loadGLTFModel(1, texIndex, filename);
     }
-
-    @Nullable
+    
     public Model loadGLTFModel(int amount, int texIndex, String filename) {
         if(amount < 1) {
             return null;
