@@ -28,7 +28,9 @@ public class Core implements IComponentManager {
         createGreenTowers();
 
         {
-            Model screen = renderer.setScreenModel(loader.createScreen(frameBuffer.getTextureID()));
+            Model screen = renderer.setScreenModel(loader.createScreen(
+        frameBuffer.getTextureID() | (frameBuffer.getDepthTexture() << ObjectLoader.BIT_16_CAPACITY)
+            ));
             loader.loadVertexObject(screen, 3);
             //screen.scale(0.5f, 0.5f, 0.5f);
             screen.update();
@@ -56,12 +58,7 @@ public class Core implements IComponentManager {
         FrameBuffer.unbind();
 
         renderer.clear();
-        renderer.renderInstances(loader);
-        renderer.renderScreen(0, null, loader);
-    }
-
-    public void graphicsPass() {
-        renderer.clear();
+        renderer.renderScreen(1, null, loader);
     }
 
     @Override
@@ -74,6 +71,17 @@ public class Core implements IComponentManager {
         frameBuffer.destroy();
         renderer.destroy();
         loader.destroy();
+    }
+
+    @Override
+    public void onWindowResize(int width, int height) {
+        frameBuffer.onWindowResize(width, height);
+        frameBuffer.onWindowResize(width, height);
+    }
+
+    public void graphicsPass() {
+        renderer.clear();
+        renderer.renderInstances(loader);
     }
 
 

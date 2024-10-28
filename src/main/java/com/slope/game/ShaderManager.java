@@ -47,7 +47,7 @@ public class ShaderManager implements IGraphics {
     public void createUniform(int programIndex, CharSequence name) throws Exception {
         int location = GL20.glGetUniformLocation(IDs.get(programIndex).getFirst(), name);
 
-        if(location < 0) {
+        if(location == -1) {
             throw new Exception("Could not find uniform: " + name);
         }
 
@@ -87,10 +87,6 @@ public class ShaderManager implements IGraphics {
 
     public void createFragmentShader(int index, String shaderCode) throws Exception {
         IDs.get(index).setThird(createShader(shaderCode, GL20.GL_FRAGMENT_SHADER));
-    }
-
-    public void link() throws Exception {
-        link(0);
     }
 
     public void link(int programIndex) throws Exception {

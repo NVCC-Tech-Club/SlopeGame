@@ -22,6 +22,7 @@ import java.util.List;
 
 public class ObjectLoader implements IGraphics {
     private static final int BIT_32_CAPACITY = 32;
+    public static final int BIT_16_CAPACITY = 16;
 
     private List<Long> vaoList = new ArrayList<Long>();
     private List<Integer> vboList = new ArrayList<Integer>();
