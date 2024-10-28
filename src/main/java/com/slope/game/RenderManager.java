@@ -134,6 +134,9 @@ public final class RenderManager {
             // Bind our texture.
             GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
 
+            // Draw the vertices as triangles.
+            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
