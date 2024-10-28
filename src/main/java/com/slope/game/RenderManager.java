@@ -151,8 +151,7 @@ public final class RenderManager {
             GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
 
             // Draw the vertices as triangles.
-            if(!enableInstancing) {
-                GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+            if(enableInstancing) {
                 GL33.glDrawElementsInstanced(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0, m.getAmount());
             } else {
                 GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
