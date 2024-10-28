@@ -12,7 +12,8 @@ data class Model(
     val vertices: FloatArray,
     val indices: IntArray,
     val texCoord: FloatArray,
-    val colorArray: FloatArray // Added colorArray
+    val colorArray: FloatArray, // Added colorArray
+    val amount: Int
 ) : Object() {
     var index: Int = 0
 
