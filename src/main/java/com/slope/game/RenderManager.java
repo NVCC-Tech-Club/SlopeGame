@@ -83,8 +83,9 @@ public final class RenderManager {
             shaderManager.createVertexShader(1, ResourceLoader.loadShader("shaders/sphere-vertex.glsl"));
             shaderManager.createFragmentShader(1, ResourceLoader.loadShader("shaders/sphere-fragment.glsl"));
 
-            //shaderManager.createVertexShader(2, ResourceLoader.loadShader("shaders/tower-vertex.glsl"));
-            //shaderManager.createFragmentShader(2, ResourceLoader.loadShader("shaders/tower-fragment.glsl"));
+            shaderManager.createShaderProgram();
+            shaderManager.createVertexShader(2, ResourceLoader.loadShader("shaders/tower-vertex.glsl"));
+            shaderManager.createFragmentShader(2, ResourceLoader.loadShader("shaders/tower-fragment.glsl"));
 
             createGameUniforms();
         } catch (Exception e) {
@@ -274,12 +275,9 @@ public final class RenderManager {
         shaderManager.createUniform(1, "textureSampler2");
         shaderManager.unbind();
 
-        /*
         link(2);
         shaderManager.bind(2);
         shaderManager.unbind();
-
-         */
     }
 
     private void link(int index) {
