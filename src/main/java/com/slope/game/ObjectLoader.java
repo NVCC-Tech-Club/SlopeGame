@@ -320,6 +320,10 @@ public class ObjectLoader implements IGraphics {
 
     public int getModelCapacity() { return loadedModels.size(); }
 
+    public Model getModelInstance(int index) {return loadedInstanceModels.get(index); }
+
+    public int getModelInstanceCapacity() { return loadedInstanceModels.size(); }
+
     @Override
     public void unbind() {
         GL30.glBindVertexArray(0);

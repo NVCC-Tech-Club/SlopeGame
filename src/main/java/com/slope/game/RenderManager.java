@@ -95,15 +95,30 @@ public final class RenderManager {
     }
 
     public void renderInstances(ObjectLoader loader) {
-        link(0);
+        renderInstances(false, 0, loader);
+    }
+
+    public void renderInstances(boolean enableInstancing, int programID, ObjectLoader loader) {
+        link(programID);
         shaderManager.bind();
         camMatrices.update(CameraMatrices.Z_NEAR, CameraMatrices.Z_FAR);
         renderCamera();
 
-        for(int i=0; i<loader.getModelCapacity(); i++) {
+        int size = loader.getModelCapacity();
+
+        if(enableInstancing) {
+            size = loader.getModelInstanceCapacity();
+        }
+
+        for(int i=0; i<size; i++) {
 
             // Receive our components
             Model m = loader.getModel(i);
+
+            if(enableInstancing) {
+                m = loader.getModelInstance(i);
+            }
+
             int ID = loader.getID(m.getIndex());
             int indicesCount = loader.getIndicesCount(m.getIndex());
             int textureID = loader.getTextures(m.getTexIndex());
@@ -136,7 +151,12 @@ public final class RenderManager {
             GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
 
             // Draw the vertices as triangles.
-            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+            if(!enableInstancing) {
+                GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+                GL33.glDrawElementsInstanced(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0, m.getAmount());
+            } else {
+                GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+            }
 
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
@@ -277,6 +297,8 @@ public final class RenderManager {
 
         link(2);
         shaderManager.bind(2);
+        shaderManager.createUniform("textureSampler");
+        shaderManager.createUniform("model");
         shaderManager.unbind();
     }
 
