@@ -1,4 +1,18 @@
 package com.slope.game;
+import java.util.Locale;
+
+import org.joml.Vector2f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL21;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL31;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+import com.slope.game.utils.Model;
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.*;
 
 import java.util.Locale;
 
@@ -36,7 +50,7 @@ public final class RenderManager {
     private int __dirtyLink = -1;
 
     // Sphere Stuff
-    private final SizedShaderBlock<SphereObject> sphereBlock;
+    private final SizedShaderBlock<Sphere> sphereBlock;
 
     // Camera Stuff.
     private final SizedShaderBlock<CameraMatrices> camBlock;
@@ -45,7 +59,7 @@ public final class RenderManager {
     public RenderManager(CameraMatrices camMatrices) {
         this.camMatrices = camMatrices;
         this.camBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, CameraMatrices.SIZE, CameraMatrices::write);
-        this.sphereBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, SphereObject.SIZE, SphereObject::write);
+        this.sphereBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, Sphere.SIZE, Sphere::write);
 
         {
             this.resolution = new Vector2f(0, 0);
@@ -68,6 +82,10 @@ public final class RenderManager {
             shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
             shaderManager.createVertexShader(1, ResourceLoader.loadShader("shaders/sphere-vertex.glsl"));
             shaderManager.createFragmentShader(1, ResourceLoader.loadShader("shaders/sphere-fragment.glsl"));
+
+            //shaderManager.createVertexShader(2, ResourceLoader.loadShader("shaders/tower-vertex.glsl"));
+            //shaderManager.createFragmentShader(2, ResourceLoader.loadShader("shaders/tower-fragment.glsl"));
+
             createGameUniforms();
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,9 +134,6 @@ public final class RenderManager {
             // Bind our texture.
             GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
 
-            // Draw the vertices as triangles.
-            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
-
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
@@ -132,19 +147,13 @@ public final class RenderManager {
 
             // Unbind the texture.
             GL21.glBindTexture(GL15.GL_TEXTURE_2D, 0);
-
-            // Bind VBO for instance-specific data (e.g., instance position)
-            // GL20.glEnableVertexAttribArray(1);
-
-            // Set the divisor for instance attribute
-            // GL33.glVertexAttribDivisor(1, 1);
         }
-      
+
         unbind(this.camBlock);
         shaderManager.unbind();
     }
 
-    public void renderScreen(int programIndex, SphereObject sphere, ObjectLoader loader) {
+    public void renderScreen(int programIndex, Sphere sphere, ObjectLoader loader) {
         if(screen == null) {
             return;
         }
@@ -236,7 +245,7 @@ public final class RenderManager {
         bind("CameraMatrices", this.camBlock);
     }
 
-    public void renderSphere(SphereObject object) {
+    public void renderSphere(Sphere object) {
         sphereBlock.set(object);
         bind("SphereBlock", this.sphereBlock);
     }
@@ -261,6 +270,13 @@ public final class RenderManager {
         shaderManager.createUniform(1, "textureSampler1");
         shaderManager.createUniform(1, "textureSampler2");
         shaderManager.unbind();
+
+        /*
+        link(2);
+        shaderManager.bind(2);
+        shaderManager.unbind();
+
+         */
     }
 
     private void link(int index) {

@@ -29,6 +29,7 @@ public class ObjectLoader implements IGraphics {
     private List<Integer> textures = new ArrayList<Integer>();
     private List<Long> eboList = new ArrayList<Long>();
     private List<Model> loadedModels = new ArrayList<>();
+    private List<Model> loadedInstanceModels = new ArrayList<>();
 
     public Model createScreen(int texIndex) {
         float[] vertices = {
@@ -61,11 +62,19 @@ public class ObjectLoader implements IGraphics {
                 1.0f, 1.0f, 1.0f, 1.0f
         };
 
-        Model m = new Model(texIndex, vertices, indices, texCoords, colors);
+        Model m = new Model(texIndex, vertices, indices, texCoords, colors, 1);
         return m;
     }
 
-    public Model loadGLTFModel(int texIndex, String filename){
+    public Model loadGLTFModel(int texIndex, String filename) {
+        return loadGLTFModel(1, texIndex, filename);
+    }
+    
+    public Model loadGLTFModel(int amount, int texIndex, String filename) {
+        if(amount < 1) {
+            return null;
+        }
+
         List<Float> positions = new ArrayList<>();
         List<Float> texCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -102,10 +111,19 @@ public class ObjectLoader implements IGraphics {
             colorArray[i] = colors.get(i);
         }
 
-        Model m = new Model(texIndex, vertexArray, indicesArray, texCoordArray, colorArray);
-        loadedModels.add(m);
+        Model m = new Model(texIndex, vertexArray, indicesArray, texCoordArray, colorArray, amount);
+
+        switch(m.getAmount()) {
+            case 1:
+                loadedModels.add(m);
+                break;
+
+            default:
+                loadedInstanceModels.add(m);
+                break;
+        }
+
         return m;
-        
     }
 
     private void processMesh(AIMesh mesh,
@@ -330,6 +348,7 @@ public class ObjectLoader implements IGraphics {
         }
 
         loadedModels.clear();
+        loadedInstanceModels.clear();
     }
 
     private static void processFace(String token, List<Vector3i> faces) {
