@@ -7,6 +7,9 @@ import java.nio.ByteBuffer;
 
 
 public class CameraMatrices {
+    public static final float Z_NEAR = 0.05f;
+    public static final float Z_FAR = 480.0f;
+
     private static final float COS_X = Math.cos(0);
     private static final float SIN_X = Math.sin(0);
     private static final float FOV = Math.toRadians(45);
@@ -15,7 +18,6 @@ public class CameraMatrices {
     public static final int SIZE =
             Float.BYTES * 16 + // The size of our projection matrix.
             Float.BYTES * 16 + // The size of our view matrix.
-            Float.BYTES * 3 + // The size of our camera position.
             Float.BYTES * 2; // The size of our near and far plane.
 
     // Our data sent to the GPU.
@@ -36,7 +38,7 @@ public class CameraMatrices {
     public CameraMatrices() {
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
-        this.position = new Vector3f(0.0f, 15.0f, -90.0f);
+        this.position = new Vector3f(0.0f, 0.0f, -3.0f);
         this.nearPlane = 0.0f;
         this.farPlane = 0.0f;
 
@@ -46,7 +48,6 @@ public class CameraMatrices {
         this.verticalAngle = Math.asin(lookAt.y);
 
         this.center = new Vector3f(0.0f, 0.0f, 0.0f);
-        
     }
 
     public void init() {
@@ -57,15 +58,17 @@ public class CameraMatrices {
     public void write(ByteBuffer buffer) {
         this.projectionMatrix.get(0, buffer);
         this.viewMatrix.get(Float.BYTES * 16, buffer);
-        this.position.get(Float.BYTES * 32, buffer);
-        buffer.putFloat(Float.BYTES * 35, this.nearPlane);
-        buffer.putFloat(Float.BYTES * 36, this.farPlane);
+        buffer.putFloat(Float.BYTES * 32, this.nearPlane);
+        buffer.putFloat(Float.BYTES * 33, this.farPlane);
     }
 
     // @param zFar (datatype: float) -> The far clipping plane of the camera.
     // @param zNear (datatype: float) -> The near clipping plane of the camera.
     
     public void update(float zNear, float zFar) {
+        this.nearPlane = zNear;
+        this.farPlane = zFar;
+
         projectionMatrix.identity();
         projectionMatrix.perspective(FOV, Engine.getMain().getPrimaryWindow().getAspectRatio(), zNear, zFar, false);
     }

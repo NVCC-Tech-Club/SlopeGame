@@ -10,14 +10,25 @@ import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
-
 import com.slope.game.utils.Model;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.*;
 
 import java.util.Locale;
 
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL21;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL31;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+
+import com.slope.game.objs.SphereObject;
+import com.slope.game.utils.Model;
 
 public final class RenderManager {
     // Nice utils to have
@@ -35,6 +46,7 @@ public final class RenderManager {
     private Model screen;
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
+    private Vector2f resolution;
     private int __dirtyLink = -1;
 
     // Sphere Stuff
@@ -58,14 +70,22 @@ public final class RenderManager {
         shaderManager = new ShaderManager();
         uniformBlockState = new UniformBlockState(shaderManager);
 
+        {
+            final int width = Engine.getMain().getPrimaryWindow().getFramebufferWidth();
+            final int height = Engine.getMain().getPrimaryWindow().getFramebufferHeight();
+            this.resolution = new Vector2f(width, height);
+        }
+
         try {
             shaderManager.createShaderProgram();
             shaderManager.createVertexShader(ResourceLoader.loadShader("shaders/main-vertex.glsl"));
             shaderManager.createFragmentShader(ResourceLoader.loadShader("shaders/main-fragment.glsl"));
             shaderManager.createVertexShader(1, ResourceLoader.loadShader("shaders/sphere-vertex.glsl"));
             shaderManager.createFragmentShader(1, ResourceLoader.loadShader("shaders/sphere-fragment.glsl"));
+
             //shaderManager.createVertexShader(2, ResourceLoader.loadShader("shaders/tower-vertex.glsl"));
             //shaderManager.createFragmentShader(2, ResourceLoader.loadShader("shaders/tower-fragment.glsl"));
+
             createGameUniforms();
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +96,7 @@ public final class RenderManager {
     public void renderInstances(ObjectLoader loader) {
         link(0);
         shaderManager.bind();
-        camMatrices.update(0.05f, 160.0f);
+        camMatrices.update(CameraMatrices.Z_NEAR, CameraMatrices.Z_FAR);
         renderCamera();
 
         for(int i=0; i<loader.getModelCapacity(); i++) {
@@ -117,7 +137,7 @@ public final class RenderManager {
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
-            GL20.glDisableVertexAttribArray(2);
+            GL20.glDisableVertexAttribArray(0);
 
             // Unbind the VAO to avoid any accidental changes.
             GL30.glBindVertexArray(0);
@@ -141,43 +161,43 @@ public final class RenderManager {
         link(programIndex);
         shaderManager.bind(programIndex);
         int ID = loader.getID(screen.getIndex());
-        int textureID = screen.getTexIndex();
+        int textureID = screen.getTexIndex() & 0xFF;
+        int depthTextureID = screen.getTexIndex() >> ObjectLoader.BIT_16_CAPACITY;
 
         // Bind VAO
         GL30.glBindVertexArray(ID);
 
-        switch(programIndex) {
-            case 0:
+        // Add model matrix
+        camMatrices.update(CameraMatrices.Z_NEAR, CameraMatrices.Z_FAR);
+        renderCamera();
 
-                // Add model matrix
-                camMatrices.projectionMatrix.identity();
-                camMatrices.viewMatrix.identity();
-                renderCamera();
-
-                // Add model matrix
-                shaderManager.setMatrixUniform("model", screen.getModelMatrix());
-
-                // Update uniform texture sampler
-                shaderManager.setIntUniform("textureSampler", 0);
-                GL20.glEnableVertexAttribArray(1);
-                GL20.glEnableVertexAttribArray(2);
-                break;
-            case 1:
-                shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
-
-                sphere.updateResolution();
-                renderSphere(sphere);
-                break;
+        // Add resolution vector
+        {
+            shaderManager.setVec2Uniform("iResolution", resolution);
+            shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
         }
+
+        // Update uniform texture sampler
+        shaderManager.setIntUniform("textureSampler0", 0);
+        shaderManager.setIntUniform("textureSampler1", 1);
+        shaderManager.setIntUniform("textureSampler2", 2);
 
         // Enable the vertex attribute array.
         GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(1);
 
-        // Active our texture.
+        // Active our texture 0
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-
-        // Bind our texture.
         GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
+
+        // Active our texture 1
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, loader.getTextures(0));
+
+        // Active our texture 2
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
+        GL21.glBindTexture(GL21.GL_TEXTURE_2D, depthTextureID);
+        //System.out.println(depthTextureID);
 
         // Draw the vertices as triangles.
         GL21.glDrawArrays(GL21.GL_TRIANGLES, 0, screen.getVertices().length);
@@ -191,16 +211,9 @@ public final class RenderManager {
         // Unbind the VAO to avoid any accidental changes.
         GL30.glBindVertexArray(0);
 
-        switch(programIndex) {
-            case 0:
-                unbind(this.camBlock);
-                GL20.glDisableVertexAttribArray(1);
-                GL20.glDisableVertexAttribArray(2);
-                break;
-            case 1:
-                unbind(this.sphereBlock);
-                break;
-        }
+        unbind(this.camBlock);
+        GL20.glDisableVertexAttribArray(0);
+        GL20.glDisableVertexAttribArray(1);
 
         shaderManager.unbind();
     }
@@ -237,13 +250,21 @@ public final class RenderManager {
         bind("SphereBlock", this.sphereBlock);
     }
 
+    public void onWindowResize(int width, int height) {
+        resolution.set(width, height);
+    }
+
     private void createGameUniforms() throws Exception {
+        link(0);
+
+        shaderManager.bind(0);
         shaderManager.createUniform("textureSampler");
-        shaderManager.setMatrixUniform("model", new Matrix4f().identity());
         shaderManager.createUniform("model");
+        shaderManager.unbind();
 
-
-        shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
+        link(1);
+        shaderManager.bind(1);
+        shaderManager.createUniform(1,"iResolution");
         shaderManager.createUniform(1, "camPosition");
         shaderManager.createUniform(1, "textureSampler0");
         shaderManager.createUniform(1, "textureSampler1");
