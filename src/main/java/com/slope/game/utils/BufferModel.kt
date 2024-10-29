@@ -4,7 +4,15 @@ import org.lwjgl.system.MemoryUtil
 import java.nio.ByteBuffer
 
 class BufferModel {
-    private val rawBuffer: ByteBuffer;
+    private val rawBuffer: ByteBuffer
+        get() {
+            return rawBuffer
+        }
+
+    private var size: Int
+        get() {
+            return size
+        }
 
     constructor(vertices: FloatArray, indices: IntArray, texCoord: FloatArray, colorArray: FloatArray) {
         val totalSize =
@@ -12,7 +20,7 @@ class BufferModel {
             (Int.SIZE_BYTES + indices.size * Float.SIZE_BYTES) +
             (Int.SIZE_BYTES + texCoord.size * Float.SIZE_BYTES) +
             (Int.SIZE_BYTES + colorArray.size * Float.SIZE_BYTES)
-        var size: Int = 0;
+        size = 0;
 
         rawBuffer = MemoryUtil.memAlloc(totalSize)
         rawBuffer.putInt(size, vertices.size)
@@ -46,10 +54,6 @@ class BufferModel {
             rawBuffer.putFloat(size, colorArray.get(i))
             size += Float.SIZE_BYTES
         }
-    }
-
-    fun getRawBuffer(): ByteBuffer {
-        return rawBuffer;
     }
 
     fun destroy() {
