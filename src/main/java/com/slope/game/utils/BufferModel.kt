@@ -10,6 +10,7 @@ open class BufferModel {
 
     constructor(vertices: FloatArray, indices: IntArray, texCoord: FloatArray, colorArray: FloatArray) {
         val totalSize =
+            Int.SIZE_BYTES +
             (Int.SIZE_BYTES + vertices.size * Float.SIZE_BYTES) +
             (Int.SIZE_BYTES + indices.size * Float.SIZE_BYTES) +
             (Int.SIZE_BYTES + texCoord.size * Float.SIZE_BYTES) +

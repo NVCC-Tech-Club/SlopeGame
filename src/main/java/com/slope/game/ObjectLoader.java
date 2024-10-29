@@ -20,6 +20,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ObjectLoader implements IGraphics {
     private static final int BIT_32_CAPACITY = 32;
@@ -203,10 +204,14 @@ public class ObjectLoader implements IGraphics {
         int vertexLength = (vertexColors != null) ? vertexColors.limit() : 0;
         int nullVertexLength = (vertexColors == null) ? vectors.limit() : 0;
 
+        final Random r = new Random();
+        final int high = 100;
+        float result = (float)(r.nextInt(high) / (high - 1));
+
         for (int i = 0; i < nullVertexLength; i++) {
             colors.add(0.0f);
             colors.add(1.0f);
-            colors.add(0.0f);
+            colors.add(result);
             colors.add(1.0f);
         }
 
