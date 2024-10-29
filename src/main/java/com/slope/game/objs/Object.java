@@ -1,7 +1,7 @@
 package com.slope.game.objs;
 
 import com.slope.game.ObjectLoader;
-import com.slope.game.utils.Model;
+import com.slope.game.utils.PropModel;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

@@ -1,6 +1,6 @@
 package com.slope.game;
 
-import com.slope.game.utils.Model;
+import com.slope.game.utils.PropModel;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -28,10 +28,8 @@ public class ObjectLoader implements IGraphics {
     private List<Integer> vboList = new ArrayList<Integer>();
     private List<Integer> textures = new ArrayList<Integer>();
     private List<Long> eboList = new ArrayList<Long>();
-    private List<Model> loadedModels = new ArrayList<>();
-    private List<Model> loadedInstanceModels = new ArrayList<>();
 
-    public Model createScreen(int texIndex) {
+    public PropModel createScreen(int texIndex) {
         float[] vertices = {
                 -1.0f, 1.0f, 0.0f,
                 -1.0f, -1.0f, 0.0f,
@@ -62,15 +60,15 @@ public class ObjectLoader implements IGraphics {
                 1.0f, 1.0f, 1.0f, 1.0f
         };
 
-        Model m = new Model(texIndex, vertices, indices, texCoords, colors, 1);
+        PropModel m = new PropModel(texIndex, vertices, indices, texCoords, colors, 1);
         return m;
     }
 
-    public Model loadGLTFModel(int texIndex, String filename) {
+    public PropModel loadGLTFModel(int texIndex, String filename) {
         return loadGLTFModel(1, texIndex, filename);
     }
     
-    public Model loadGLTFModel(int amount, int texIndex, String filename) {
+    public PropModel loadGLTFModel(int amount, int texIndex, String filename) {
         if(amount < 1) {
             return null;
         }
@@ -111,18 +109,7 @@ public class ObjectLoader implements IGraphics {
             colorArray[i] = colors.get(i);
         }
 
-        Model m = new Model(texIndex, vertexArray, indicesArray, texCoordArray, colorArray, amount);
-
-        switch(m.getAmount()) {
-            case 1:
-                loadedModels.add(m);
-                break;
-
-            default:
-                loadedInstanceModels.add(m);
-                break;
-        }
-
+        PropModel m = new PropModel(texIndex, vertexArray, indicesArray, texCoordArray, colorArray, amount);
         return m;
     }
 
@@ -195,7 +182,7 @@ public class ObjectLoader implements IGraphics {
         }
     }
 
-    public void loadVertexObject(Model model, int count) {
+    public void loadVertexObject(PropModel model, int count) {
         long vertexAmount = (long) model.getVertices().length / 3;
         int VAO = createVAO();
         int EBO = storeIndexInAttribList(model);
@@ -234,7 +221,7 @@ public class ObjectLoader implements IGraphics {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    private int storeIndexInAttribList(Model model) {
+    private int storeIndexInAttribList(PropModel model) {
         int EBO = GL15.glGenBuffers();
 
         // Bind buffer object to element array (Basically indices)
@@ -316,14 +303,6 @@ public class ObjectLoader implements IGraphics {
         return (int) (eboList.get(index) & 0xFFFFFFFFL);
     }
 
-    public Model getModel(int index) {return loadedModels.get(index); }
-
-    public int getModelCapacity() { return loadedModels.size(); }
-
-    public Model getModelInstance(int index) {return loadedInstanceModels.get(index); }
-
-    public int getModelInstanceCapacity() { return loadedInstanceModels.size(); }
-
     @Override
     public void unbind() {
         GL30.glBindVertexArray(0);
@@ -350,9 +329,6 @@ public class ObjectLoader implements IGraphics {
             GL30.glDeleteTextures(getTextures(0));
             textures.remove(0);
         }
-
-        loadedModels.clear();
-        loadedInstanceModels.clear();
     }
 
     private static void processFace(String token, List<Vector3i> faces) {

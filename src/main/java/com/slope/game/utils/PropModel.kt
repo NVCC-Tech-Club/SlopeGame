@@ -7,7 +7,14 @@ import java.nio.IntBuffer
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
-data class Model(
+
+// The `PropModel` class is suppose to be a background object that does not interact with the game at all
+// No physics, just there as like horizon models like the green towers.
+// The `PropModel` is also used for the screen since the screen does not interact with the game, just displays
+// the current framebuffer, that's it!
+// That's why this class is very bare bone since there's no purpose for it other than less emptyness.
+// @author Diego Fonseca
+data class PropModel(
     val texIndex: Int,
     val vertices: FloatArray,
     val indices: IntArray,

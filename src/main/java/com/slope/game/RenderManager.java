@@ -2,9 +2,7 @@ package com.slope.game;
 
 import java.util.Locale;
 import org.lwjgl.opengl.*;
-
 import java.util.Locale;
-
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
@@ -16,9 +14,8 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL33;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
-
-import com.slope.game.objs.SphereObject;
-import com.slope.game.utils.Model;
+import java.util.ArrayList;
+import com.slope.game.utils.PropModel;
 
 public final class RenderManager {
     // Nice utils to have
@@ -33,7 +30,8 @@ public final class RenderManager {
 
     // How the renderer works at runtime.
 
-    private Model screen;
+    private PropModel screen;
+    private ArrayList<PropModel> backgroundModels;
     private UniformBlockState uniformBlockState;
     private ShaderManager shaderManager;
     private Vector2f resolution;
@@ -50,6 +48,7 @@ public final class RenderManager {
         this.camMatrices = camMatrices;
         this.camBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, CameraMatrices.SIZE, CameraMatrices::write);
         this.sphereBlock = new SizedShaderBlock<>(this, GL_UNIFORM_BUFFER, Sphere.SIZE, Sphere::write);
+        this.backgroundModels = new ArrayList<>();
 
         {
             this.resolution = new Vector2f(0, 0);
@@ -89,68 +88,13 @@ public final class RenderManager {
         camMatrices.update(CameraMatrices.Z_NEAR, CameraMatrices.Z_FAR);
         renderCamera();
 
-        int size = loader.getModelCapacity();
-        for(int i=0; i<size; i++) {
-
-            // Receive our components
-            Model m = loader.getModel(i);
-
-            int ID = loader.getID(m.getIndex());
-            int indicesCount = loader.getIndicesCount(m.getIndex());
-            int textureID = loader.getTextures(m.getTexIndex());
-
-            // Add model matrix
-            shaderManager.setMatrixUniform("model", m.getModelMatrix());
-
-            // Update uniform texture sampler
-            shaderManager.setIntUniform("textureSampler", 0);
-
-            // Bind VAO
-            GL30.glBindVertexArray(ID);
-
-            // Bind the element buffer object (EBO) for the indices
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, loader.getEBO(m.getIndex()));
-
-            // Enable the vertex attribute array.
-            GL20.glEnableVertexAttribArray(0);
-
-            // Enable the texture attribute array.
-            GL20.glEnableVertexAttribArray(1);
-
-            // Enable the color attribute array.
-            GL20.glEnableVertexAttribArray(2);
-
-            // Active our texture.
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-
-            // Bind our texture.
-            GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
-
-            // Draw the vertices as triangles.
-            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
-
-            // Disable our attributes
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL20.glDisableVertexAttribArray(2);
-
-            // Unbind the VAO to avoid any accidental changes.
-            GL30.glBindVertexArray(0);
-
-            // Unbind the EBO to avoid any accidental changes.
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-            // Unbind the texture.
-            GL21.glBindTexture(GL15.GL_TEXTURE_2D, 0);
-        }
-
         shaderManager.bind(2);
-        size = loader.getModelInstanceCapacity();
+        final int size = backgroundModels.size();
 
         for(int i=0; i<size; i++) {
 
             // Receive our components
-            Model m = loader.getModelInstance(i);
+            PropModel m = backgroundModels.get(i);
 
             int ID = loader.getID(m.getIndex());
             int indicesCount = loader.getIndicesCount(m.getIndex());
@@ -266,7 +210,9 @@ public final class RenderManager {
         GL20.glDisableVertexAttribArray(1);
     }
 
-    public Model setScreenModel(Model value) {
+    public void addPropModel(PropModel model) { backgroundModels.add(model); }
+
+    public PropModel setScreenModel(PropModel value) {
         return screen = value;
     }
 
@@ -285,6 +231,7 @@ public final class RenderManager {
     }
 
     public void destroy() {
+        backgroundModels.clear();
         shaderManager.destroy();
     }
 
