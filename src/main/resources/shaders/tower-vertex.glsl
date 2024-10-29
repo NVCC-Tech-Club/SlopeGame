@@ -17,7 +17,11 @@ out vec2 fragTexCoords;
 out vec4 outColor;
 
 void main() {
-    mat4 u = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * model;
+    vec3 instanceOffset = vec3(0.0, sin(float(gl_InstanceID)) * 50.0f, float(gl_InstanceID) * 150.0);
+    mat4 instanceModel = model;
+    instanceModel[3].xyz += instanceOffset;
+
+    mat4 u = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * instanceModel;
     gl_Position = u * vec4(pos, 1.0);
 
     fragTexCoords = texCoord;
