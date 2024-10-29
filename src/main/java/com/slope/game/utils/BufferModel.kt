@@ -4,7 +4,7 @@ import org.lwjgl.system.MemoryUtil
 import java.nio.ByteBuffer
 
 class BufferModel {
-    private val rawBuffer: ByteBuffer
+    private var rawBuffer: ByteBuffer
         get() {
             return rawBuffer
         }
