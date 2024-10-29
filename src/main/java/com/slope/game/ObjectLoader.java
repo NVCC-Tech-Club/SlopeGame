@@ -1,5 +1,6 @@
 package com.slope.game;
 
+import com.slope.game.utils.BufferModel;
 import com.slope.game.utils.PropModel;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -61,6 +62,47 @@ public class ObjectLoader implements IGraphics {
         };
 
         PropModel m = new PropModel(texIndex, vertices, indices, texCoords, colors, 1);
+        return m;
+    }
+
+    public BufferModel loadGLTFBuffer(String filename) {
+        List<Float> positions = new ArrayList<>();
+        List<Float> texCoords = new ArrayList<>();
+        List<Float> normals = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
+        List<Float> colors = new ArrayList<>();
+
+        AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate);
+        PointerBuffer buffer = scene.mMeshes();
+
+        for (int i = 0; i < buffer.limit(); i++){
+            AIMesh mesh = AIMesh.create(buffer.get(i));
+            processMesh(mesh, positions, texCoords, normals, indices, colors);
+        }
+
+        float[] vertexArray = new float[positions.size()];
+        float[] texCoordArray = new float[texCoords.size()];
+        float[] normalArray = new float[normals.size()];
+        float[] colorArray = new float[colors.size()];
+        int[] indicesArray = new int[indices.size()];
+
+        for (int i = 0; i < positions.size(); i++) {
+            vertexArray[i] = positions.get(i);
+        }
+        for (int i = 0; i < texCoords.size(); i++) {
+            texCoordArray[i] = texCoords.get(i);
+        }
+        for (int i = 0; i < normals.size(); i++) {
+            normalArray[i] = normals.get(i);
+        }
+        for (int i = 0; i < indices.size(); i++) {
+            indicesArray[i] = indices.get(i);
+        }
+        for(int i = 0; i < colors.size(); i++){
+            colorArray[i] = colors.get(i);
+        }
+
+        BufferModel m = new BufferModel(vertexArray, indicesArray, texCoordArray, colorArray);
         return m;
     }
     

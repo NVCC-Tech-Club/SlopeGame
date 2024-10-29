@@ -1,11 +1,14 @@
 package com.slope.game;
 
+import com.slope.game.utils.BufferModel;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.joml.Math;
 
+import java.nio.Buffer;
+
 public class Game extends Core {
-    private static final int MAX_PlATFORM_CAPACITY = 10;
+    private static final int ALL_PLATFORM_MODELS = 1;
 
     // TODO: Also add multiple Fixed Sized Queues here for platforms and red block pillars. (Feeshy Task Only)
     // NOTE: I will have to create my own Fixed Size Queue class that uses LWJGL's direct memory components to
@@ -13,12 +16,16 @@ public class Game extends Core {
     // This means I need an object pool to store all platform variations.
 
     // TODO: Probably have an ArrayList for the red obstacles in every platform. (Feeshy Task Only)
+    private BufferModel[] bufferPool;
+
     protected float sensitivity = 0.015f;
     protected boolean mouseActive = false;
     protected boolean initialMouseCentering = true;
 
     public Game() {
         super();
+
+        bufferPool = new BufferModel[ALL_PLATFORM_MODELS];
     }
     
     public void move(float dx, float dy, float dz) {
@@ -82,6 +89,8 @@ public class Game extends Core {
     @Override
     public void init() {
         // TODO: Add stuff above our pre-init to it can get loaded to the renderer. (Feeshy Task Only)
+
+        bufferPool[0] = loader.loadGLTFBuffer("src/main/resources/models/ramp.glb");
 
         super.init();
     }
