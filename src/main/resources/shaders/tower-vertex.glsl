@@ -13,7 +13,13 @@ layout(std140) uniform CameraMatrices {
 
 uniform mat4 model;
 
+out vec2 fragTexCoords;
+out vec4 outColor;
+
 void main() {
     mat4 u = CamMatrix.projectionMatrix * CamMatrix.viewMatrix * model;
     gl_Position = u * vec4(pos, 1.0);
+
+    fragTexCoords = texCoord;
+    outColor = inColor;
 }
