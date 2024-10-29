@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 public class CameraMatrices {
     public static final float Z_NEAR = 0.05f;
-    public static final float Z_FAR = 480.0f;
+    public static final float Z_FAR = 960.0f;
 
     private static final float COS_X = Math.cos(0);
     private static final float SIN_X = Math.sin(0);
