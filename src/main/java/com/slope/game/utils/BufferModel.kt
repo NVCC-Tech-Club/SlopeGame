@@ -3,16 +3,10 @@ package com.slope.game.utils
 import org.lwjgl.system.MemoryUtil
 import java.nio.ByteBuffer
 
-class BufferModel {
-    private var rawBuffer: ByteBuffer
-        get() {
-            return rawBuffer
-        }
+open class BufferModel {
+    protected var rawBuffer: ByteBuffer
 
     private var size: Int
-        get() {
-            return size
-        }
 
     constructor(vertices: FloatArray, indices: IntArray, texCoord: FloatArray, colorArray: FloatArray) {
         val totalSize =
@@ -54,6 +48,11 @@ class BufferModel {
             rawBuffer.putFloat(size, colorArray.get(i))
             size += Float.SIZE_BYTES
         }
+    }
+
+    constructor(rawSize: Int) {
+        rawBuffer = MemoryUtil.memAlloc(rawSize)
+        this.size = rawSize;
     }
 
     fun destroy() {
