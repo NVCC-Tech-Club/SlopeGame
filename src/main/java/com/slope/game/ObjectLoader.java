@@ -63,10 +63,6 @@ public class ObjectLoader implements IGraphics {
         PropModel m = new PropModel(texIndex, vertices, indices, texCoords, colors, 1);
         return m;
     }
-
-    public PropModel loadGLTFModel(int texIndex, String filename) {
-        return loadGLTFModel(1, texIndex, filename);
-    }
     
     public PropModel loadGLTFModel(int amount, int texIndex, String filename) {
         if(amount < 1) {
@@ -328,38 +324,6 @@ public class ObjectLoader implements IGraphics {
         while(textures.size() != 0) {
             GL30.glDeleteTextures(getTextures(0));
             textures.remove(0);
-        }
-    }
-
-    private static void processFace(String token, List<Vector3i> faces) {
-        String[] lineToken = token.split("/");
-        int length = lineToken.length;
-        int pos = -1, coords = -1, normal = -1;
-        pos = Integer.parseInt(lineToken[0]) - 1;
-
-        if(length > 1) {
-            String texCoord = lineToken[1];
-            coords = texCoord.length() > 0 ? Integer.parseInt(texCoord) - 1 : -1;
-
-            if(length > 2) {
-                normal = Integer.parseInt(lineToken[2]) - 1;
-            }
-        }
-
-        Vector3i faceVec = new Vector3i(pos, coords, normal);
-        faces.add(faceVec);
-    }
-
-    private static void processVertex(int pos, int texCoord, int normal, List<Vector2f> texCoordList,
-                                      List<Vector3f> normalList, List<Integer> indicesList,
-                                      float[] texCoordArr, float[] normalArr) {
-        indicesList.add(pos);
-
-        if(normal >= 0) {
-            Vector3f normalVec = normalList.get(normal);
-            normalArr[pos * 3] = normalVec.x;
-            normalArr[pos * 3 + 1] = normalVec.y;
-            normalArr[pos * 3 + 2] = normalVec.z;
         }
     }
 }

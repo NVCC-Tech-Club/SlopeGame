@@ -4,8 +4,6 @@ import com.slope.game.objs.Object
 import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
-import org.joml.Matrix4f
-import org.joml.Vector3f
 
 
 // The `PropModel` class is suppose to be a background object that does not interact with the game at all
