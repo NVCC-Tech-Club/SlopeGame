@@ -1,17 +1,6 @@
 package com.slope.game;
-import java.util.Locale;
 
-import org.joml.Vector2f;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL21;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL31;
-import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
-import com.slope.game.utils.Model;
-import org.joml.Matrix4f;
+import java.util.Locale;
 import org.lwjgl.opengl.*;
 
 import java.util.Locale;
@@ -25,6 +14,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
+import org.lwjgl.opengl.GL33;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 
 import com.slope.game.objs.SphereObject;
@@ -194,7 +184,7 @@ public final class RenderManager {
             GL21.glBindTexture(GL21.GL_TEXTURE_2D, textureID);
 
             // Draw the vertices as triangles.
-            GL21.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+            GL33.glDrawElementsInstanced(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0, m.getAmount());
 
             // Disable our attributes
             GL20.glDisableVertexAttribArray(0);
