@@ -4,13 +4,16 @@ import com.slope.game.utils.BufferModel;
 
 // Using the concept of a circular buffer
 // The different is we can only update our read index for every completed cycle of write.
-public class CircularClockBuffer extends BufferModel {
+abstract class CircularClockBuffer extends BufferModel {
     private int slots;
     private int sizePerSlot;
     private int writeIndex;
     private int readIndex;
     private byte[] readOnlyCache;
     private boolean __hasRead;
+
+    // Buffer Objects
+
 
     public CircularClockBuffer(int size, int slots) {
         super(size * slots);
@@ -44,5 +47,9 @@ public class CircularClockBuffer extends BufferModel {
 
     public int getSlots() {
         return slots;
+    }
+
+    public int getSizePerSlot() {
+        return sizePerSlot;
     }
 }

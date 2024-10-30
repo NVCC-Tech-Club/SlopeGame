@@ -103,7 +103,7 @@ public class ObjectLoader implements IGraphics {
             colorArray[i] = colors.get(i);
         }
 
-        BufferModel m = new BufferModel(vertexArray, indicesArray, texCoordArray, colorArray);
+        BufferModel m = new BufferModel(vertexArray, texCoordArray, colorArray, indicesArray);
         return m;
     }
     
@@ -232,6 +232,7 @@ public class ObjectLoader implements IGraphics {
         storeDataInAttribList(model.storeVerticesInBuffer(),0, count);
         storeDataInAttribList(model.storeTexCoordsInBuffer(), 1, 2);
         storeDataInAttribList(model.storeColorsInBuffer(), 2, 4);
+        GL30.glBindVertexArray(0);
 
         // Store VAO and vertex count in a 64-bit long (32 bits each)
         long vaoWithCount = ((long) VAO << BIT_32_CAPACITY) | (vertexAmount & 0xFFFFFFFFL);

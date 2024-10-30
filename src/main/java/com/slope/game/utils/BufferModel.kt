@@ -7,24 +7,28 @@ open class BufferModel {
     var rawBuffer: ByteBuffer
         private set
 
-    var size: Int
+    var size: Int = 0
         private set
 
-    constructor(vertices: FloatArray, indices: IntArray, texCoord: FloatArray, colorArray: FloatArray) {
+    var vboSize: Int = 0
+        private set
+
+    constructor(vertices: FloatArray, texCoord: FloatArray, colorArray: FloatArray, indices: IntArray) {
         val totalSize =
-            Int.SIZE_BYTES +
-            (Int.SIZE_BYTES + vertices.size * Float.SIZE_BYTES) +
-            (Int.SIZE_BYTES + indices.size * Float.SIZE_BYTES) +
-            (Int.SIZE_BYTES + texCoord.size * Float.SIZE_BYTES) +
-            (Int.SIZE_BYTES + colorArray.size * Float.SIZE_BYTES)
+            Int.SIZE_BYTES * 2 +
+            (vertices.size * Float.SIZE_BYTES) +
+            (texCoord.size * Float.SIZE_BYTES) +
+            (colorArray.size * Float.SIZE_BYTES) +
+            (indices.size * Int.SIZE_BYTES)
         size = 0;
+        vboSize = totalSize - (indices.size * Float.SIZE_BYTES)
 
         rawBuffer = MemoryUtil.memAlloc(totalSize)
 
         rawBuffer.putInt(size, totalSize)
         size += Integer.BYTES
 
-        rawBuffer.putInt(size, vertices.size)
+        rawBuffer.putInt(size, vboSize)
         size += Integer.BYTES
 
         for(i in 0 until vertices.size) {
@@ -32,28 +36,19 @@ open class BufferModel {
             size += Float.SIZE_BYTES
         }
 
-        rawBuffer.putInt(size, indices.size)
-        size += Integer.BYTES
-
-        for(i in 0 until indices.size) {
-            rawBuffer.putInt(size, indices.get(i))
-            size += Int.SIZE_BYTES
-        }
-
-        rawBuffer.putInt(size, texCoord.size)
-        size += Integer.BYTES
-
         for(i in 0 until texCoord.size) {
             rawBuffer.putFloat(size, texCoord.get(i))
             size += Float.SIZE_BYTES
         }
 
-        rawBuffer.putInt(size, colorArray.size)
-        size += Integer.BYTES
-
         for(i in 0 until colorArray.size) {
             rawBuffer.putFloat(size, colorArray.get(i))
             size += Float.SIZE_BYTES
+        }
+
+        for(i in 0 until indices.size) {
+            rawBuffer.putInt(size, indices.get(i))
+            size += Int.SIZE_BYTES
         }
     }
 
@@ -66,7 +61,7 @@ open class BufferModel {
         rawBuffer = buffer;
     }
 
-    fun destroy() {
+    open fun destroy() {
         MemoryUtil.memFree(rawBuffer);
     }
 }
