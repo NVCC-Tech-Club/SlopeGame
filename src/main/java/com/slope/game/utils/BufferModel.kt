@@ -12,6 +12,9 @@ open class BufferModel {
 
     var vboSize: Int = 0
         private set
+    
+    var eboSize: Int = 0
+        private set
 
     constructor(vertices: FloatArray, texCoord: FloatArray, colorArray: FloatArray, indices: IntArray) {
         val totalSize =
@@ -21,11 +24,15 @@ open class BufferModel {
             (colorArray.size * Float.SIZE_BYTES) +
             (indices.size * Int.SIZE_BYTES)
         size = 0;
-        vboSize = totalSize - (indices.size * Float.SIZE_BYTES)
+        vboSize = 
+            (vertices.size * Float.SIZE_BYTES) +
+            (texCoord.size * Float.SIZE_BYTES) +
+            (colorArray.size * Float.SIZE_BYTES)
+        eboSize = (indices.size * Int.SIZE_BYTES)
 
         rawBuffer = MemoryUtil.memAlloc(totalSize)
 
-        rawBuffer.putInt(size, totalSize)
+        rawBuffer.putInt(size, eboSize)
         size += Integer.BYTES
 
         rawBuffer.putInt(size, vboSize)

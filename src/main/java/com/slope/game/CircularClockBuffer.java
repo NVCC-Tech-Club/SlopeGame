@@ -12,8 +12,8 @@ abstract class CircularClockBuffer extends BufferModel {
     private byte[] readOnlyCache;
     private boolean __hasRead;
 
-    // Buffer Objects
-
+    protected int totalVBOSize;
+    protected int totalEBOSize;
 
     public CircularClockBuffer(int size, int slots) {
         super(size * slots);
@@ -23,6 +23,7 @@ abstract class CircularClockBuffer extends BufferModel {
         this.sizePerSlot = size;
         this.writeIndex = 0;
         this.readIndex = 0;
+        this.totalVBOSize = 0;
         this.__hasRead = false;
     }
 
@@ -30,11 +31,20 @@ abstract class CircularClockBuffer extends BufferModel {
         int newWriteIndex = (writeIndex + 1) % slots;
         int bufferSize = buffer.getSize();
 
-        if((getRawBuffer().getInt(newWriteIndex * sizePerSlot) == 0 || writeIndex == readIndex) && __hasRead) {
-            getRawBuffer().put(writeIndex, buffer.getRawBuffer(), 0, bufferSize);
-            writeIndex = newWriteIndex;
-            __hasRead = false;
+        if(!((getRawBuffer().getInt(newWriteIndex * sizePerSlot) == 0 || writeIndex == readIndex) && __hasRead)) {
+            System.out.println("Something went wrong while writing!");
+            return;
         }
+
+        totalEBOSize -= getRawBuffer().getInt(0);
+        totalEBOSize += buffer.getEboSize();
+
+        totalVBOSize -= getRawBuffer().getInt(Integer.BYTES);
+        totalVBOSize += buffer.getVboSize();
+
+        getRawBuffer().put(writeIndex, buffer.getRawBuffer(), 0, bufferSize);
+        writeIndex = newWriteIndex;
+        __hasRead = false;
     }
 
     protected byte[] get() {
