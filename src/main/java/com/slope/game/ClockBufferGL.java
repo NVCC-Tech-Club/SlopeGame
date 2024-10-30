@@ -56,7 +56,7 @@ public class ClockBufferGL extends CircularClockBuffer {
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
             GL30.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, capacityVBOBuffer, GL15.GL_STATIC_DRAW);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, capacityVBOBuffer, GL15.GL_DYNAMIC_DRAW);
             GL20.glVertexAttribPointer(0, 3, GL21.GL_FLOAT, false, 9 * Float.BYTES, 0);
             GL20.glVertexAttribPointer(1, 2, GL21.GL_FLOAT, false, 9 * Float.BYTES, 3 * Float.BYTES);
             GL20.glVertexAttribPointer(2, 4, GL21.GL_FLOAT, false, 9 * Float.BYTES, 5 * Float.BYTES);
