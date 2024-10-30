@@ -62,6 +62,10 @@ open class BufferModel {
         this.size = rawSize;
     }
 
+    fun rewrite(buffer: ByteBuffer) {
+        rawBuffer = buffer;
+    }
+
     fun destroy() {
         MemoryUtil.memFree(rawBuffer);
     }
