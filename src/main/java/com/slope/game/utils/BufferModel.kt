@@ -18,6 +18,10 @@ open class BufferModel {
         size = 0;
 
         rawBuffer = MemoryUtil.memAlloc(totalSize)
+
+        rawBuffer.putInt(size, totalSize)
+        size += Integer.BYTES
+
         rawBuffer.putInt(size, vertices.size)
         size += Integer.BYTES
 

@@ -21,8 +21,9 @@ public class CircularClockBuffer extends BufferModel {
 
     public void put(ByteBuffer buffer) {
         int newWriteIndex = (writeIndex + 1) % sizePerSlot;
-        byte[] rawBytes;
-        //getRawBuffer().get(rawBytes, sizePerSlot * newWriteIndex, );
+        int bufferSize = buffer.getInt(sizePerSlot * newWriteIndex);
+        byte[] rawBytes = new byte[bufferSize];
+        getRawBuffer().get(rawBytes, sizePerSlot * newWriteIndex, bufferSize);
 
         //if(newWriteIndex == null || ) {
 
