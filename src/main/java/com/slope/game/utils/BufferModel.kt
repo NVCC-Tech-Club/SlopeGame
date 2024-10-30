@@ -4,9 +4,11 @@ import org.lwjgl.system.MemoryUtil
 import java.nio.ByteBuffer
 
 open class BufferModel {
-    protected var rawBuffer: ByteBuffer
+    var rawBuffer: ByteBuffer
+        private set
 
-    private var size: Int
+    var size: Int
+        private set
 
     constructor(vertices: FloatArray, indices: IntArray, texCoord: FloatArray, colorArray: FloatArray) {
         val totalSize =
@@ -56,7 +58,7 @@ open class BufferModel {
     }
 
     constructor(rawSize: Int) {
-        rawBuffer = MemoryUtil.memAlloc(rawSize)
+        rawBuffer = MemoryUtil.memCalloc(rawSize)
         this.size = rawSize;
     }
 
