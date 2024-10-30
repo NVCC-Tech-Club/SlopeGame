@@ -22,8 +22,6 @@ public class ClockBufferGL extends CircularClockBuffer {
     }
 
     public void renderStage() {
-        GL30.glBindVertexArray(VAO);
-
         MemoryStack stack = MemoryStack.stackPush();
         try {
             stack.push();
@@ -46,28 +44,29 @@ public class ClockBufferGL extends CircularClockBuffer {
                 final int eboSize = stackBuffer.getInt(0);
                 final int vboSize = stackBuffer.getInt(Integer.BYTES);
 
-                {
-                    stack.push();
-                    capacityVBOBuffer.put(curVBOCapacity, stackBuffer, Integer.BYTES * 2, vboSize);
-                    stack.pop();
-                }
-
-                {
-                    stack.push();
-                    capacityEBOBuffer.put(curEBOCapacity, stackBuffer, (Integer.BYTES * 2) + vboSize, eboSize);
-                    stack.pop();
-                }
+                capacityVBOBuffer.put(curVBOCapacity, stackBuffer, Integer.BYTES * 2, vboSize);
+                capacityEBOBuffer.put(curEBOCapacity, stackBuffer, (Integer.BYTES * 2) + vboSize, eboSize);
 
                 stack.pop();
                 curVBOCapacity += vboSize;
                 curEBOCapacity += eboSize;
             }
+
+            GL30.glBindVertexArray(VAO);
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
+            GL30.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, capacityVBOBuffer, GL15.GL_STATIC_DRAW);
+            GL20.glVertexAttribPointer(0, 3, GL21.GL_FLOAT, false, 9 * Float.BYTES, 0);
+            GL20.glVertexAttribPointer(1, 2, GL21.GL_FLOAT, false, 9 * Float.BYTES, 3 * Float.BYTES);
+            GL20.glVertexAttribPointer(2, 4, GL21.GL_FLOAT, false, 9 * Float.BYTES, 5 * Float.BYTES);
+
+            GL30.glBindVertexArray(0);
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         } finally {
             stack.pop();
         }
-
-        GL30.glBindVertexArray(0);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     @Override
