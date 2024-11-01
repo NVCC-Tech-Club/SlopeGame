@@ -2,9 +2,11 @@ package com.slope.game;
 
 import com.slope.game.utils.BufferModel;
 import com.slope.game.utils.PropModel;
-import org.joml.Vector2f;
+import com.slope.game.utils.ModelData;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
+import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.opengl.GL11;
@@ -73,12 +75,12 @@ public class ObjectLoader implements IGraphics {
         List<Integer> indices = new ArrayList<>();
         List<Float> colors = new ArrayList<>();
 
-        AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate);
+        AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate | Assimp.aiProcess_GenNormals | Assimp.aiProcess_JoinIdenticalVertices);
         PointerBuffer buffer = scene.mMeshes();
 
         for (int i = 0; i < buffer.limit(); i++){
             AIMesh mesh = AIMesh.create(buffer.get(i));
-            processMesh(mesh, positions, texCoords, normals, indices, colors);
+            //processMesh(mesh, positions, texCoords, normals, indices, colors);
         }
 
         float[] vertexArray = new float[positions.size()];
@@ -112,20 +114,39 @@ public class ObjectLoader implements IGraphics {
             return null;
         }
 
+        ModelData data = loadGLTF(filename);
+        PropModel m = new PropModel(
+                texIndex,
+                data.getVertices(),
+                data.getIndices(),
+                data.getTexCoord(),
+                data.getColorArray(),
+                amount
+        );
+
+        return m;
+    }
+
+    private ModelData loadGLTF(String filename) {
         List<Float> positions = new ArrayList<>();
         List<Float> texCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
         List<Float> colors = new ArrayList<>();
 
-        AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate);
-        PointerBuffer buffer = scene.mMeshes();
+        AIScene scene = Assimp.aiImportFile(filename, Assimp.aiProcess_Triangulate | Assimp.aiProcess_GenNormals | Assimp.aiProcess_JoinIdenticalVertices);
 
-        for (int i = 0; i < buffer.limit(); i++){
-            AIMesh mesh = AIMesh.create(buffer.get(i));
-            processMesh(mesh, positions, texCoords, normals, indices, colors);
+        if (scene == null) {
+            throw new RuntimeException("Error loading GLTF file: " + filename);
         }
 
+        // Start with an identity matrix for the root transformation
+        Matrix4f identityMatrix = new Matrix4f();
+
+        // Process the root node recursively
+        processNode(scene.mRootNode(), scene, positions, texCoords, normals, indices, colors, identityMatrix);
+
+        // Convert lists to arrays
         float[] vertexArray = new float[positions.size()];
         float[] texCoordArray = new float[texCoords.size()];
         float[] normalArray = new float[normals.size()];
@@ -148,25 +169,61 @@ public class ObjectLoader implements IGraphics {
             colorArray[i] = colors.get(i);
         }
 
-        PropModel m = new PropModel(texIndex, vertexArray, indicesArray, texCoordArray, colorArray, amount);
+        Assimp.aiReleaseImport(scene);
+        ModelData m = new ModelData(vertexArray, indicesArray, texCoordArray, colorArray);
         return m;
     }
+
+    private void processNode(AINode node, AIScene scene,
+                             List<Float> positions, List<Float> texCoords,
+                             List<Float> normals, List<Integer> indices,
+                             List<Float> colors, Matrix4f parentTransform) {
+
+        // Extract node transformation and combine with parent transformation
+        AIMatrix4x4 aiTransform = node.mTransformation();
+        Matrix4f nodeTransform = new Matrix4f(
+                aiTransform.a1(), aiTransform.a2(), aiTransform.a3(), aiTransform.a4(),
+                aiTransform.b1(), aiTransform.b2(), aiTransform.b3(), aiTransform.b4(),
+                aiTransform.c1(), aiTransform.c2(), aiTransform.c3(), aiTransform.c4(),
+                aiTransform.d1(), aiTransform.d2(), aiTransform.d3(), aiTransform.d4()
+        );
+
+        Matrix4f globalTransform = parentTransform.mul(nodeTransform);
+
+        // Only process if node has meshes
+        if (node.mNumMeshes() > 0) {
+            for (int i = 0; i < node.mNumMeshes(); i++) {
+                int meshIndex = node.mMeshes().get(i);
+                AIMesh mesh = AIMesh.create(scene.mMeshes().get(meshIndex));
+                processMesh(mesh, positions, texCoords, normals, indices, colors, globalTransform);
+            }
+        }
+
+        // Recursively process child nodes
+        for (int i = 0; i < node.mNumChildren(); i++) {
+            processNode(AINode.create(node.mChildren().get(i)), scene,
+                    positions, texCoords, normals, indices, colors, globalTransform);
+        }
+    }
+
 
     private void processMesh(AIMesh mesh,
                              List<Float> positions,
                              List<Float> texCoords,
                              List<Float> normals,
                              List<Integer> indices,
-                             List<Float> colors) {
+                             List<Float> colors,
+                             Matrix4f globalTransform) {
 
         AIVector3D.Buffer vectors = mesh.mVertices();
 
         for(int i = 0; i < vectors.limit(); i++){
             AIVector3D vector = vectors.get(i);
+            Vector4f transformedPosition = new Vector4f(vector.x(), vector.y(), vector.z(), 1.0f).mul(globalTransform);
 
-            positions.add(vector.x());
-            positions.add(vector.y());
-            positions.add(vector.z());
+            positions.add(transformedPosition.x());
+            positions.add(transformedPosition.y());
+            positions.add(transformedPosition.z());
 
         }
 
@@ -180,15 +237,25 @@ public class ObjectLoader implements IGraphics {
 
         }
 
+        // Process and transform normals if they exist
         AIVector3D.Buffer norms = mesh.mNormals();
+        if (norms != null) {
+            // Calculate the normal matrix as the inverse transpose of the upper 3x3 of globalTransform
+            Matrix3f normalMatrix = new Matrix3f(globalTransform).invert().transpose();
+            for (int i = 0; i < norms.limit(); i++) {
+                AIVector3D norm = norms.get(i);
+                Vector3f transformedNormal = new Vector3f(norm.x(), norm.y(), norm.z()).mul(normalMatrix).normalize();
 
-        for (int i = 0; i < norms.limit(); i++) {
-
-            AIVector3D norm = norms.get(i);
-
-            normals.add(norm.x());
-            normals.add(norm.y());
-            normals.add(norm.z());
+                normals.add(transformedNormal.x);
+                normals.add(transformedNormal.y);
+                normals.add(transformedNormal.z);
+            }
+        } else {
+            for (int i = 0; i < vectors.limit(); i++) {
+                normals.add(0.0f);
+                normals.add(0.0f);
+                normals.add(0.0f);
+            }
         }
 
         AIFace.Buffer facesBuffer = mesh.mFaces();
@@ -244,34 +311,6 @@ public class ObjectLoader implements IGraphics {
         eboList.add(eboWithCount);
 
         model.setIndex(vaoList.size() - 1);
-    }
-
-    private int createVAO() {
-        int VAO = GL30.glGenVertexArrays();
-        GL30.glBindVertexArray(VAO);
-        return VAO;
-    }
-
-    private void storeDataInAttribList(FloatBuffer buffer, int index, int size) {
-        int VBO = GL15.glGenBuffers();
-        vboList.add(VBO);
-
-        // Bind buffer object to array
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-
-        // Set vertex attribute pointer for the shape
-        GL20.glVertexAttribPointer(index, size, GL21.GL_FLOAT, false, 0, 0);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-    }
-
-    private int storeIndexInAttribList(PropModel model) {
-        int EBO = GL15.glGenBuffers();
-
-        // Bind buffer object to element array (Basically indices)
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
-        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, model.storeIndicesInBuffer(), GL15.GL_STATIC_DRAW);
-        return EBO;
     }
 
     public int loadTexture(String filename) {
@@ -373,5 +412,37 @@ public class ObjectLoader implements IGraphics {
             GL30.glDeleteTextures(getTextures(0));
             textures.remove(0);
         }
+    }
+
+    private int createVAO() {
+        int VAO = GL30.glGenVertexArrays();
+        GL30.glBindVertexArray(VAO);
+        return VAO;
+    }
+
+    private void storeDataInAttribList(FloatBuffer buffer, int index, int size) {
+        int VBO = GL15.glGenBuffers();
+        vboList.add(VBO);
+
+        // Bind buffer object to array
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+
+        // Set vertex attribute pointer for the shape
+        GL20.glVertexAttribPointer(index, size, GL21.GL_FLOAT, false, 0, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+
+    private int storeIndexInAttribList(PropModel model) {
+        int EBO = GL15.glGenBuffers();
+
+        // Bind buffer object to element array (Basically indices)
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, model.storeIndicesInBuffer(), GL15.GL_STATIC_DRAW);
+        return EBO;
+    }
+
+    private void applyTransformationToMesh(AIMesh mesh) {
+
     }
 }
