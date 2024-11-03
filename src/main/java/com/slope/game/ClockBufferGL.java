@@ -26,6 +26,8 @@ public class ClockBufferGL extends CircularClockBuffer {
         try {
             stack.push();
             ByteBuffer capacityVBOBuffer = stack.malloc(totalVBOSize);
+
+            stack.push();
             ByteBuffer capacityEBOBuffer = stack.malloc(totalEBOSize);
             int curVBOCapacity = 0;
             int curEBOCapacity = 0;
@@ -65,6 +67,7 @@ public class ClockBufferGL extends CircularClockBuffer {
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         } finally {
+            stack.pop();
             stack.pop();
         }
     }
