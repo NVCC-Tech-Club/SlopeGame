@@ -10,10 +10,7 @@ import java.nio.Buffer;
 public class Game extends Core {
     private static final int ALL_PLATFORM_MODELS = 1;
 
-    // TODO: Also add multiple Fixed Sized Queues here for platforms and red block pillars. (Feeshy Task Only)
-    // NOTE: I will have to create my own Fixed Size Queue class that uses LWJGL's direct memory components to
-    // allocate and deallocate my capacity and map memory to it like I was in C.
-    // This means I need an object pool to store all platform variations.
+    private ClockBufferGL clockBuffer;
 
     // TODO: Probably have an ArrayList for the red obstacles in every platform. (Feeshy Task Only)
     private BufferModel[] bufferPool;
@@ -91,6 +88,8 @@ public class Game extends Core {
         // TODO: Add stuff above our pre-init to it can get loaded to the renderer. (Feeshy Task Only)
 
         bufferPool[0] = loader.loadGLTFBuffer("src/main/resources/models/ramp.glb");
+        clockBuffer = new ClockBufferGL(bufferPool[0].getSize(), 1);
+        clockBuffer.put(bufferPool[0]);
 
         super.init();
     }

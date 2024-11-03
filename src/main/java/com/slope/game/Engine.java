@@ -21,6 +21,8 @@ public class Engine {
     private GLFWErrorCallback errorCallback; // Capture any errors that may arise.
     private boolean isRunning; // Whether or not the application is still running.
     private long frames;
+    private float totalTime;
+    private float iTime;
 
     private Engine() {
         this.errorCallback = null;
@@ -103,12 +105,19 @@ public class Engine {
                 }
             }
 
+            totalTime += passedTime / (float) NANOSECOND;
+            iTime = totalTime;
+
             if(render) {
                 render();
             }
 
             GLFW.glfwPollEvents();
         }
+    }
+
+    public float getITime() {
+        return iTime;
     }
 
     public void stop() {

@@ -169,6 +169,7 @@ public final class RenderManager {
         {
             shaderManager.setVec2Uniform("iResolution", resolution);
             shaderManager.setVec3Uniform("camPosition", camMatrices.getPosition());
+            shaderManager.setVec3Uniform("position", Physics.getPosition());
         }
 
         // Update uniform texture sampler
@@ -268,6 +269,7 @@ public final class RenderManager {
         shaderManager.createUniform(1, "textureSampler0");
         shaderManager.createUniform(1, "textureSampler1");
         shaderManager.createUniform(1, "textureSampler2");
+        shaderManager.createUniform(1, "position");
 
         shaderManager.bind(2);
         shaderManager.createUniform(2, "textureSampler");

@@ -4,8 +4,6 @@
 #define PI 3.14159265
 #define TAU (2*PI)
 
-const vec3 c = vec3(0.0, 5.0, 0.0);
-
 in vec3 color;
 in vec2 fragTexCoords;
 in vec4 outColor;
@@ -16,6 +14,7 @@ uniform sampler2D textureSampler1;
 uniform sampler2D textureSampler2;
 uniform vec2 iResolution;
 uniform vec3 camPosition;
+uniform vec3 position;
 
 layout(std140) uniform CameraMatrices {
     mat4 projectionMatrix;
@@ -73,7 +72,7 @@ vec2 sphereUV(vec3 p) {
 
 // Source: https://iquilezles.org/articles/distfunctions/
 float sdSphere(vec3 p, float s) {
-    return length(p)-s;
+    return length(p-position)-s;
 }
 
 
@@ -97,7 +96,7 @@ bool raymarched(vec2 uv, vec2 ndc, inout vec3 p) {
     // TODO: Instead of MIN and MAX distance use z-near and z-far.
     for(int i=0; i<MAX_STEPS; i++) {
         p = ro + rd * t;
-        float d = sdSphere(p - c, 3.0);
+        float d = sdSphere(p, 3.0);
         t += d;
 
         if(d < CamMatrix.nearPlane) {
@@ -129,11 +128,11 @@ void main() {
 
 
     if(hit) {
-        vec3 nor = normalize(p - c);
+        vec3 nor = normalize(p - position);
         vec2 spTexCoord = sphereUV(nor);
         col = texture(textureSampler1, spTexCoord * 6);
 
-        float sphDepth = length((p - c) - camPosition);
+        float sphDepth = length((p - position) - camPosition);
         float ndcDepth = (sphDepth - CamMatrix.nearPlane) / (CamMatrix.farPlane - CamMatrix.nearPlane);
         ndcDepth = clamp(ndcDepth, 0.0, 1.0);
 
