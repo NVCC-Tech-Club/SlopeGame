@@ -1,7 +1,8 @@
 package com.slope.game;
 
-import com.slope.game.utils.PropModel;
 import org.lwjgl.opengl.GL21;
+
+import com.slope.game.utils.PropModel;
 
 public class Core implements IComponentManager {
     protected final ObjectLoader loader;
