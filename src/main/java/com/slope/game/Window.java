@@ -38,8 +38,8 @@ public class Window {
         this.framebufferHeight = new int[1];
 
         if(this.width <= 0 || this.height <= 0) {
-            this.width = 800;
-            this.height = 600;
+            this.width = 1920;
+            this.height = 1080;
         }
 
         this.aspectRatio = (float)width / (float)height;

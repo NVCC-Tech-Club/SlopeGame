@@ -27,7 +27,7 @@ public class Physics {
     }
 
     public static float checkFloor(){
-        if (sphere_pos.y <= floor){
+        if (sphere_pos.y - 3.0 <= floor){
             return -gravityVelocity;
         }
         return 0.0f;

@@ -101,6 +101,14 @@ public class Core implements IComponentManager {
             */
 
             loader.loadTexture("textures/Object.png");
+            PropModel n = loader.loadGLTFModel(1,0, "src/main/resources/models/flat.glb");
+            n.setPosition(0.0f, -107.5f, 250.0f);
+            n.update();
+            renderer.addPropModel(n);
+
+            loader.loadVertexObject(n, 3);
+
+            loader.loadTexture("textures/Object.png");
             PropModel m = loader.loadGLTFModel(300,0, "src/main/resources/models/tower.glb");
             m.setPosition(-250.0f, -400.0f, -250.0f);
             m.update();
