@@ -1,8 +1,8 @@
 package com.slope.game;
 
 import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
@@ -118,6 +118,9 @@ public class Engine {
 
     public float getITime() {
         return iTime;
+    }
+    public float getFrameArea(){
+        return (float) FRAME_AREA;
     }
 
     public void stop() {
