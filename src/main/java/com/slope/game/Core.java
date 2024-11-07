@@ -27,6 +27,7 @@ public class Core implements IComponentManager {
         }
 
         createGreenTowers();
+        createCollisionObjects();
 
         {
             PropModel screen = renderer.setScreenModel(loader.createScreen(
@@ -87,6 +88,17 @@ public class Core implements IComponentManager {
         renderer.end();
     }
 
+    //Objects that will collide with the sphere
+    private void createCollisionObjects(){
+        loader.loadTexture("textures/Object.png");
+            PropModel n = loader.loadGLTFModel(1,0, "src/main/resources/models/flat.glb");
+            n.setPosition(0.0f, -107.5f, 250.0f);
+            n.update();
+            renderer.addPropModel(n);
+
+            loader.loadVertexObject(n, 3);
+    }
+
 
     // These are background objects that can't be interacted with the game in any way.
     // That's why they are in the Core Class rather than the Game Class.
@@ -99,6 +111,8 @@ public class Core implements IComponentManager {
             n.scale(2.0f, 2.0f, 2.0f);
             n.update();
             */
+
+            
 
             loader.loadTexture("textures/Object.png");
             PropModel m = loader.loadGLTFModel(300,0, "src/main/resources/models/tower.glb");

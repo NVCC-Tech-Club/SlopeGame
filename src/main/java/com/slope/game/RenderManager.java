@@ -1,9 +1,8 @@
 package com.slope.game;
 
+import java.util.ArrayList;
 import java.util.Locale;
-import org.lwjgl.opengl.*;
-import java.util.Locale;
-import org.joml.Matrix4f;
+
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -12,9 +11,9 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
-import org.lwjgl.opengl.GL33;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
-import java.util.ArrayList;
+import org.lwjgl.opengl.GL33;
+
 import com.slope.game.utils.PropModel;
 
 public final class RenderManager {

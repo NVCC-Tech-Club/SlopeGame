@@ -1,11 +1,10 @@
 package com.slope.game;
 
-import com.slope.game.utils.BufferModel;
+import org.joml.Math;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.joml.Math;
 
-import java.nio.Buffer;
+import com.slope.game.utils.BufferModel;
 
 public class Game extends Core {
     private static final int ALL_PLATFORM_MODELS = 1;
