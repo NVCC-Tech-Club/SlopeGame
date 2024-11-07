@@ -111,7 +111,7 @@ public class ObjectLoader implements IGraphics {
         if (scene == null) {
             throw new RuntimeException("Error loading GLTF file: " + filename);
         }
-
+//CBT haha ~FluffyMP
         // Start with an identity matrix for the root transformation
         Matrix4f identityMatrix = new Matrix4f();
 

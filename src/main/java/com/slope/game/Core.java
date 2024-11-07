@@ -91,8 +91,8 @@ public class Core implements IComponentManager {
     //Objects that will collide with the sphere
     private void createCollisionObjects(){
         loader.loadTexture("textures/Object.png");
-            PropModel n = loader.loadGLTFModel(1,0, "src/main/resources/models/flat.glb");
-            n.setPosition(0.0f, -107.5f, 250.0f);
+            PropModel n = loader.loadGLTFModel(1,0, "src/main/resources/models/ramp3.glb");
+            n.setPosition(-20.0f, -105.0f, 265.0f);
             n.update();
             renderer.addPropModel(n);
 
