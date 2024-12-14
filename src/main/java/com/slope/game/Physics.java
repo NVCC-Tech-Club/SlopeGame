@@ -8,7 +8,7 @@ public class Physics {
     private static Vector3f sphere_pos = new Vector3f(0.0f, 0.0f, 0.0f);
     private static float gravityVelocity = 0.0f;
     private static float gravityPos= 0.0f;
-    
+
     private static float floor = -100.0f; //testing floor
 
     public static Vector3f getPosition() { // Gravity Pull
@@ -17,7 +17,7 @@ public class Physics {
         gravityVelocity += GRAVITY_STRENGTH * Engine.getMain().getFrameArea();
         gravityVelocity += checkFloor();
         //gravityPos = checkFloor();
-        System.out.println(gravityVelocity);
+        //System.out.println(gravityVelocity);
         //System.out.println(gravityPos);
         sphere_pos.set(sphere_pos.x, sphere_pos.y += gravityVelocity * Engine.getMain().getFrameArea(), sphere_pos.z);
         //sphere_pos.set(sphere_pos.x, gravityPos, sphere_pos.z);
@@ -32,5 +32,4 @@ public class Physics {
         }
         return 0.0f;
     }
-    
 }
